@@ -5,8 +5,12 @@ plugins {
 
     // ktlint
     id("org.jlleitschuh.gradle.ktlint") version "12.0.3"
+
+    // detekt
+    id("io.gitlab.arturbosch.detekt") version("1.23.4")
 }
 
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "io.gitlab.arturbosch.detekt")
 }
