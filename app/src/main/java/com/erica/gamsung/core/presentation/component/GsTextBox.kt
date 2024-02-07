@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -39,40 +40,14 @@ fun GsTextBox(
     isRequired: Boolean,
     options: List<String>? = null,
     onOptionSelected: (String) -> Unit,
+    modifier: Modifier,
+    innerTextModifier: Modifier,
 ) {
     val text by remember { mutableStateOf(TextFieldValue(hintText)) }
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("") }
     Column {
-        Text(
-            text =
-                buildAnnotatedString {
-                    withStyle(
-                        SpanStyle(
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
-                        ),
-                    ) {
-                        append(title)
-                    }
-                    withStyle(
-                        SpanStyle(
-                            color = Color.Red,
-                        ),
-                    ) {
-                        if (isRequired) {
-                            append(" * ")
-                        }
-                    }
-                    withStyle(
-                        SpanStyle(
-                            color = Color.LightGray,
-                        ),
-                    ) {
-                        description?.let { append(description) }
-                    }
-                },
-        )
+        TextTitle(title, isRequired, description)
         if (options != null) {
             DropdownTextBox(
                 text,
@@ -85,11 +60,54 @@ fun GsTextBox(
                     onOptionSelected.invoke(option)
                     expanded = false
                 },
+                innerTextModifier = innerTextModifier,
+                modifier = modifier,
             )
         } else {
-            InputTextBox(text)
+            InputTextBox(
+                text,
+                innerTextModifier,
+                modifier,
+            )
         }
     }
+}
+
+@Composable
+private fun TextTitle(
+    title: String,
+    isRequired: Boolean,
+    description: String?,
+) {
+    Text(
+        text =
+            buildAnnotatedString {
+                withStyle(
+                    SpanStyle(
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                ) {
+                    append(title)
+                }
+                withStyle(
+                    SpanStyle(
+                        color = Color.Red,
+                    ),
+                ) {
+                    if (isRequired) {
+                        append(" * ")
+                    }
+                }
+                withStyle(
+                    SpanStyle(
+                        color = Color.LightGray,
+                    ),
+                ) {
+                    description?.let { append(description) }
+                }
+            },
+    )
 }
 
 @Composable
@@ -100,21 +118,26 @@ private fun DropdownTextBox(
     selectedOption: String,
     onExpandedChange: () -> Unit,
     onOptionSelected: (String) -> Unit,
+    modifier: Modifier,
+    innerTextModifier: Modifier,
 ) {
-    val text = hintText
     BasicTextField(
-        value = if (selectedOption.isEmpty()) text else TextFieldValue(selectedOption),
+        value = if (selectedOption.isEmpty()) hintText else TextFieldValue(selectedOption),
         onValueChange = {},
         singleLine = true,
         readOnly = true,
         modifier =
-            Modifier
-                .border(1.dp, Color.LightGray, RoundedCornerShape(percent = 15))
-                .padding(16.dp)
-                .background(Color.Transparent)
+            modifier
+                .border(
+                    1.dp,
+                    Color.LightGray,
+                    RoundedCornerShape(percent = 15),
+                ).background(Color.Transparent)
                 .clickable { onExpandedChange() },
         decorationBox = { innerTextField ->
-            Row {
+            Row(
+                modifier = innerTextModifier,
+            ) {
                 innerTextField()
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
@@ -143,7 +166,11 @@ private fun DropdownTextBox(
 }
 
 @Composable
-private fun InputTextBox(hintText: TextFieldValue) {
+private fun InputTextBox(
+    hintText: TextFieldValue,
+    modifier: Modifier,
+    innerTextModifier: Modifier,
+) {
     var text by remember {
         mutableStateOf(hintText)
     }
@@ -157,23 +184,24 @@ private fun InputTextBox(hintText: TextFieldValue) {
         },
         singleLine = true,
         modifier =
-            Modifier
-                .onFocusChanged { focusState ->
+            modifier
+                .background(Color.Transparent)
+                .border(
+                    1.dp,
+                    Color.LightGray,
+                    RoundedCornerShape(percent = 15),
+                ).onFocusChanged { focusState ->
                     isFocused = focusState.isFocused
                     if (isFocused && text == hintText) {
                         text = TextFieldValue("")
                     } else if (!isFocused && text.text.isEmpty()) {
                         text = hintText
                     }
-                }.background(Color.Transparent)
-                .border(1.dp, Color.LightGray, RoundedCornerShape(percent = 15))
-                .padding(16.dp),
+                },
         decorationBox = { innerTextField ->
-            // Because the decorationBox is used, the whole Row gets the same behaviour as the
-            // internal input field would have otherwise. For example, there is no need to add a
-            // Modifier.clickable to the Row anymore to bring the text field into focus when user
-            // taps on a larger text field area which includes paddings and the icon areas.
-            Row {
+            Row(
+                modifier = innerTextModifier,
+            ) {
                 if (!isFocused && text.text.isEmpty()) {
                     Text(hintText.text, color = Color.Gray)
                     Spacer(modifier = Modifier.weight(1f))
@@ -189,7 +217,7 @@ private fun InputTextBox(hintText: TextFieldValue) {
 @Preview
 @Composable
 private fun GsTextPreview() {
-    val options = listOf<String>("option1", "option2", "option3")
+    val options = listOf("option1", "option2", "option3")
     Column(
         modifier = Modifier.background(Color.White),
     ) {
@@ -202,6 +230,8 @@ private fun GsTextPreview() {
             onOptionSelected = { option ->
                 println("Selected option: $option")
             },
+            modifier = Modifier.fillMaxWidth(0.5f),
+            innerTextModifier = Modifier.padding(16.dp),
         )
         GsTextBox(
             hintText = "ex) 한양대학교 개강 기념 불고기 10인분",
@@ -212,6 +242,8 @@ private fun GsTextPreview() {
             onOptionSelected = { option ->
                 println("Selected option: $option")
             },
+            modifier = Modifier.fillMaxWidth(1f),
+            innerTextModifier = Modifier.padding(16.dp),
         )
         GsTextBox(
             hintText = "",
@@ -222,6 +254,8 @@ private fun GsTextPreview() {
             onOptionSelected = { option ->
                 println("Selected option: $option")
             },
+            modifier = Modifier.fillMaxWidth(0.5f),
+            innerTextModifier = Modifier.padding(16.dp),
         )
     }
 }
