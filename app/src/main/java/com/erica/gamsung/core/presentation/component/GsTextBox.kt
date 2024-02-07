@@ -230,7 +230,7 @@ private fun GsTextPreview() {
             onOptionSelected = { option ->
                 println("Selected option: $option")
             },
-            modifier = Modifier.fillMaxWidth(0.5f),
+            modifier = Modifier.fillMaxWidth(1f),
             innerTextModifier = Modifier.padding(16.dp),
         )
         GsTextBox(
@@ -254,7 +254,7 @@ private fun GsTextPreview() {
             onOptionSelected = { option ->
                 println("Selected option: $option")
             },
-            modifier = Modifier.fillMaxWidth(0.5f),
+            modifier = Modifier.fillMaxWidth(1f),
             innerTextModifier = Modifier.padding(16.dp),
         )
     }
