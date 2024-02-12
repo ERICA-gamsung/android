@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
 private val Green = Color(0xFF1F7158)
@@ -47,6 +48,7 @@ fun GsButton(
 fun GsOutlinedButton(
     modifier: Modifier = Modifier,
     text: String,
+    fontSize: TextUnit = TextUnit.Unspecified,
     onClick: () -> Unit = {},
 ) {
     OutlinedButton(
@@ -57,6 +59,7 @@ fun GsOutlinedButton(
                 text = text,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
+                fontSize = fontSize,
             )
         },
         modifier = modifier,
