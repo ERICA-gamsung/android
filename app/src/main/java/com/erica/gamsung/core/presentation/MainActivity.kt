@@ -26,10 +26,10 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     NavHost(navController = navController, startDestination = "main") {
-                        composable("main") { MainScreen(navController = navController) }
-                        composable("setting") { SettingScreen() }
-                        composable("publishPosting") { PublishPostingScreen() }
-                        composable("checkPosting") { CheckPostingScreen() }
+                        composable(Screen.MAIN.route) { MainScreen(navController = navController) }
+                        composable(Screen.SETTING.route) { SettingScreen() }
+                        composable(Screen.PUBLISH_POSTING.route) { PublishPostingScreen() }
+                        composable(Screen.CHECK_POSTING.route) { CheckPostingScreen() }
                     }
                 }
             }

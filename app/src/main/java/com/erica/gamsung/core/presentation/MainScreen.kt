@@ -26,7 +26,7 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             GsTopAppBar(
                 title = "메인 페이지",
                 hasRightIcon = true,
-                onActionsClick = { navController.navigate("setting") },
+                onActionsClick = { navController.navigate(Screen.SETTING.route) },
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -39,11 +39,11 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            MainButton("글 발행하러 가기") { navController.navigate("publishPosting") }
+            MainButton("글 발행하러 가기") { navController.navigate(Screen.PUBLISH_POSTING.route) }
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            MainButton("발행 현황 확인하기") { navController.navigate("checkPosting") }
+            MainButton("발행 현황 확인하기") { navController.navigate(Screen.CHECK_POSTING.route) }
         }
     }
 }
