@@ -1,4 +1,4 @@
-package com.erica.gamsung
+package com.erica.gamsung.core.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.erica.gamsung.core.presentation.MainScreen
 import com.erica.gamsung.ui.theme.GamsungTheme
 
 class MainActivity : ComponentActivity() {
