@@ -14,17 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.component.GsOutlinedButton
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavHostController = rememberNavController()) {
     Scaffold(
         topBar = {
             GsTopAppBar(
                 title = "메인 페이지",
                 hasRightIcon = true,
-                onActionsClick = { TODO() },
+                onActionsClick = { navController.navigate("setting") },
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -37,17 +39,20 @@ fun MainScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            MainButton("글 발행하러 가기")
+            MainButton("글 발행하러 가기") { navController.navigate("publishPosting") }
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            MainButton("발행 현황 확인하기")
+            MainButton("발행 현황 확인하기") { navController.navigate("checkPosting") }
         }
     }
 }
 
 @Composable
-private fun MainButton(text: String) {
+private fun MainButton(
+    text: String,
+    onClick: () -> Unit = {},
+) {
     GsOutlinedButton(
         modifier =
             Modifier
@@ -56,12 +61,12 @@ private fun MainButton(text: String) {
                 .padding(horizontal = 20.dp),
         text = text,
         fontSize = 25.sp,
-        onClick = { TODO() },
+        onClick = onClick,
     )
 }
 
 @Preview
 @Composable
 private fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(navController = rememberNavController())
 }
