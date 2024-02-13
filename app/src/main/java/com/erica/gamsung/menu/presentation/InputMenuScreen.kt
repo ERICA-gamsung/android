@@ -101,10 +101,12 @@ private fun InputMenuSection() {
         }
 
         item {
-            Icon(
-                imageVector = Icons.Default.AddCircleOutline,
-                contentDescription = "메뉴 추가 아이콘",
-            )
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.AddCircleOutline,
+                    contentDescription = "메뉴 추가 아이콘",
+                )
+            }
         }
     }
 }
@@ -129,15 +131,17 @@ private fun CompletedMenuItem(menu: Menu) {
             content = menu.price.toString(),
             modifier = Modifier.weight(1f),
         )
-        Icon(
-            imageVector = Icons.Default.RemoveCircleOutline,
-            contentDescription = "메뉴 제거 아이콘",
+        IconButton(
+            onClick = { /*TODO*/ },
             modifier =
                 Modifier
                     .size(20.dp)
                     .padding(top = 5.dp, end = 5.dp),
-        )
-        IconButton(onClick = { /*TODO*/ }) {
+        ) {
+            Icon(
+                imageVector = Icons.Default.RemoveCircleOutline,
+                contentDescription = "메뉴 제거 아이콘",
+            )
         }
     }
 }
