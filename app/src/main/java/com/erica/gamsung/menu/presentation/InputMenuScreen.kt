@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -196,14 +197,7 @@ private fun InputMenuItem() {
                     .padding(5.dp)
                     .weight(1f),
         )
-        Icon(
-            imageVector = Icons.Default.RemoveCircleOutline,
-            contentDescription = "메뉴 제거 아이콘",
-            modifier =
-                Modifier
-                    .size(20.dp)
-                    .padding(top = 5.dp, end = 5.dp),
-        )
+        Spacer(modifier = Modifier.padding(10.dp))
     }
 }
 
