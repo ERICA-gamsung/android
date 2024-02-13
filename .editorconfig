@@ -18,7 +18,6 @@ indent_size = 4
 ktlint_code_style = ktlint_official
 ktlint_ignore_back_ticked_identifier = true
 ktlint_standard_no-wildcard-imports = disabled
-ktlint_standard_function-naming = disabled
 
 ktlint_standard = enabled
 
