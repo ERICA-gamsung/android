@@ -204,7 +204,7 @@ fun InputTextBox(
                 modifier = innerTextModifier,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (!isFocused && text.text.isEmpty()) {
+                if (!isFocused && text == hintText) {
                     Text(hintText.text, color = Color.Gray)
                     Spacer(modifier = Modifier.weight(1f))
                 } else {
