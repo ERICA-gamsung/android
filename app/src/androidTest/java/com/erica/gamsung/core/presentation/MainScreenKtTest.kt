@@ -23,22 +23,25 @@ class MainScreenKtTest {
         }
     }
 
+    /** 메인 페이지에 탑바가 화면에 보인다 */
     @Test
-    fun 메인페이지에_탑바가_화면에_보인다() {
+    fun topBarIsDisplayedOnMainPage() {
         rule
             .onNodeWithText("메인 페이지")
             .assertIsDisplayed()
     }
 
+    /** 메인 페이지에 글 발행 버튼이 화면에 보인다 */
     @Test
-    fun 메인페이지에_글_발행_버튼이_화면에_보인다() {
+    fun publishButtonIsDisplayedOnMainPage() {
         rule
             .onNodeWithText("글 발행하러 가기")
             .assertIsDisplayed()
     }
 
+    /** 메인 페이지에 발행 현황 확인 버튼이 화면에 보인다 */
     @Test
-    fun 메인페이지에_발행_현황_확인_버튼이_화면에_보인다() {
+    fun checkPublishStatusButtonIsDisplayedOnMainPage() {
         rule
             .onNodeWithText("발행 현황 확인하기")
             .assertIsDisplayed()
