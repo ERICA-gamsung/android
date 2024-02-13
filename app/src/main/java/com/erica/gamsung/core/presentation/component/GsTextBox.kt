@@ -74,7 +74,7 @@ fun GsTextBox(
 }
 
 @Composable
-private fun TextTitle(
+fun TextTitle(
     title: String,
     isRequired: Boolean,
     description: String?,
@@ -166,7 +166,7 @@ private fun DropdownTextBox(
 }
 
 @Composable
-private fun InputTextBox(
+fun InputTextBox(
     hintText: TextFieldValue,
     modifier: Modifier,
     innerTextModifier: Modifier,
