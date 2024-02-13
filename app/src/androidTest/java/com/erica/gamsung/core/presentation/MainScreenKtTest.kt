@@ -39,8 +39,9 @@ class MainScreenKtTest {
             .assertIsDisplayed()
     }
 
+    /** 설정 버튼을 누르면 설정 페이지로 이동한다 */
     @Test
-    fun 설정_버튼을_누르면_설정_페이지로_이동한다() {
+    fun navigateToSettingPageWhenSettingButtonIsClicked() {
         rule
             .onNodeWithContentDescription("AccountCircle")
             .performClick()
@@ -57,9 +58,9 @@ class MainScreenKtTest {
             .assertIsDisplayed()
     }
 
-
+    /** 글 발행 버튼을 누르면 글 발행 페이지로 이동한다 */
     @Test
-    fun 글_발행_버튼을_누르면_글_발행_페이지로_이동한다() {
+    fun navigateToPublishPostingPageWhenPublishPostingButtonIsClicked() {
         rule
             .onNodeWithText("글 발행하러 가기")
             .performClick()
@@ -76,8 +77,9 @@ class MainScreenKtTest {
             .assertIsDisplayed()
     }
 
+    /** 발행 현황 확인 버튼을 누르면 발행 현황 페이지로 이동한다 */
     @Test
-    fun 발행_현황_확인_버튼을_누르면_발행_현황_페이지로_이동한다() {
+    fun navigateToCheckPostingPageWhenCheckPostingButtonIsClicked() {
         rule
             .onNodeWithText("발행 현황 확인하기")
             .performClick()
