@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.erica.gamsung.core.presentation.component.GsButton
@@ -196,6 +197,7 @@ private fun InputMenuItem(
             title = "메뉴 이름",
             hintText = "ex. 고등어 구이 정식",
             onValueChange = nameChanged,
+            keyboardType = KeyboardType.Text,
         )
         TitleTextField(
             modifier =
@@ -206,6 +208,7 @@ private fun InputMenuItem(
             title = "가격",
             hintText = "ex. 15000",
             onValueChange = priceChanged,
+            keyboardType = KeyboardType.Number,
         )
         Spacer(modifier = Modifier.padding(10.dp))
     }
@@ -217,6 +220,7 @@ private fun TitleTextField(
     title: String,
     hintText: String,
     onValueChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text,
 ) {
     Column(
         modifier = modifier,
@@ -231,6 +235,7 @@ private fun TitleTextField(
                     .weight(1f)
                     .padding(end = 10.dp),
             innerTextModifier = Modifier.padding(start = 5.dp),
+            keyboardType = keyboardType,
         )
     }
 }

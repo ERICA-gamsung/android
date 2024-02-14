@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,6 +72,7 @@ fun GsTextBox(
                 onValueChange = { text = TextFieldValue(it) },
                 modifier = innerTextModifier,
                 innerTextModifier = modifier,
+                keyboardType = KeyboardType.Text,
             )
         }
     }
@@ -171,6 +174,7 @@ private fun DropdownTextBox(
 fun InputTextBox(
     hintText: String,
     onValueChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text,
     modifier: Modifier,
     innerTextModifier: Modifier,
 ) {
@@ -186,6 +190,7 @@ fun InputTextBox(
             textState = updatedText
             onValueChange(updatedText.text)
         },
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         singleLine = true,
         modifier =
             modifier
