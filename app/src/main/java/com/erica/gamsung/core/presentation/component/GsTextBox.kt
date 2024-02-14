@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -74,7 +75,7 @@ fun GsTextBox(
 }
 
 @Composable
-private fun TextTitle(
+fun TextTitle(
     title: String,
     isRequired: Boolean,
     description: String?,
@@ -166,7 +167,7 @@ private fun DropdownTextBox(
 }
 
 @Composable
-private fun InputTextBox(
+fun InputTextBox(
     hintText: TextFieldValue,
     modifier: Modifier,
     innerTextModifier: Modifier,
@@ -201,8 +202,9 @@ private fun InputTextBox(
         decorationBox = { innerTextField ->
             Row(
                 modifier = innerTextModifier,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (!isFocused && text.text.isEmpty()) {
+                if (!isFocused && text == hintText) {
                     Text(hintText.text, color = Color.Gray)
                     Spacer(modifier = Modifier.weight(1f))
                 } else {
