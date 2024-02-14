@@ -101,10 +101,11 @@ private fun InputMenuSection() {
 
         item {
             IconButton(onClick = {
-                // TODO 입력값 검증
-                menus.add(Menu(name, price.toInt()))
-                setName("")
-                setPrice("")
+                if (name.isNotBlank() && price.isZeroOrPrimitiveInt()) {
+                    menus.add(Menu(name, price.toInt()))
+                    setName("")
+                    setPrice("")
+                }
             }) {
                 Icon(
                     imageVector = Icons.Default.AddCircleOutline,
@@ -113,6 +114,11 @@ private fun InputMenuSection() {
             }
         }
     }
+}
+
+private fun String.isZeroOrPrimitiveInt(): Boolean {
+    val int = this.toIntOrNull() ?: return false
+    return int >= 0
 }
 
 @Composable
