@@ -43,7 +43,7 @@ class MainScreenKtTest {
     @Test
     fun navigateToSettingPageWhenSettingButtonIsClicked() {
         rule
-            .onNodeWithContentDescription("AccountCircle")
+            .onNodeWithContentDescription("SettingButton")
             .performClick()
 
         val route = navController.currentDestination?.route
