@@ -122,12 +122,12 @@ private fun CompletedMenuItem(menu: Menu) {
                 .padding(6.dp)
                 .border(1.dp, Color.Black, RoundedCornerShape(10.dp)),
     ) {
-        TitleWithContent(
+        MenuItemContainer(
             title = "메뉴 이름",
             content = menu.name,
             modifier = Modifier.weight(1f),
         )
-        TitleWithContent(
+        MenuItemContainer(
             title = "가격",
             content = menu.price.toString(),
             modifier = Modifier.weight(1f),
@@ -148,7 +148,7 @@ private fun CompletedMenuItem(menu: Menu) {
 }
 
 @Composable
-private fun TitleWithContent(
+private fun MenuItemContainer(
     modifier: Modifier = Modifier,
     title: String,
     content: String,
