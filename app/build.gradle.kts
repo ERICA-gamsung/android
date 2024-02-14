@@ -55,7 +55,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.2")
@@ -75,4 +74,8 @@ dependencies {
     // kotest
     testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+
+    // navigation
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.5.3")
 }
