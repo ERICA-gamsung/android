@@ -44,7 +44,7 @@ fun GsTextBox(
     modifier: Modifier,
     innerTextModifier: Modifier,
 ) {
-    val text by remember { mutableStateOf(TextFieldValue(hintText)) }
+    var text by remember { mutableStateOf(TextFieldValue(hintText)) }
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("") }
     Column {
@@ -66,9 +66,10 @@ fun GsTextBox(
             )
         } else {
             InputTextBox(
-                text,
-                innerTextModifier,
-                modifier,
+                hintText = text.text,
+                onValueChange = { text = TextFieldValue(it) },
+                modifier = innerTextModifier,
+                innerTextModifier = modifier,
             )
         }
     }
@@ -168,20 +169,22 @@ private fun DropdownTextBox(
 
 @Composable
 fun InputTextBox(
-    hintText: TextFieldValue,
+    hintText: String,
+    onValueChange: (String) -> Unit,
     modifier: Modifier,
     innerTextModifier: Modifier,
 ) {
-    var text by remember {
-        mutableStateOf(hintText)
+    var textState by remember {
+        mutableStateOf(TextFieldValue(""))
     }
     var isFocused by remember {
         mutableStateOf(false)
     }
     BasicTextField(
-        value = text,
+        value = textState,
         onValueChange = { updatedText ->
-            text = updatedText
+            textState = updatedText
+            onValueChange(updatedText.text)
         },
         singleLine = true,
         modifier =
@@ -193,10 +196,8 @@ fun InputTextBox(
                     RoundedCornerShape(percent = 15),
                 ).onFocusChanged { focusState ->
                     isFocused = focusState.isFocused
-                    if (isFocused && text == hintText) {
-                        text = TextFieldValue("")
-                    } else if (!isFocused && text.text.isEmpty()) {
-                        text = hintText
+                    if (isFocused && textState.text == hintText) {
+                        textState = TextFieldValue("")
                     }
                 },
         decorationBox = { innerTextField ->
@@ -204,8 +205,8 @@ fun InputTextBox(
                 modifier = innerTextModifier,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (!isFocused && text == hintText) {
-                    Text(hintText.text, color = Color.Gray)
+                if (!isFocused && textState.text.isBlank()) {
+                    Text(hintText, color = Color.Gray)
                     Spacer(modifier = Modifier.weight(1f))
                 } else {
                     innerTextField()
