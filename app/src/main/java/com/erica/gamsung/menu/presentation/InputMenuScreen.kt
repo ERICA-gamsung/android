@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
@@ -24,6 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -73,16 +75,17 @@ fun InputMenuScreen() {
 @Suppress("MagicNumber") // TODO 기능 구현 시 제거
 @Composable
 private fun InputMenuSection() {
-    // TODO 기능 구현 시 제거
     val menus =
-        listOf(
-            Menu("비빔밥", 12000),
-            Menu("떡볶이", 8000),
-            Menu("김치볶음밥", 9000),
-            Menu("갈비구이", 18000),
-            Menu("김치전", 13000),
-            Menu("해물파전", 15000),
-        )
+        remember {
+            mutableStateListOf(
+                Menu("비빔밥", 12000),
+                Menu("떡볶이", 8000),
+                Menu("김치볶음밥", 9000),
+                Menu("갈비구이", 18000),
+                Menu("김치전", 13000),
+                Menu("해물파전", 15000),
+            )
+        }
 
     LazyColumn(
         modifier =
@@ -93,8 +96,8 @@ private fun InputMenuSection() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
     ) {
-        items(menus) { menu ->
-            CompletedMenuItem(menu)
+        itemsIndexed(menus) { index, menu ->
+            CompletedMenuItem(menu) { menus.removeAt(index) }
         }
 
         item {
@@ -113,7 +116,10 @@ private fun InputMenuSection() {
 }
 
 @Composable
-private fun CompletedMenuItem(menu: Menu) {
+private fun CompletedMenuItem(
+    menu: Menu,
+    onClick: () -> Unit,
+) {
     Row(
         modifier =
             Modifier
@@ -133,7 +139,7 @@ private fun CompletedMenuItem(menu: Menu) {
             modifier = Modifier.weight(1f),
         )
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = onClick,
             modifier =
                 Modifier
                     .size(20.dp)
