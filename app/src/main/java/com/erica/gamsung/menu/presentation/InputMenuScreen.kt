@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,13 +58,16 @@ fun InputMenuScreen(navController: NavHostController = rememberNavController()) 
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val menus = remember { mutableStateListOf<Menu>() }
+            val isNameValid = remember { mutableStateOf(true) }
+            val isPriceValid = remember { mutableStateOf(true) }
+
             Box(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .weight(1f),
             ) {
-                InputMenuSection(menus)
+                InputMenuSection(menus, isNameValid, isPriceValid)
             }
             Divider()
             GsButton(
@@ -77,7 +81,12 @@ fun InputMenuScreen(navController: NavHostController = rememberNavController()) 
                     // TODO 서버로 메뉴 전송
                     Log.d("InputMenuScreen", "서버로 전송할 메뉴 목록\n ${menus.toList().joinToString("\n")}")
 
-                    navController.navigate(Screen.MAIN.route)
+                    if (menus.isEmpty()) {
+                        isNameValid.value = false
+                        isPriceValid.value = false
+                    } else {
+                        navController.navigate(Screen.MAIN.route)
+                    }
                 },
             )
         }
@@ -85,11 +94,13 @@ fun InputMenuScreen(navController: NavHostController = rememberNavController()) 
 }
 
 @Composable
-private fun InputMenuSection(menus: SnapshotStateList<Menu>) {
+private fun InputMenuSection(
+    menus: SnapshotStateList<Menu>,
+    isNameValid: MutableState<Boolean>,
+    isPriceValid: MutableState<Boolean>,
+) {
     val (name, setName) = remember { mutableStateOf("") }
     val (price, setPrice) = remember { mutableStateOf("") }
-    val isNameValid = remember { mutableStateOf(true) }
-    val isPriceValid = remember { mutableStateOf(true) }
 
     LazyColumn(
         modifier =
