@@ -16,15 +16,16 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -50,7 +51,7 @@ fun GsTextBox(
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("") }
     Column {
-        TextTitle(title, isRequired, description)
+        TextTitle(title, isRequired, description, Modifier)
         if (options != null) {
             DropdownTextBox(
                 text,
@@ -70,9 +71,8 @@ fun GsTextBox(
             InputTextBox(
                 hintText = text.text,
                 onValueChange = { text = TextFieldValue(it) },
-                modifier = innerTextModifier,
-                innerTextModifier = modifier,
                 keyboardType = KeyboardType.Text,
+                modifier = innerTextModifier,
             )
         }
     }
@@ -83,6 +83,7 @@ fun TextTitle(
     title: String,
     isRequired: Boolean,
     description: String?,
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text =
@@ -112,6 +113,8 @@ fun TextTitle(
                     description?.let { append(description) }
                 }
             },
+        style = MaterialTheme.typography.titleSmall,
+        modifier = modifier,
     )
 }
 
@@ -172,53 +175,37 @@ private fun DropdownTextBox(
 
 @Composable
 fun InputTextBox(
+    modifier: Modifier = Modifier,
     hintText: String,
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
-    modifier: Modifier,
-    innerTextModifier: Modifier,
 ) {
     var textState by remember {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf("")
     }
-    var isFocused by remember {
-        mutableStateOf(false)
-    }
-    BasicTextField(
+    OutlinedTextField(
         value = textState,
-        onValueChange = { updatedText ->
-            textState = updatedText
-            onValueChange(updatedText.text)
+        onValueChange = {
+            textState = it
+            onValueChange(it)
         },
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        placeholder = {
+            Text(
+                text = hintText,
+                color = Color.Gray,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        },
         singleLine = true,
-        modifier =
-            modifier
-                .background(Color.Transparent)
-                .border(
-                    1.dp,
-                    Color.LightGray,
-                    RoundedCornerShape(percent = 15),
-                ).onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused
-                    if (isFocused && textState.text == hintText) {
-                        textState = TextFieldValue("")
-                    }
-                },
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = innerTextModifier,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (!isFocused && textState.text.isBlank()) {
-                    Text(hintText, color = Color.Gray)
-                    Spacer(modifier = Modifier.weight(1f))
-                } else {
-                    innerTextField()
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-            }
-        },
+        colors =
+            TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.LightGray,
+            ),
+        shape = RoundedCornerShape(percent = 15),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        textStyle = MaterialTheme.typography.bodyLarge,
+        modifier = modifier,
     )
 }
 

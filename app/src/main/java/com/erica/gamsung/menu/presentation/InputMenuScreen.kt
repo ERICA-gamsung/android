@@ -186,6 +186,7 @@ private fun MenuItemContainer(
             title = title,
             isRequired = false,
             description = null,
+            modifier = Modifier,
         )
         Text(text = content)
     }
@@ -200,7 +201,7 @@ private fun InputMenuItem(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(70.dp)
+                .height(100.dp)
                 .padding(6.dp)
                 .border(1.dp, Color.Black, RoundedCornerShape(10.dp)),
     ) {
@@ -240,18 +241,17 @@ private fun TitleTextField(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        TextTitle(title = title, isRequired = true, description = null)
+        TextTitle(
+            title = title,
+            isRequired = true,
+            description = null,
+        )
         InputTextBox(
             hintText = hintText,
             onValueChange = onValueChange,
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(end = 10.dp),
-            innerTextModifier = Modifier.padding(start = 5.dp),
             keyboardType = keyboardType,
+            modifier = Modifier.padding(top = 5.dp, end = 10.dp),
         )
     }
 }
