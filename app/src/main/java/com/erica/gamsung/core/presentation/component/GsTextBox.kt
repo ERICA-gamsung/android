@@ -69,10 +69,11 @@ fun GsTextBox(
             )
         } else {
             InputTextBox(
+                modifier = innerTextModifier,
                 hintText = text.text,
                 onValueChange = { text = TextFieldValue(it) },
                 keyboardType = KeyboardType.Text,
-                modifier = innerTextModifier,
+                isError = false,
             )
         }
     }
@@ -179,6 +180,7 @@ fun InputTextBox(
     hintText: String,
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
+    isError: Boolean = false,
 ) {
     var textState by remember {
         mutableStateOf("")
@@ -201,11 +203,14 @@ fun InputTextBox(
             TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.LightGray,
+                focusedContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
             ),
         shape = RoundedCornerShape(percent = 15),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         textStyle = MaterialTheme.typography.bodyLarge,
         modifier = modifier,
+        isError = isError,
     )
 }
 

@@ -88,6 +88,8 @@ fun InputMenuScreen(navController: NavHostController = rememberNavController()) 
 private fun InputMenuSection(menus: SnapshotStateList<Menu>) {
     val (name, setName) = remember { mutableStateOf("") }
     val (price, setPrice) = remember { mutableStateOf("") }
+    val isNameValid = remember { mutableStateOf(true) }
+    val isPriceValid = remember { mutableStateOf(true) }
 
     LazyColumn(
         modifier =
@@ -106,12 +108,17 @@ private fun InputMenuSection(menus: SnapshotStateList<Menu>) {
             InputMenuItem(
                 nameChanged = { setName(it) },
                 priceChanged = { setPrice(it) },
+                isNameValid = isNameValid.value,
+                isPriceValid = isPriceValid.value,
             )
         }
 
         item {
             IconButton(onClick = {
-                if (name.isNotBlank() && price.isZeroOrPrimitiveInt()) {
+                isNameValid.value = name.isNotBlank()
+                isPriceValid.value = price.isZeroOrPrimitiveInt()
+
+                if (isNameValid.value && isPriceValid.value) {
                     menus.add(Menu(name, price.toInt()))
                     setName("")
                     setPrice("")
@@ -196,6 +203,8 @@ private fun MenuItemContainer(
 private fun InputMenuItem(
     nameChanged: (String) -> Unit,
     priceChanged: (String) -> Unit,
+    isNameValid: Boolean = true,
+    isPriceValid: Boolean = true,
 ) {
     Row(
         modifier =
@@ -215,6 +224,7 @@ private fun InputMenuItem(
             hintText = "ex. 고등어 구이 정식",
             onValueChange = nameChanged,
             keyboardType = KeyboardType.Text,
+            isValid = isNameValid,
         )
         TitleTextField(
             modifier =
@@ -226,6 +236,7 @@ private fun InputMenuItem(
             hintText = "ex. 15000",
             onValueChange = priceChanged,
             keyboardType = KeyboardType.Number,
+            isValid = isPriceValid,
         )
         Spacer(modifier = Modifier.padding(10.dp))
     }
@@ -238,6 +249,7 @@ private fun TitleTextField(
     hintText: String,
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
+    isValid: Boolean = true,
 ) {
     Column(
         modifier = modifier,
@@ -248,10 +260,11 @@ private fun TitleTextField(
             description = null,
         )
         InputTextBox(
+            modifier = Modifier.padding(top = 5.dp, end = 10.dp),
             hintText = hintText,
             onValueChange = onValueChange,
             keyboardType = keyboardType,
-            modifier = Modifier.padding(top = 5.dp, end = 10.dp),
+            isError = !isValid,
         )
     }
 }
