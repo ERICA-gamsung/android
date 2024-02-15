@@ -1,5 +1,6 @@
 package com.erica.gamsung.menu.presentation
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,12 +28,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.core.presentation.component.InputTextBox
@@ -40,7 +45,7 @@ import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.menu.domain.Menu
 
 @Composable
-fun InputMenuScreen() {
+fun InputMenuScreen(navController: NavHostController = rememberNavController()) {
     Scaffold(
         topBar = { GsTopAppBar(title = "메뉴 입력 (2/2)") },
     ) { paddingValues ->
@@ -51,13 +56,14 @@ fun InputMenuScreen() {
                     .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            val menus = remember { mutableStateListOf<Menu>() }
             Box(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .weight(1f),
             ) {
-                InputMenuSection()
+                InputMenuSection(menus)
             }
             Divider()
             GsButton(
@@ -67,15 +73,19 @@ fun InputMenuScreen() {
                         .fillMaxWidth()
                         .height(70.dp)
                         .padding(horizontal = 8.dp, vertical = 12.dp),
-                onClick = { TODO() },
+                onClick = {
+                    // TODO 서버로 메뉴 전송
+                    Log.d("InputMenuScreen", "서버로 전송할 메뉴 목록\n ${menus.toList().joinToString("\n")}")
+
+                    navController.navigate(Screen.MAIN.route)
+                },
             )
         }
     }
 }
 
 @Composable
-private fun InputMenuSection() {
-    val menus = remember { mutableStateListOf<Menu>() }
+private fun InputMenuSection(menus: SnapshotStateList<Menu>) {
     val (name, setName) = remember { mutableStateOf("") }
     val (price, setPrice) = remember { mutableStateOf("") }
 
