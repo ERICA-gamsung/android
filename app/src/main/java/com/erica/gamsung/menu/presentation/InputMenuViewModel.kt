@@ -1,11 +1,17 @@
 package com.erica.gamsung.menu.presentation
 
 import androidx.lifecycle.ViewModel
+import com.erica.gamsung.menu.domain.Menu
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class InputMenuViewModel : ViewModel() {
+class InputMenuViewModel(
+    initialMenus: List<Menu> = emptyList(),
+) : ViewModel() {
+    private var _menusState = MutableStateFlow(initialMenus)
+    val menusState = _menusState.asStateFlow()
+
     private var _inputMenuState = MutableStateFlow(InputMenuState())
     val inputMenuState = _inputMenuState.asStateFlow()
 
@@ -26,6 +32,12 @@ class InputMenuViewModel : ViewModel() {
                     )
                 }
             }
+
+            is InputMenuUiEvent.RemoveMenu -> {
+                _menusState.update {
+                    it.filterIndexed { index, _ -> index != event.index }
+                }
+            }
         }
     }
 }
@@ -37,6 +49,10 @@ sealed interface InputMenuUiEvent {
 
     data class PriceChanged(
         val price: String,
+    ) : InputMenuUiEvent
+
+    data class RemoveMenu(
+        val index: Int,
     ) : InputMenuUiEvent
 }
 
