@@ -26,6 +26,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
@@ -46,7 +49,12 @@ import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.menu.domain.Menu
 
 @Composable
-fun InputMenuScreen(navController: NavHostController = rememberNavController()) {
+fun InputMenuScreen(
+    navController: NavHostController = rememberNavController(),
+    inputMenuViewModel: InputMenuViewModel = viewModel(),
+) {
+    val inputMenuState by inputMenuViewModel.inputMenuState.collectAsState()
+
     Scaffold(
         topBar = { GsTopAppBar(title = "메뉴 입력 (2/2)") },
     ) { paddingValues ->
@@ -67,7 +75,7 @@ fun InputMenuScreen(navController: NavHostController = rememberNavController()) 
                         .fillMaxWidth()
                         .weight(1f),
             ) {
-                InputMenuSection(menus, isNameValid, isPriceValid)
+                InputMenuSection(menus, isNameValid, isPriceValid, inputMenuState, inputMenuViewModel)
             }
             Divider()
             GsButton(
@@ -98,8 +106,9 @@ private fun InputMenuSection(
     menus: SnapshotStateList<Menu>,
     isNameValid: MutableState<Boolean>,
     isPriceValid: MutableState<Boolean>,
+    inputMenuState: InputMenuState,
+    inputMenuViewModel: InputMenuViewModel,
 ) {
-    val (name, setName) = remember { mutableStateOf("") }
     val (price, setPrice) = remember { mutableStateOf("") }
 
     LazyColumn(
@@ -117,7 +126,9 @@ private fun InputMenuSection(
 
         item {
             InputMenuItem(
-                nameChanged = { setName(it) },
+                nameChanged = {
+                    inputMenuViewModel.onEvent(InputMenuUiEvent.NameChanged(it))
+                },
                 priceChanged = { setPrice(it) },
                 isNameValid = isNameValid.value,
                 isPriceValid = isPriceValid.value,
@@ -126,12 +137,12 @@ private fun InputMenuSection(
 
         item {
             IconButton(onClick = {
-                isNameValid.value = name.isNotBlank()
+                isNameValid.value = inputMenuState.name.isNotBlank()
                 isPriceValid.value = price.isZeroOrPrimitiveInt()
 
                 if (isNameValid.value && isPriceValid.value) {
-                    menus.add(Menu(name, price.toInt()))
-                    setName("")
+                    menus.add(Menu(inputMenuState.name, price.toInt()))
+                    inputMenuViewModel.onEvent(InputMenuUiEvent.NameChanged(""))
                     setPrice("")
                 }
             }) {
@@ -283,5 +294,5 @@ private fun TitleTextField(
 @Preview
 @Composable
 private fun InputMenuScreenPreview() {
-    InputMenuScreen()
+    InputMenuScreen(inputMenuViewModel = InputMenuViewModel())
 }
