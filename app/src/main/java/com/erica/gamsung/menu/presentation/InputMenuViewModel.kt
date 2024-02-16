@@ -18,6 +18,14 @@ class InputMenuViewModel : ViewModel() {
                     )
                 }
             }
+
+            is InputMenuUiEvent.PriceChanged -> {
+                _inputMenuState.update {
+                    it.copy(
+                        price = event.price,
+                    )
+                }
+            }
         }
     }
 }
@@ -26,8 +34,13 @@ sealed interface InputMenuUiEvent {
     data class NameChanged(
         val name: String,
     ) : InputMenuUiEvent
+
+    data class PriceChanged(
+        val price: String,
+    ) : InputMenuUiEvent
 }
 
 data class InputMenuState(
     val name: String = "",
+    val price: String = "",
 )

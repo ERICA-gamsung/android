@@ -17,4 +17,16 @@ class InputMenuViewModelTest :
             val name = viewModel.inputMenuState.value.name
             name shouldBe "새 메뉴"
         }
+
+        test("PriceChanged 이벤트로 추가할 메뉴명을 수정할 수 있다.") {
+            // Given
+            val viewModel = InputMenuViewModel()
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.PriceChanged("3000"))
+
+            // Then
+            val price = viewModel.inputMenuState.value.price
+            price shouldBe "3000"
+        }
     })

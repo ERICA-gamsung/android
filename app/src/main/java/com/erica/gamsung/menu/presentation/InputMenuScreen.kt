@@ -109,8 +109,6 @@ private fun InputMenuSection(
     inputMenuState: InputMenuState,
     inputMenuViewModel: InputMenuViewModel,
 ) {
-    val (price, setPrice) = remember { mutableStateOf("") }
-
     LazyColumn(
         modifier =
             Modifier
@@ -129,7 +127,9 @@ private fun InputMenuSection(
                 nameChanged = {
                     inputMenuViewModel.onEvent(InputMenuUiEvent.NameChanged(it))
                 },
-                priceChanged = { setPrice(it) },
+                priceChanged = {
+                    inputMenuViewModel.onEvent(InputMenuUiEvent.PriceChanged(it))
+                },
                 isNameValid = isNameValid.value,
                 isPriceValid = isPriceValid.value,
             )
@@ -138,12 +138,12 @@ private fun InputMenuSection(
         item {
             IconButton(onClick = {
                 isNameValid.value = inputMenuState.name.isNotBlank()
-                isPriceValid.value = price.isZeroOrPrimitiveInt()
+                isPriceValid.value = inputMenuState.price.isZeroOrPrimitiveInt()
 
                 if (isNameValid.value && isPriceValid.value) {
-                    menus.add(Menu(inputMenuState.name, price.toInt()))
+                    menus.add(Menu(inputMenuState.name, inputMenuState.price.toInt()))
                     inputMenuViewModel.onEvent(InputMenuUiEvent.NameChanged(""))
-                    setPrice("")
+                    inputMenuViewModel.onEvent(InputMenuUiEvent.PriceChanged(""))
                 }
             }) {
                 Icon(
