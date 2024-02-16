@@ -2,6 +2,7 @@ package com.erica.gamsung.menu.presentation
 
 import com.erica.gamsung.menu.domain.Menu
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -31,6 +32,69 @@ class InputMenuViewModelTest :
             // Then
             val price = viewModel.inputMenuState.value.price
             price shouldBe "3000"
+        }
+
+        test("AddMenu 이벤트로 메뉴를 추가할 수 있다.") {
+            // Given
+            val viewModel = InputMenuViewModel(initialInputMenuState = InputMenuState("새 메뉴", "3000"))
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.AddMenu)
+
+            // Then
+            val menus = viewModel.menusState.value
+            menus shouldHaveSize 1
+            menus shouldContain Menu("새 메뉴", 3000)
+        }
+
+        test("메뉴명이 공백이거나 비어있으면 AddMenu 이벤트로 메뉴를 추가할 수 없다") {
+            // Given
+            val viewModel = InputMenuViewModel(initialInputMenuState = InputMenuState(" ", "3000"))
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.AddMenu)
+
+            // Then
+            val menus = viewModel.menusState.value
+            menus shouldHaveSize 0
+        }
+
+        test("가격이 숫자가 아니면 AddMenu 이벤트로 메뉴를 추가할 수 없다") {
+            // Given
+            val viewModel = InputMenuViewModel(initialInputMenuState = InputMenuState("새 메뉴", "삼천원"))
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.AddMenu)
+
+            // Then
+            val menus = viewModel.menusState.value
+            menus shouldHaveSize 0
+        }
+
+        test("가격이 음수면 AddMenu 이벤트로 메뉴를 추가할 수 없다") {
+            // Given
+            val viewModel = InputMenuViewModel(initialInputMenuState = InputMenuState("새 메뉴", "-3000"))
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.AddMenu)
+
+            // Then
+            val menus = viewModel.menusState.value
+            menus shouldHaveSize 0
+        }
+
+        test("AddMenu 이벤트로 메뉴 추가 후에 추가할 메뉴명과 추가할 가격은 빈 문자열로 초기화된다.") {
+            // Given
+            val viewModel = InputMenuViewModel(initialInputMenuState = InputMenuState("새 메뉴", "3000"))
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.AddMenu)
+
+            // Then
+            val name = viewModel.inputMenuState.value.name
+            val price = viewModel.inputMenuState.value.price
+            name shouldBe ""
+            price shouldBe ""
         }
 
         test("RemoveMenu 이벤트로 메뉴를 제거할 수 있다.") {

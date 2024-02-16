@@ -25,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -73,7 +72,7 @@ fun InputMenuScreen(
                         .fillMaxWidth()
                         .weight(1f),
             ) {
-                InputMenuSection(menus, isNameValid, isPriceValid, inputMenuState, inputMenuViewModel)
+                InputMenuSection(menus, inputMenuState, inputMenuViewModel)
             }
             Divider()
             GsButton(
@@ -102,8 +101,6 @@ fun InputMenuScreen(
 @Composable
 private fun InputMenuSection(
     menus: List<Menu>,
-    isNameValid: MutableState<Boolean>,
-    isPriceValid: MutableState<Boolean>,
     inputMenuState: InputMenuState,
     inputMenuViewModel: InputMenuViewModel,
 ) {
@@ -128,21 +125,14 @@ private fun InputMenuSection(
                 priceChanged = {
                     inputMenuViewModel.onEvent(InputMenuUiEvent.PriceChanged(it))
                 },
-                isNameValid = isNameValid.value,
-                isPriceValid = isPriceValid.value,
+                isNameValid = inputMenuState.isNameValid,
+                isPriceValid = inputMenuState.isPriceValid,
             )
         }
 
         item {
             IconButton(onClick = {
-                isNameValid.value = inputMenuState.name.isNotBlank()
-                isPriceValid.value = inputMenuState.price.isZeroOrPrimitiveInt()
-
-                if (isNameValid.value && isPriceValid.value) {
-//                    menus.add(Menu(inputMenuState.name, inputMenuState.price.toInt()))
-                    inputMenuViewModel.onEvent(InputMenuUiEvent.NameChanged(""))
-                    inputMenuViewModel.onEvent(InputMenuUiEvent.PriceChanged(""))
-                }
+                inputMenuViewModel.onEvent(InputMenuUiEvent.AddMenu)
             }) {
                 Icon(
                     imageVector = Icons.Default.AddCircleOutline,
@@ -151,11 +141,6 @@ private fun InputMenuSection(
             }
         }
     }
-}
-
-private fun String.isZeroOrPrimitiveInt(): Boolean {
-    val int = this.toIntOrNull() ?: return false
-    return int >= 0
 }
 
 @Composable
@@ -292,5 +277,5 @@ private fun TitleTextField(
 @Preview
 @Composable
 private fun InputMenuScreenPreview() {
-    InputMenuScreen(inputMenuViewModel = InputMenuViewModel(emptyList()))
+    InputMenuScreen(inputMenuViewModel = InputMenuViewModel(emptyList(), InputMenuState()))
 }
