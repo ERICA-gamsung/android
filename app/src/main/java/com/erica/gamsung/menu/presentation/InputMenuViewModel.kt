@@ -16,6 +16,10 @@ class InputMenuViewModel(
     private var _inputMenuState = MutableStateFlow(initialInputMenuState)
     val inputMenuState = _inputMenuState.asStateFlow()
 
+    private var _shouldNavigateState = MutableStateFlow(false)
+    val shouldNavigateState = _shouldNavigateState.asStateFlow()
+
+    @Suppress("LongMethod")
     fun onEvent(event: InputMenuUiEvent) {
         when (event) {
             is InputMenuUiEvent.NameChanged -> {
@@ -66,6 +70,22 @@ class InputMenuViewModel(
                     it.filterIndexed { index, _ -> index != event.index }
                 }
             }
+
+            InputMenuUiEvent.SendMenus -> {
+                val menus = _menusState.value
+
+                if (menus.isEmpty()) {
+                    _inputMenuState.update {
+                        it.copy(
+                            isNameValid = false,
+                            isPriceValid = false,
+                        )
+                    }
+                } else {
+                    // TODO 서버로 메뉴 전송
+                    _shouldNavigateState.value = true
+                }
+            }
         }
     }
 
@@ -89,6 +109,8 @@ sealed interface InputMenuUiEvent {
     data class RemoveMenu(
         val index: Int,
     ) : InputMenuUiEvent
+
+    data object SendMenus : InputMenuUiEvent
 }
 
 data class InputMenuState(

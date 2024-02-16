@@ -121,4 +121,42 @@ class InputMenuViewModelTest :
                     Menu("메뉴3", 3000),
                 )
         }
+
+        test("입력된 메뉴가 하나도 없을 시 SendEvent 이벤트 작동 후에 메인 페이지로 이동하면 안된다.") {
+            // Given
+            val viewModel = InputMenuViewModel(initialMenus = emptyList())
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.SendMenus)
+
+            // Then
+            val shouldNavigate = viewModel.shouldNavigateState.value
+            shouldNavigate shouldBe false
+        }
+
+        test("입력된 메뉴가 하나도 없을 시 SendEvent 이벤트 작동 후에 메뉴와 가격을 입력하라고 표시된다.") {
+            // Given
+            val viewModel = InputMenuViewModel(initialMenus = emptyList())
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.SendMenus)
+
+            // Then
+            val isNameValid = viewModel.inputMenuState.value.isNameValid
+            val isPriceValid = viewModel.inputMenuState.value.isPriceValid
+            isNameValid shouldBe false
+            isPriceValid shouldBe false
+        }
+
+        test("입력된 메뉴가 한 개 이상이면 SendEvent 이벤트 작동 후에 메인 페이지로 이동해도 된다.") {
+            // Given
+            val viewModel = InputMenuViewModel(initialMenus = listOf(Menu("입력된 메뉴", 1000)))
+
+            // When
+            viewModel.onEvent(InputMenuUiEvent.SendMenus)
+
+            // Then
+            val shouldNavigate = viewModel.shouldNavigateState.value
+            shouldNavigate shouldBe true
+        }
     })
