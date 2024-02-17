@@ -1,5 +1,6 @@
 package com.erica.gamsung.menu.presentation
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
@@ -24,12 +25,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.core.presentation.component.InputTextBox
@@ -37,7 +46,7 @@ import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.menu.domain.Menu
 
 @Composable
-fun InputMenuScreen() {
+fun InputMenuScreen(navController: NavHostController = rememberNavController()) {
     Scaffold(
         topBar = { GsTopAppBar(title = "메뉴 입력 (2/2)") },
     ) { paddingValues ->
@@ -48,13 +57,17 @@ fun InputMenuScreen() {
                     .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            val menus = remember { mutableStateListOf<Menu>() }
+            val isNameValid = remember { mutableStateOf(true) }
+            val isPriceValid = remember { mutableStateOf(true) }
+
             Box(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .weight(1f),
             ) {
-                InputMenuSection()
+                InputMenuSection(menus, isNameValid, isPriceValid)
             }
             Divider()
             GsButton(
@@ -64,25 +77,30 @@ fun InputMenuScreen() {
                         .fillMaxWidth()
                         .height(70.dp)
                         .padding(horizontal = 8.dp, vertical = 12.dp),
-                onClick = { TODO() },
+                onClick = {
+                    // TODO 서버로 메뉴 전송
+                    Log.d("InputMenuScreen", "서버로 전송할 메뉴 목록\n ${menus.toList().joinToString("\n")}")
+
+                    if (menus.isEmpty()) {
+                        isNameValid.value = false
+                        isPriceValid.value = false
+                    } else {
+                        navController.navigate(Screen.MAIN.route)
+                    }
+                },
             )
         }
     }
 }
 
-@Suppress("MagicNumber") // TODO 기능 구현 시 제거
 @Composable
-private fun InputMenuSection() {
-    // TODO 기능 구현 시 제거
-    val menus =
-        listOf(
-            Menu("비빔밥", 12000),
-            Menu("떡볶이", 8000),
-            Menu("김치볶음밥", 9000),
-            Menu("갈비구이", 18000),
-            Menu("김치전", 13000),
-            Menu("해물파전", 15000),
-        )
+private fun InputMenuSection(
+    menus: SnapshotStateList<Menu>,
+    isNameValid: MutableState<Boolean>,
+    isPriceValid: MutableState<Boolean>,
+) {
+    val (name, setName) = remember { mutableStateOf("") }
+    val (price, setPrice) = remember { mutableStateOf("") }
 
     LazyColumn(
         modifier =
@@ -93,16 +111,30 @@ private fun InputMenuSection() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
     ) {
-        items(menus) { menu ->
-            CompletedMenuItem(menu)
+        itemsIndexed(menus) { index, menu ->
+            CompletedMenuItem(menu) { menus.removeAt(index) }
         }
 
         item {
-            InputMenuItem()
+            InputMenuItem(
+                nameChanged = { setName(it) },
+                priceChanged = { setPrice(it) },
+                isNameValid = isNameValid.value,
+                isPriceValid = isPriceValid.value,
+            )
         }
 
         item {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                isNameValid.value = name.isNotBlank()
+                isPriceValid.value = price.isZeroOrPrimitiveInt()
+
+                if (isNameValid.value && isPriceValid.value) {
+                    menus.add(Menu(name, price.toInt()))
+                    setName("")
+                    setPrice("")
+                }
+            }) {
                 Icon(
                     imageVector = Icons.Default.AddCircleOutline,
                     contentDescription = "메뉴 추가 아이콘",
@@ -112,8 +144,16 @@ private fun InputMenuSection() {
     }
 }
 
+private fun String.isZeroOrPrimitiveInt(): Boolean {
+    val int = this.toIntOrNull() ?: return false
+    return int >= 0
+}
+
 @Composable
-private fun CompletedMenuItem(menu: Menu) {
+private fun CompletedMenuItem(
+    menu: Menu,
+    onClick: () -> Unit,
+) {
     Row(
         modifier =
             Modifier
@@ -133,7 +173,7 @@ private fun CompletedMenuItem(menu: Menu) {
             modifier = Modifier.weight(1f),
         )
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = onClick,
             modifier =
                 Modifier
                     .size(20.dp)
@@ -164,38 +204,50 @@ private fun MenuItemContainer(
             title = title,
             isRequired = false,
             description = null,
+            modifier = Modifier,
         )
         Text(text = content)
     }
 }
 
 @Composable
-private fun InputMenuItem() {
+private fun InputMenuItem(
+    nameChanged: (String) -> Unit,
+    priceChanged: (String) -> Unit,
+    isNameValid: Boolean = true,
+    isPriceValid: Boolean = true,
+) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(70.dp)
+                .height(100.dp)
                 .padding(6.dp)
                 .border(1.dp, Color.Black, RoundedCornerShape(10.dp)),
     ) {
         TitleTextField(
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .padding(5.dp)
+                    .weight(1f),
             title = "메뉴 이름",
             hintText = "ex. 고등어 구이 정식",
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .padding(5.dp)
-                    .weight(1f),
+            onValueChange = nameChanged,
+            keyboardType = KeyboardType.Text,
+            isValid = isNameValid,
         )
         TitleTextField(
-            title = "가격",
-            hintText = "ex. 15000",
             modifier =
                 Modifier
                     .fillMaxHeight()
                     .padding(5.dp)
                     .weight(1f),
+            title = "가격",
+            hintText = "ex. 15000",
+            onValueChange = priceChanged,
+            keyboardType = KeyboardType.Number,
+            isValid = isPriceValid,
         )
         Spacer(modifier = Modifier.padding(10.dp))
     }
@@ -206,19 +258,24 @@ private fun TitleTextField(
     modifier: Modifier = Modifier,
     title: String,
     hintText: String,
+    onValueChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    isValid: Boolean = true,
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        TextTitle(title = title, isRequired = true, description = null)
+        TextTitle(
+            title = title,
+            isRequired = true,
+            description = null,
+        )
         InputTextBox(
-            hintText = TextFieldValue(hintText),
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(end = 10.dp),
-            innerTextModifier = Modifier.padding(start = 5.dp),
+            modifier = Modifier.padding(top = 5.dp, end = 10.dp),
+            hintText = hintText,
+            onValueChange = onValueChange,
+            keyboardType = keyboardType,
+            isError = !isValid,
         )
     }
 }
