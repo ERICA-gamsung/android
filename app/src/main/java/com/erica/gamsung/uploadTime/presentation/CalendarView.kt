@@ -1,16 +1,22 @@
 package com.erica.gamsung.uploadTime.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,8 +29,9 @@ import java.util.Locale
 
 @Composable
 fun CalendarView(
-    selectedDate: LocalDate = LocalDate.now(),
-    onDateSelected: (LocalDate) -> Unit,
+    selectedDates: List<LocalDate> = listOf(LocalDate.now()),
+    // focusedDate: LocalDate? = null,
+    onDateSelected: ((List<LocalDate>) -> Unit)? = null,
 ) {
     Column(
         horizontalAlignment =
@@ -32,16 +39,32 @@ fun CalendarView(
                 .CenterHorizontally,
         modifier =
             Modifier
-                .background(color = Color.White),
+                .background(color = Color.White)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(10.dp),
+                ).clip(RoundedCornerShape(10.dp)),
     ) {
         val yearMonth =
-            remember(selectedDate) { YearMonth.from(selectedDate) }
+            remember(selectedDates) {
+                if (selectedDates.isNotEmpty()) {
+                    YearMonth.from(selectedDates.minOrNull())
+                } else {
+                    YearMonth.from(LocalDate.now())
+                }
+            }
         CalendarHeader(yearMonth)
+        Divider(
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+            thickness = 1.dp,
+        )
         DaysOfWeekRow()
-        CalendarGrid(yearMonth, selectedDate, onDateSelected)
+        CalendarGrid(yearMonth, selectedDates, onDateSelected)
     }
 }
 
+// XXXX년 YY월
 @Composable
 fun CalendarHeader(yearMonth: YearMonth) {
     val formatter =
@@ -66,6 +89,7 @@ fun CalendarHeader(yearMonth: YearMonth) {
     )
 }
 
+// 요일 (일,월,화,수,목,금)
 @Composable
 fun DaysOfWeekRow() {
     val daysOfWeek =
@@ -96,11 +120,12 @@ fun DaysOfWeekRow() {
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 fun CalendarGrid(
     yearMonth: YearMonth,
-    selectedDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit,
+    selectedDates: List<LocalDate>,
+    onDateSelected: ((List<LocalDate>) -> Unit)? = null,
 ) {
     val daysInMonth = yearMonth.lengthOfMonth()
     val firstOfMonth = yearMonth.atDay(1)
@@ -134,8 +159,24 @@ fun CalendarGrid(
                             date =
                                 yearMonth
                                     .atDay(day),
-                            selectedDate = selectedDate,
-                            onDateSelected = onDateSelected,
+                            selectedDates = selectedDates,
+                            onDateSelected = { selectedDate ->
+                                // 선택된 날짜를 처리 하는 로직
+                                if (onDateSelected != null) {
+                                    val newSelectedDates =
+                                        selectedDates.toMutableList().apply {
+                                            // 이미 선택된 날짜면 제거, 아니면 추가
+                                            if (contains(selectedDate)) {
+                                                remove(selectedDate)
+                                            } else {
+                                                add(selectedDate)
+                                            }
+                                        }
+                                    // 변경된 날짜 목록을 상위 Component 로 전달
+                                    // onDateSelected: (List<LocalDate>) -> Unit
+                                    onDateSelected(newSelectedDates)
+                                }
+                            },
                             modifier =
                                 Modifier
                                     .weight(1f),
@@ -160,28 +201,49 @@ fun CalendarGrid(
 
 @Composable
 fun DateView(
-    date: LocalDate,
-    selectedDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
+    date: LocalDate,
+    selectedDates: List<LocalDate>,
+    focusedDate: LocalDate? = null,
+    onDateSelected: ((LocalDate) -> Unit)? = null,
 ) {
-    Text(
-        text = date.dayOfMonth.toString(),
+    val isSelected = remember(selectedDates, date) { selectedDates.contains(date) }
+    val isFocused = date == focusedDate
+    val backGroundColor =
+        when {
+            isSelected -> MaterialTheme.colorScheme.primary
+            isFocused -> Color.Red
+            else -> Color.Transparent
+        }
+    val textColor = if (isSelected || isFocused) Color.White else MaterialTheme.colorScheme.onSurface
+
+    Box(
+        contentAlignment = Alignment.Center,
         modifier =
             modifier
                 .padding(8.dp)
-                .toggleable(
-                    value = date == selectedDate,
-                    onValueChange = {
-                        onDateSelected(date)
+                .background(color = backGroundColor, shape = CircleShape)
+                .then(
+                    if (onDateSelected != null) {
+                        Modifier.toggleable(
+                            value = isSelected,
+                            onValueChange = { onDateSelected(date) },
+                        )
+                    } else {
+                        Modifier
                     },
                 ),
-        textAlign =
-            TextAlign
-                .Center,
-        style =
-            MaterialTheme
-                .typography
-                .bodyLarge,
-    )
+    ) {
+        Text(
+            text = date.dayOfMonth.toString(),
+            color = textColor,
+            textAlign =
+                TextAlign
+                    .Center,
+            style =
+                MaterialTheme
+                    .typography
+                    .bodyLarge,
+        )
+    }
 }
