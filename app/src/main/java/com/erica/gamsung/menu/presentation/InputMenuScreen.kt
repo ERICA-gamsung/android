@@ -1,6 +1,5 @@
 package com.erica.gamsung.menu.presentation
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,17 +24,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
@@ -46,7 +43,14 @@ import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.menu.domain.Menu
 
 @Composable
-fun InputMenuScreen(navController: NavHostController = rememberNavController()) {
+fun InputMenuScreen(
+    navController: NavHostController = rememberNavController(),
+    inputMenuViewModel: InputMenuViewModel = viewModel(),
+) {
+    val menus by inputMenuViewModel.menusState.collectAsState()
+    val inputMenuState by inputMenuViewModel.inputMenuState.collectAsState()
+    val shouldNavigate by inputMenuViewModel.shouldNavigateState.collectAsState()
+
     Scaffold(
         topBar = { GsTopAppBar(title = "메뉴 입력 (2/2)") },
     ) { paddingValues ->
@@ -57,17 +61,13 @@ fun InputMenuScreen(navController: NavHostController = rememberNavController()) 
                     .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val menus = remember { mutableStateListOf<Menu>() }
-            val isNameValid = remember { mutableStateOf(true) }
-            val isPriceValid = remember { mutableStateOf(true) }
-
             Box(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .weight(1f),
             ) {
-                InputMenuSection(menus, isNameValid, isPriceValid)
+                InputMenuSection(menus, inputMenuState, inputMenuViewModel)
             }
             Divider()
             GsButton(
@@ -78,13 +78,8 @@ fun InputMenuScreen(navController: NavHostController = rememberNavController()) 
                         .height(70.dp)
                         .padding(horizontal = 8.dp, vertical = 12.dp),
                 onClick = {
-                    // TODO 서버로 메뉴 전송
-                    Log.d("InputMenuScreen", "서버로 전송할 메뉴 목록\n ${menus.toList().joinToString("\n")}")
-
-                    if (menus.isEmpty()) {
-                        isNameValid.value = false
-                        isPriceValid.value = false
-                    } else {
+                    inputMenuViewModel.onEvent(InputMenuUiEvent.SendMenus)
+                    if (shouldNavigate) {
                         navController.navigate(Screen.MAIN.route)
                     }
                 },
@@ -95,13 +90,10 @@ fun InputMenuScreen(navController: NavHostController = rememberNavController()) 
 
 @Composable
 private fun InputMenuSection(
-    menus: SnapshotStateList<Menu>,
-    isNameValid: MutableState<Boolean>,
-    isPriceValid: MutableState<Boolean>,
+    menus: List<Menu>,
+    inputMenuState: InputMenuState,
+    inputMenuViewModel: InputMenuViewModel,
 ) {
-    val (name, setName) = remember { mutableStateOf("") }
-    val (price, setPrice) = remember { mutableStateOf("") }
-
     LazyColumn(
         modifier =
             Modifier
@@ -112,28 +104,25 @@ private fun InputMenuSection(
         verticalArrangement = Arrangement.Top,
     ) {
         itemsIndexed(menus) { index, menu ->
-            CompletedMenuItem(menu) { menus.removeAt(index) }
+            CompletedMenuItem(menu) { inputMenuViewModel.onEvent(InputMenuUiEvent.RemoveMenu(index)) }
         }
 
         item {
             InputMenuItem(
-                nameChanged = { setName(it) },
-                priceChanged = { setPrice(it) },
-                isNameValid = isNameValid.value,
-                isPriceValid = isPriceValid.value,
+                nameChanged = {
+                    inputMenuViewModel.onEvent(InputMenuUiEvent.NameChanged(it))
+                },
+                priceChanged = {
+                    inputMenuViewModel.onEvent(InputMenuUiEvent.PriceChanged(it))
+                },
+                isNameValid = inputMenuState.isNameValid,
+                isPriceValid = inputMenuState.isPriceValid,
             )
         }
 
         item {
             IconButton(onClick = {
-                isNameValid.value = name.isNotBlank()
-                isPriceValid.value = price.isZeroOrPrimitiveInt()
-
-                if (isNameValid.value && isPriceValid.value) {
-                    menus.add(Menu(name, price.toInt()))
-                    setName("")
-                    setPrice("")
-                }
+                inputMenuViewModel.onEvent(InputMenuUiEvent.AddMenu)
             }) {
                 Icon(
                     imageVector = Icons.Default.AddCircleOutline,
@@ -142,11 +131,6 @@ private fun InputMenuSection(
             }
         }
     }
-}
-
-private fun String.isZeroOrPrimitiveInt(): Boolean {
-    val int = this.toIntOrNull() ?: return false
-    return int >= 0
 }
 
 @Composable
@@ -283,5 +267,5 @@ private fun TitleTextField(
 @Preview
 @Composable
 private fun InputMenuScreenPreview() {
-    InputMenuScreen()
+    InputMenuScreen(inputMenuViewModel = InputMenuViewModel(emptyList(), InputMenuState()))
 }
