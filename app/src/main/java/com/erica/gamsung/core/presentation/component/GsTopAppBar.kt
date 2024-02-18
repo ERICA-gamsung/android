@@ -33,7 +33,7 @@ fun GsTopAppBar(
                     content = {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "ArrowBack",
+                            contentDescription = "PreviousButton",
                         )
                     },
                 )
@@ -47,7 +47,7 @@ fun GsTopAppBar(
                     content = {
                         Icon(
                             imageVector = Icons.Rounded.AccountCircle,
-                            contentDescription = "AccountCircle",
+                            contentDescription = "SettingButton",
                         )
                     },
                 )

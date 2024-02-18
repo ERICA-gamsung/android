@@ -10,23 +10,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,11 +47,11 @@ fun GsTextBox(
     modifier: Modifier,
     innerTextModifier: Modifier,
 ) {
-    val text by remember { mutableStateOf(TextFieldValue(hintText)) }
+    var text by remember { mutableStateOf(TextFieldValue(hintText)) }
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("") }
     Column {
-        TextTitle(title, isRequired, description)
+        TextTitle(title, isRequired, description, Modifier)
         if (options != null) {
             DropdownTextBox(
                 text,
@@ -65,19 +69,22 @@ fun GsTextBox(
             )
         } else {
             InputTextBox(
-                text,
-                innerTextModifier,
-                modifier,
+                modifier = innerTextModifier,
+                hintText = text.text,
+                onValueChange = { text = TextFieldValue(it) },
+                keyboardType = KeyboardType.Text,
+                isError = false,
             )
         }
     }
 }
 
 @Composable
-private fun TextTitle(
+fun TextTitle(
     title: String,
     isRequired: Boolean,
     description: String?,
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text =
@@ -107,6 +114,8 @@ private fun TextTitle(
                     description?.let { append(description) }
                 }
             },
+        style = MaterialTheme.typography.titleSmall,
+        modifier = modifier,
     )
 }
 
@@ -166,51 +175,42 @@ private fun DropdownTextBox(
 }
 
 @Composable
-private fun InputTextBox(
-    hintText: TextFieldValue,
-    modifier: Modifier,
-    innerTextModifier: Modifier,
+fun InputTextBox(
+    modifier: Modifier = Modifier,
+    hintText: String,
+    onValueChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    isError: Boolean = false,
 ) {
-    var text by remember {
-        mutableStateOf(hintText)
+    var textState by remember {
+        mutableStateOf("")
     }
-    var isFocused by remember {
-        mutableStateOf(false)
-    }
-    BasicTextField(
-        value = text,
-        onValueChange = { updatedText ->
-            text = updatedText
+    OutlinedTextField(
+        value = textState,
+        onValueChange = {
+            textState = it
+            onValueChange(it)
+        },
+        placeholder = {
+            Text(
+                text = hintText,
+                color = Color.Gray,
+                style = MaterialTheme.typography.bodyLarge,
+            )
         },
         singleLine = true,
-        modifier =
-            modifier
-                .background(Color.Transparent)
-                .border(
-                    1.dp,
-                    Color.LightGray,
-                    RoundedCornerShape(percent = 15),
-                ).onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused
-                    if (isFocused && text == hintText) {
-                        text = TextFieldValue("")
-                    } else if (!isFocused && text.text.isEmpty()) {
-                        text = hintText
-                    }
-                },
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = innerTextModifier,
-            ) {
-                if (!isFocused && text.text.isEmpty()) {
-                    Text(hintText.text, color = Color.Gray)
-                    Spacer(modifier = Modifier.weight(1f))
-                } else {
-                    innerTextField()
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-            }
-        },
+        colors =
+            TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.LightGray,
+                focusedContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
+            ),
+        shape = RoundedCornerShape(percent = 15),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        textStyle = MaterialTheme.typography.bodyLarge,
+        modifier = modifier,
+        isError = isError,
     )
 }
 
