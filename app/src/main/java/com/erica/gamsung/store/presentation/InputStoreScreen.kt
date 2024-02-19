@@ -75,7 +75,7 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                         "토" to false,
                     ),
             )
-            StoreAddressSection()
+            StoreAddressSection(onValueChange = { /* TODO */ }, isValid = true)
             StorePhoneNumberSection()
             Spacer(modifier = Modifier.weight(1f))
             RegisterStoreButton(onClick = { navController.navigate(Screen.INPUT_MENU.route) })
@@ -235,8 +235,16 @@ private fun StoreBusinessDaysSeciton(
 }
 
 @Composable
-fun StoreAddressSection() {
-    Text(text = "StoreAddressSection") // TODO
+private fun StoreAddressSection(
+    onValueChange: (String) -> Unit = {},
+    isValid: Boolean = true,
+) {
+    TitleTextField(
+        title = "주소",
+        hintText = "ex. 안산시 상록구 한양대학로 99 1층",
+        onValueChange = onValueChange,
+        isValid = isValid,
+    )
 }
 
 @Composable
