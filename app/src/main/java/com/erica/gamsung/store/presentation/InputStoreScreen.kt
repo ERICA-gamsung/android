@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -17,6 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
+import com.erica.gamsung.core.presentation.component.InputTextBox
+import com.erica.gamsung.core.presentation.component.TextTitle
 
 @Composable
 fun InputStoreScreen(navController: NavHostController = rememberNavController()) {
@@ -29,7 +32,7 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                     .fillMaxSize()
                     .padding(top = paddingValues.calculateTopPadding(), start = 8.dp, end = 8.dp),
         ) {
-            StoreNameSection()
+            StoreNameSection(onValueChange = { /* TODO */ }, isValid = true)
             StoreTypeSection()
             StoreBusinessHoursSection()
             StoreBusinessDaysSeciton()
@@ -42,8 +45,17 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
 }
 
 @Composable
-fun StoreNameSection() {
-    Text(text = "StoreNameSection") // TODO
+fun StoreNameSection(
+    onValueChange: (String) -> Unit = {},
+    isValid: Boolean = true,
+) {
+    TitleTextField(
+        title = "음식점 이름",
+        hintText = "ex. 감성식당",
+        onValueChange = onValueChange,
+        isValid = isValid,
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 @Composable
@@ -82,6 +94,34 @@ private fun RegisterStoreButton(onClick: () -> Unit = {}) {
                 .padding(vertical = 12.dp),
         onClick = onClick,
     )
+}
+
+@Composable
+private fun TitleTextField(
+    modifier: Modifier = Modifier,
+    title: String,
+    hintText: String,
+    onValueChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    isValid: Boolean = true,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        TextTitle(
+            title = title,
+            isRequired = true,
+            description = null,
+            modifier = Modifier.padding(vertical = 10.dp),
+        )
+        InputTextBox(
+            modifier = Modifier.fillMaxWidth(),
+            hintText = hintText,
+            onValueChange = onValueChange,
+            keyboardType = keyboardType,
+            isError = !isValid,
+        )
+    }
 }
 
 @Preview
