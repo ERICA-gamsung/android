@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.menu.presentation.InputMenuScreen
 import com.erica.gamsung.menu.presentation.InputMenuViewModel
+import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.ui.theme.GamsungTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,6 +43,7 @@ fun MainNavHost(navController: NavHostController) {
         composable(Screen.SETTING.route) { SettingScreen() }
         composable(Screen.PUBLISH_POSTING.route) { PublishPostingScreen() }
         composable(Screen.CHECK_POSTING.route) { CheckPostingScreen() }
+        composable(Screen.INPUT_STORE.route) { InputStoreScreen(navController = navController) }
         composable(Screen.INPUT_MENU.route) {
             InputMenuScreen(navController = navController, inputMenuViewModel = InputMenuViewModel())
         }
