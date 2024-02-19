@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -76,7 +77,7 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                     ),
             )
             StoreAddressSection(onValueChange = { /* TODO */ }, isValid = true)
-            StorePhoneNumberSection()
+            StorePhoneNumberSection(onValueChange = { /* TODO */ }, isValid = true)
             Spacer(modifier = Modifier.weight(1f))
             RegisterStoreButton(onClick = { navController.navigate(Screen.INPUT_MENU.route) })
         }
@@ -248,8 +249,17 @@ private fun StoreAddressSection(
 }
 
 @Composable
-fun StorePhoneNumberSection() {
-    Text(text = "StoreAddressSection") // TODO
+private fun StorePhoneNumberSection(
+    onValueChange: (String) -> Unit = {},
+    isValid: Boolean = true,
+) {
+    TitleTextField(
+        title = "전화 번호",
+        hintText = "ex. 010-1234-1234",
+        onValueChange = onValueChange,
+        isValid = isValid,
+        keyboardType = KeyboardType.Number,
+    )
 }
 
 @Composable
