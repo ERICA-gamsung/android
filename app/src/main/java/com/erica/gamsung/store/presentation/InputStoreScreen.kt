@@ -1,6 +1,7 @@
 package com.erica.gamsung.store.presentation
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,7 +62,19 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                 onOpenTimeUpdate = { /* TODO */ },
                 onCloseTimeUpdate = { /* TODO */ },
             )
-            StoreBusinessDaysSeciton()
+            StoreBusinessDaysSeciton(
+                onClick = { /* TODO */ },
+                week =
+                    mapOf(
+                        "일" to true,
+                        "월" to false,
+                        "화" to true,
+                        "수" to false,
+                        "목" to false,
+                        "금" to true,
+                        "토" to false,
+                    ),
+            )
             StoreAddressSection()
             StorePhoneNumberSection()
             Spacer(modifier = Modifier.weight(1f))
@@ -192,8 +205,33 @@ private fun HoursSection(
 }
 
 @Composable
-fun StoreBusinessDaysSeciton() {
-    Text(text = "StoreBusinessDaysSeciton") // TODO
+private fun StoreBusinessDaysSeciton(
+    onClick: (String) -> Unit = {},
+    week: Map<String, Boolean> =
+        mapOf(
+            "일" to false,
+            "월" to false,
+            "화" to false,
+            "수" to false,
+            "목" to false,
+            "금" to false,
+            "토" to false,
+        ),
+) {
+    TextTitle(
+        title = "영업일",
+        isRequired = true,
+        description = null,
+        modifier = Modifier.padding(top = 10.dp),
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        week.forEach {
+            GsChip(text = it.key, selected = it.value, onClick = { onClick(it.key) })
+        }
+    }
 }
 
 @Composable
