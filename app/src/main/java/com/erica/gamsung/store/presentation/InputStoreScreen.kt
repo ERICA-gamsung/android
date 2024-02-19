@@ -27,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -37,9 +36,9 @@ import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsChip
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
-import com.erica.gamsung.core.presentation.component.InputTextBox
 import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.store.domain.StoreType
+import com.erica.gamsung.store.presentation.components.TitleTextField
 import com.erica.gamsung.store.presentation.utils.toDisplayString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -220,36 +219,8 @@ private fun RegisterStoreButton(onClick: () -> Unit = {}) {
     )
 }
 
-@Composable
-private fun TitleTextField(
-    modifier: Modifier = Modifier,
-    title: String,
-    hintText: String,
-    onValueChange: (String) -> Unit,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    isValid: Boolean = true,
-) {
-    Column(
-        modifier = modifier,
-    ) {
-        TextTitle(
-            title = title,
-            isRequired = true,
-            description = null,
-            modifier = Modifier.padding(vertical = 10.dp),
-        )
-        InputTextBox(
-            modifier = Modifier.fillMaxWidth(),
-            hintText = hintText,
-            onValueChange = onValueChange,
-            keyboardType = keyboardType,
-            isError = !isValid,
-        )
-    }
-}
-
 @Preview
 @Composable
-private fun InputStoreScreenPreveiw() {
+private fun InputStoreScreenPreview() {
     InputStoreScreen()
 }
