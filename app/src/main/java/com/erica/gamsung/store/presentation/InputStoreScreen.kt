@@ -1,6 +1,7 @@
 package com.erica.gamsung.store.presentation
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,9 +18,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsButton
+import com.erica.gamsung.core.presentation.component.GsChip
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.core.presentation.component.InputTextBox
 import com.erica.gamsung.core.presentation.component.TextTitle
+import com.erica.gamsung.store.domain.StoreType
 
 @Composable
 fun InputStoreScreen(navController: NavHostController = rememberNavController()) {
@@ -33,7 +36,7 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                     .padding(top = paddingValues.calculateTopPadding(), start = 8.dp, end = 8.dp),
         ) {
             StoreNameSection(onValueChange = { /* TODO */ }, isValid = true)
-            StoreTypeSection()
+            StoreTypeSection(onClick = { /* TODO */ }, selectedStoreType = StoreType.CAFE)
             StoreBusinessHoursSection()
             StoreBusinessDaysSeciton()
             StoreAddressSection()
@@ -59,8 +62,26 @@ fun StoreNameSection(
 }
 
 @Composable
-fun StoreTypeSection() {
-    Text(text = "StoreTypeSection") // TODO
+private fun StoreTypeSection(
+    onClick: (StoreType) -> Unit = {},
+    selectedStoreType: StoreType? = null,
+) {
+    TextTitle(
+        title = "업종",
+        isRequired = true,
+        description = null,
+        modifier = Modifier.padding(top = 10.dp),
+    )
+    Row {
+        StoreType.entries.forEach { storeType ->
+            GsChip(
+                text = storeType.description,
+                selected = storeType == selectedStoreType,
+                modifier = Modifier.padding(end = 10.dp),
+                onClick = { onClick(storeType) },
+            )
+        }
+    }
 }
 
 @Composable
