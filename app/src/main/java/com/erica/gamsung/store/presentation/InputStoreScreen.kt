@@ -1,5 +1,7 @@
 package com.erica.gamsung.store.presentation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,7 +44,11 @@ import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.store.domain.StoreType
 import com.erica.gamsung.store.presentation.components.TitleTextField
 import com.erica.gamsung.store.presentation.utils.toDisplayString
+import java.time.DayOfWeek
+import java.time.format.TextStyle
+import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputStoreScreen(navController: NavHostController = rememberNavController()) {
@@ -67,13 +73,13 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                 onClick = { /* TODO */ },
                 week =
                     mapOf(
-                        "일" to true,
-                        "월" to false,
-                        "화" to true,
-                        "수" to false,
-                        "목" to false,
-                        "금" to true,
-                        "토" to false,
+                        DayOfWeek.SUNDAY to false,
+                        DayOfWeek.MONDAY to true,
+                        DayOfWeek.TUESDAY to false,
+                        DayOfWeek.WEDNESDAY to true,
+                        DayOfWeek.THURSDAY to false,
+                        DayOfWeek.FRIDAY to true,
+                        DayOfWeek.SATURDAY to false,
                     ),
             )
             StoreAddressSection(onValueChange = { /* TODO */ }, isValid = true)
@@ -205,19 +211,12 @@ private fun HoursSection(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun StoreBusinessDaysSeciton(
-    onClick: (String) -> Unit = {},
-    week: Map<String, Boolean> =
-        mapOf(
-            "일" to false,
-            "월" to false,
-            "화" to false,
-            "수" to false,
-            "목" to false,
-            "금" to false,
-            "토" to false,
-        ),
+    onClick: (DayOfWeek) -> Unit = {},
+    week: Map<DayOfWeek, Boolean> =
+        DayOfWeek.entries.associateWith { false },
 ) {
     TextTitle(
         title = "영업일",
@@ -229,8 +228,12 @@ private fun StoreBusinessDaysSeciton(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        week.forEach {
-            GsChip(text = it.key, selected = it.value, onClick = { onClick(it.key) })
+        week.forEach { (day, isSelected) ->
+            GsChip(
+                text = day.getDisplayName(TextStyle.SHORT, Locale.KOREA),
+                selected = isSelected,
+                onClick = { onClick(day) },
+            )
         }
     }
 }
@@ -275,6 +278,7 @@ private fun RegisterStoreButton(onClick: () -> Unit = {}) {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 private fun InputStoreScreenPreview() {
