@@ -69,7 +69,7 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                 onOpenTimeUpdate = { /* TODO */ },
                 onCloseTimeUpdate = { /* TODO */ },
             )
-            StoreBusinessDaysSeciton(
+            StoreBusinessDaysSection(
                 onClick = { /* TODO */ },
                 week =
                     mapOf(
@@ -213,7 +213,7 @@ private fun HoursSection(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun StoreBusinessDaysSeciton(
+private fun StoreBusinessDaysSection(
     onClick: (DayOfWeek) -> Unit = {},
     week: Map<DayOfWeek, Boolean> =
         DayOfWeek.entries.associateWith { false },
