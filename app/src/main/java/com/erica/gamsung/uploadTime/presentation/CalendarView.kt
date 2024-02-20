@@ -37,6 +37,10 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
+const val DATE_OF_FRAME = 42
+const val FILTER_NUM = 32
+const val CHUNK_NUM = 7
+
 @Composable
 fun CalendarView(
     // focusedDate: LocalDate? = null,
@@ -206,20 +210,19 @@ fun CalendarGrid(
             .toList()
     val nextMonthDays =
         List(
-            CalendarViewModel.DATE_OF_FRAME -
+            DATE_OF_FRAME -
                 (currentMonthDays.size + prevMonthDays.size),
         ) {
-            CalendarViewModel
-                .FILTER_NUM
+            FILTER_NUM
         }
     val calendarDays =
         (prevMonthDays + currentMonthDays + nextMonthDays)
-            .chunked(CalendarViewModel.CHUNK_NUM)
+            .chunked(CHUNK_NUM)
     calendarDays.forEachIndexed { _, week ->
         Row {
             week
                 .forEach { day ->
-                    if (day > 0 && day != CalendarViewModel.FILTER_NUM) {
+                    if (day > 0 && day != FILTER_NUM) {
                         DateView(
                             modifier =
                                 Modifier

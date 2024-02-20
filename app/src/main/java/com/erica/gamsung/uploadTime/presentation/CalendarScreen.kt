@@ -3,8 +3,7 @@ package com.erica.gamsung.uploadTime.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -40,8 +39,7 @@ fun MyCalendarScreen() {
                 Modifier
                     .padding(it)
                     .padding(16.dp)
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
+                    .fillMaxSize(),
             horizontalAlignment =
                 Alignment
                     .CenterHorizontally,
