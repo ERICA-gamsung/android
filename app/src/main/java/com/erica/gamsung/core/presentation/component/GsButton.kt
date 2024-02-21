@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
-private val Green = Color(0xFF1F7158)
 private val VividBlue = Color(0xFF1268FB)
 
 @Composable
@@ -28,7 +27,7 @@ fun GsButton(
     modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit = {},
-    containerColor: Color = Green,
+    containerColor: Color = VividBlue,
 ) {
     Button(
         shape = RoundedCornerShape(10.dp),
