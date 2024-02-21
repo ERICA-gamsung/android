@@ -21,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +40,7 @@ import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsChip
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.core.presentation.component.TextTitle
+import com.erica.gamsung.core.presentation.component.TimeInputBox
 import com.erica.gamsung.store.domain.StoreType
 import com.erica.gamsung.store.presentation.components.TitleTextField
 import com.erica.gamsung.store.presentation.utils.toDisplayString
@@ -176,7 +176,7 @@ private fun HoursSection(
                 showTimePicker = false
             },
         ) {
-            TimeInput(state = currentTimePickerState)
+            TimeInputBox(currentTimePickerState)
         }
     }
 
