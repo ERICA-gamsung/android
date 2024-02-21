@@ -7,5 +7,6 @@ enum class Screen(
     SETTING("setting"),
     PUBLISH_POSTING("publishPosting"),
     CHECK_POSTING("checkPosting"),
+    INPUT_STORE("inputStore"),
     INPUT_MENU("inputMenu"),
 }
