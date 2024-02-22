@@ -1,8 +1,10 @@
 package com.erica.gamsung.core.presentation
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -15,9 +17,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.menu.presentation.InputMenuScreen
 import com.erica.gamsung.menu.presentation.InputMenuViewModel
+import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.ui.theme.GamsungTheme
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -35,6 +39,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.MAIN.route) {
@@ -42,6 +47,7 @@ fun MainNavHost(navController: NavHostController) {
         composable(Screen.SETTING.route) { SettingScreen() }
         composable(Screen.PUBLISH_POSTING.route) { PublishPostingScreen() }
         composable(Screen.CHECK_POSTING.route) { CheckPostingScreen() }
+        composable(Screen.INPUT_STORE.route) { InputStoreScreen(navController = navController) }
         composable(Screen.INPUT_MENU.route) {
             InputMenuScreen(navController = navController, inputMenuViewModel = InputMenuViewModel())
         }
