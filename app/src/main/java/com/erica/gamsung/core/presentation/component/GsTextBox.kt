@@ -13,8 +13,11 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -214,10 +217,76 @@ fun InputTextBox(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownInputTextBox(
+    modifier: Modifier = Modifier,
+    hintText: String,
+    items: List<String>,
+    onValueChange: (String) -> Unit,
+    isError: Boolean = false,
+) {
+    var textState by remember {
+        mutableStateOf("")
+    }
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+    var icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
+
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }, modifier = modifier) {
+        OutlinedTextField(
+            value = textState,
+            onValueChange = {
+                textState = it
+                onValueChange(it)
+            },
+            readOnly = true,
+            placeholder = {
+                Text(
+                    text = hintText,
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            },
+            singleLine = true,
+            colors =
+                TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.LightGray,
+                    focusedContainerColor = Color.Transparent,
+                    errorContainerColor = Color.Transparent,
+                ),
+            shape = RoundedCornerShape(percent = 15),
+            textStyle = MaterialTheme.typography.bodyLarge,
+            isError = isError,
+            modifier = modifier.menuAnchor(),
+            trailingIcon = {
+                Icon(icon, "dropDownIcon")
+            },
+        )
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            items.forEach { label ->
+                DropdownMenuItem(
+                    onClick = {
+                        textState = label
+                        onValueChange(label)
+                        expanded = false
+                    },
+                    text = {
+                        Text(text = label)
+                    },
+                )
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun GsTextPreview() {
     val options = listOf("option1", "option2", "option3")
+    var text by remember { mutableStateOf("") }
     Column(
         modifier = Modifier.background(Color.White),
     ) {
@@ -256,6 +325,13 @@ private fun GsTextPreview() {
             },
             modifier = Modifier.fillMaxWidth(1f),
             innerTextModifier = Modifier.padding(16.dp),
+        )
+        DropdownInputTextBox(
+            hintText = "test",
+            items = options,
+            onValueChange = { newText ->
+                text = newText
+            },
         )
     }
 }

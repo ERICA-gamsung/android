@@ -45,6 +45,7 @@ const val CHUNK_NUM = 7
 fun CalendarView(
     // focusedDate: LocalDate? = null,
     onDateSelected: ((LocalDate, Boolean) -> Unit)? = null,
+    onToggleValid: Boolean,
 ) {
     var currentYearMonth by remember {
         mutableStateOf(YearMonth.now())
@@ -127,7 +128,7 @@ fun CalendarView(
         CalendarGrid(
             yearMonth = currentYearMonth,
             selectedDatesMap = selectedDatesMap,
-            onDateSelected = { date, isSelected -> toggleDateSelection(date, isSelected) },
+            onDateSelected = { date, isSelected -> if (onToggleValid) toggleDateSelection(date, isSelected) },
         )
     }
 }

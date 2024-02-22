@@ -56,6 +56,7 @@ fun MyCalendarScreen() {
                     }
                     selectedDatesMap[month] = updatedDates
                 },
+                onToggleValid = true,
             )
             Spacer(modifier = Modifier.height(32.dp))
             Text(
