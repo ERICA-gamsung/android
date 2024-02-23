@@ -1,8 +1,5 @@
-
 package com.erica.gamsung.store.presentation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,7 +46,6 @@ import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputStoreScreen(navController: NavHostController = rememberNavController()) {
@@ -212,8 +208,6 @@ private fun HoursSection(
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun StoreBusinessDaysSection(
     onClick: (DayOfWeek) -> Unit = {},
@@ -280,7 +274,6 @@ private fun RegisterStoreButton(onClick: () -> Unit = {}) {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 private fun InputStoreScreenPreview() {
