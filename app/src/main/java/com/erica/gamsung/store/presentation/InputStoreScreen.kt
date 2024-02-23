@@ -216,7 +216,7 @@ private fun HoursSection(
 private fun StoreBusinessDaysSection(
     onClick: (DayOfWeek) -> Unit = {},
     week: Map<DayOfWeek, Boolean> =
-        DayOfWeek.entries.associateWith { false },
+        DayOfWeek.values().associateWith { false },
 ) {
     TextTitle(
         title = "영업일",

@@ -140,6 +140,7 @@ private fun DropdownTextBox(
         readOnly = true,
         modifier =
             modifier
+                .fillMaxWidth()
                 .border(
                     1.dp,
                     Color.LightGray,
@@ -212,7 +213,7 @@ fun InputTextBox(
         shape = RoundedCornerShape(percent = 15),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         textStyle = MaterialTheme.typography.bodyLarge,
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         isError = isError,
     )
 }
@@ -234,7 +235,11 @@ fun DropdownInputTextBox(
     }
     var icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }, modifier = modifier) {
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = modifier.fillMaxWidth(),
+    ) {
         OutlinedTextField(
             value = textState,
             onValueChange = {
@@ -260,7 +265,7 @@ fun DropdownInputTextBox(
             shape = RoundedCornerShape(percent = 15),
             textStyle = MaterialTheme.typography.bodyLarge,
             isError = isError,
-            modifier = modifier.menuAnchor(),
+            modifier = modifier.menuAnchor().fillMaxWidth(),
             trailingIcon = {
                 Icon(icon, "dropDownIcon")
             },

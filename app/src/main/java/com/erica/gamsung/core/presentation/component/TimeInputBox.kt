@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+// timePicker 배경
 @Suppress("MagicNumber")
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,7 +25,7 @@ fun TimeInputBox(timePickerState: TimePickerState) {
             Modifier
                 .fillMaxWidth()
                 .height(150.dp)
-                .clip(RoundedCornerShape(25))
+                .clip(RoundedCornerShape(10))
                 .background(Color.White),
         contentAlignment = Alignment.BottomCenter,
     ) {
