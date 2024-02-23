@@ -14,10 +14,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.theme.GamsungTheme
 import com.erica.gamsung.menu.presentation.InputMenuScreen
 import com.erica.gamsung.menu.presentation.InputMenuViewModel
 import com.erica.gamsung.store.presentation.InputStoreScreen
-import com.erica.gamsung.ui.theme.GamsungTheme
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import com.erica.gamsung.uploadTime.presentation.MyCalendarScreen
 import com.erica.gamsung.uploadTime.presentation.MyScheduleScreen
