@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalStdlibApi::class)
 
 package com.erica.gamsung.store.presentation
 
@@ -213,6 +212,7 @@ private fun HoursSection(
     }
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun StoreBusinessDaysSection(
