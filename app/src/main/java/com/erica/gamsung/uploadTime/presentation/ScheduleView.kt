@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.erica.gamsung.uploadTime.domain.CalendarMoveType
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -44,7 +45,7 @@ fun ScheduleView(
         }
 
     var moveDirection by remember {
-        mutableStateOf(MoveDirection.START)
+        mutableStateOf(CalendarMoveType.START)
     }
 
     val canMoveLeft = currentYearMonth > now
@@ -56,8 +57,8 @@ fun ScheduleView(
      */
     LaunchedEffect(moveDirection) {
         when (moveDirection) {
-            MoveDirection.LEFT -> if (canMoveLeft) currentYearMonth = currentYearMonth.minusMonths(1)
-            MoveDirection.RIGHT -> if (canMoveRight) currentYearMonth = currentYearMonth.plusMonths(1)
+            CalendarMoveType.LEFT -> if (canMoveLeft) currentYearMonth = currentYearMonth.minusMonths(1)
+            CalendarMoveType.RIGHT -> if (canMoveRight) currentYearMonth = currentYearMonth.plusMonths(1)
             else -> {} // START 상태일 때는 변경 없음
         }
     }
@@ -82,13 +83,13 @@ fun ScheduleView(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "좌측 이동",
-                modifier = Modifier.clickable { moveDirection = MoveDirection.LEFT },
+                modifier = Modifier.clickable { moveDirection = CalendarMoveType.LEFT },
             )
             CalendarHeader(currentYearMonth)
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "우측 이동",
-                modifier = Modifier.clickable { moveDirection = MoveDirection.RIGHT },
+                modifier = Modifier.clickable { moveDirection = CalendarMoveType.RIGHT },
             )
         }
         Divider(

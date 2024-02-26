@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.erica.gamsung.uploadTime.domain.CalendarMoveType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -41,12 +42,6 @@ import java.util.Locale
 const val DATE_OF_FRAME = 42
 const val FILTER_NUM = 32
 const val CHUNK_NUM = 7
-
-enum class MoveDirection {
-    START,
-    LEFT,
-    RIGHT,
-}
 
 @Suppress("LongMethod")
 @Composable
@@ -65,7 +60,7 @@ fun CalendarView(
         }
 
     var moveDirection by remember {
-        mutableStateOf(MoveDirection.START)
+        mutableStateOf(CalendarMoveType.START)
     }
 
     val canMoveLeft = currentYearMonth > now
@@ -77,8 +72,8 @@ fun CalendarView(
      */
     LaunchedEffect(moveDirection) {
         when (moveDirection) {
-            MoveDirection.LEFT -> if (canMoveLeft) currentYearMonth = currentYearMonth.minusMonths(1)
-            MoveDirection.RIGHT -> if (canMoveRight) currentYearMonth = currentYearMonth.plusMonths(1)
+            CalendarMoveType.LEFT -> if (canMoveLeft) currentYearMonth = currentYearMonth.minusMonths(1)
+            CalendarMoveType.RIGHT -> if (canMoveRight) currentYearMonth = currentYearMonth.plusMonths(1)
             else -> {} // START 상태일 때는 변경 없음
         }
     }
@@ -117,13 +112,13 @@ fun CalendarView(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "좌측 이동",
-                modifier = Modifier.clickable { moveDirection = MoveDirection.LEFT },
+                modifier = Modifier.clickable { moveDirection = CalendarMoveType.LEFT },
             )
             CalendarHeader(currentYearMonth)
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "우측 이동",
-                modifier = Modifier.clickable { moveDirection = MoveDirection.RIGHT },
+                modifier = Modifier.clickable { moveDirection = CalendarMoveType.RIGHT },
             )
         }
         Divider(
