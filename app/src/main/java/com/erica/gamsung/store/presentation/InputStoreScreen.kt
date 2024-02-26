@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package com.erica.gamsung.store.presentation
 
 import android.os.Build
@@ -216,7 +218,7 @@ private fun HoursSection(
 private fun StoreBusinessDaysSection(
     onClick: (DayOfWeek) -> Unit = {},
     week: Map<DayOfWeek, Boolean> =
-        DayOfWeek.values().associateWith { false },
+        DayOfWeek.entries.associateWith { false },
 ) {
     TextTitle(
         title = "영업일",
