@@ -233,7 +233,7 @@ fun DropdownInputTextBox(
     var expanded by remember {
         mutableStateOf(false)
     }
-    var icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
+    val icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
 
     ExposedDropdownMenuBox(
         expanded = expanded,

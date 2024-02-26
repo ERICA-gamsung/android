@@ -14,6 +14,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import java.time.LocalDate
 import java.time.YearMonth
 
+@Suppress("LongMethod")
 @Composable
 fun ScheduleView(
     // focusedDate: LocalDate? = null,
@@ -35,30 +37,28 @@ fun ScheduleView(
     var currentYearMonth by remember {
         mutableStateOf(YearMonth.now())
     }
+    val now = YearMonth.now()
     val selectedDatesMap =
         remember {
             mutableStateMapOf<YearMonth, List<LocalDate>>()
         }
-    var lastMove by remember {
-        mutableStateOf("START")
-    }
-    var check by remember {
-        mutableStateOf(false)
+
+    var moveDirection by remember {
+        mutableStateOf(MoveDirection.START)
     }
 
-    fun moveToPreviousMonth() {
-        if (lastMove == "RIGHT") {
-            currentYearMonth = currentYearMonth.minusMonths(1)
-            lastMove = "LEFT"
-            check = true
-        }
-    }
+    val canMoveLeft = currentYearMonth > now
+    val canMoveRight = currentYearMonth == now
 
-    fun moveToNextMonth() {
-        if (check || lastMove == "START") {
-            currentYearMonth = currentYearMonth.plusMonths(1)
-            lastMove = "RIGHT"
-            check = false
+    /*
+     *  Compose에서는 가능한 한 부작용(Side Effects)을 줄이고 순수 함수(pure functions)를 사용하는 것이 권장됩니다.
+     *  LaunchedEffect나 rememberCoroutineScope를 사용하여 이벤트를 처리하는 것이 좋습니다.
+     */
+    LaunchedEffect(moveDirection) {
+        when (moveDirection) {
+            MoveDirection.LEFT -> if (canMoveLeft) currentYearMonth = currentYearMonth.minusMonths(1)
+            MoveDirection.RIGHT -> if (canMoveRight) currentYearMonth = currentYearMonth.plusMonths(1)
+            else -> {} // START 상태일 때는 변경 없음
         }
     }
 
@@ -82,13 +82,13 @@ fun ScheduleView(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "좌측 이동",
-                modifier = Modifier.clickable { moveToPreviousMonth() },
+                modifier = Modifier.clickable { moveDirection = MoveDirection.LEFT },
             )
             CalendarHeader(currentYearMonth)
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "우측 이동",
-                modifier = Modifier.clickable { moveToNextMonth() },
+                modifier = Modifier.clickable { moveDirection = MoveDirection.RIGHT },
             )
         }
         Divider(
