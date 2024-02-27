@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,20 +16,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.erica.gamsung.core.presentation.component.GsButton
-import java.time.LocalDate
-import java.time.YearMonth
 
 @Suppress("magicnumber")
 @Preview
 @Composable
-fun MyCalendarScreen() {
+fun MyCalendarScreen(viewModel: CalendarViewModel = viewModel()) {
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
-    val selectedDatesMap = remember { mutableStateMapOf<YearMonth, List<LocalDate>>() }
+    // val selectedDatesMap = remember { mutableStateMapOf<YearMonth, List<LocalDate>>() }
     // 현재 달을 기준으로 초기화
-    val currentMonth = YearMonth.now()
+    // val currentMonth = YearMonth.now()
     // 현재 달에 대한 초기 선택된 날짜 리스트 (예: 오늘)
-    selectedDatesMap[currentMonth] = listOf(LocalDate.now())
+    // selectedDatesMap[currentMonth] = listOf(LocalDate.now())
 
     Scaffold {
         Column(
@@ -46,15 +43,9 @@ fun MyCalendarScreen() {
             verticalArrangement = Arrangement.Center,
         ) {
             CalendarView(
+                selectedDatesMap = viewModel.selectedDatesMap,
                 onDateSelected = { date, isSelected ->
-                    val month = YearMonth.from(date)
-                    val updatedDates = selectedDatesMap[month]?.toMutableList() ?: mutableListOf()
-                    if (isSelected) {
-                        updatedDates.remove(date)
-                    } else {
-                        updatedDates.add(date)
-                    }
-                    selectedDatesMap[month] = updatedDates
+                    viewModel.toggleDateSelection(date, isSelected)
                 },
                 onToggleValid = true,
             )
