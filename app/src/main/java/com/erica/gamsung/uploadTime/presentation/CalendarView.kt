@@ -1,5 +1,6 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -230,6 +231,14 @@ fun CalendarGrid(
                                 // 선택된 날짜를 처리 하는 로직
                                 onDateSelected?.invoke(selectedDate, !isSelected)
                                 // 변경된 날짜 목록을 상위 Component 로 전달
+                                Log.d("CalendarGrid", "Selected Date: $selectedDate, Is Selected: ${!isSelected}")
+                                val mapContents =
+                                    selectedDatesMap
+                                        .entries
+                                        .joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
+                                            "$key=${value.joinToString()}"
+                                        }
+                                Log.d("CalendarGrid", "Current selectedDatesMap: $mapContents")
                             },
                         )
                     } else {

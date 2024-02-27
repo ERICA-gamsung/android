@@ -9,4 +9,6 @@ enum class Screen(
     CHECK_POSTING("checkPosting"),
     INPUT_STORE("inputStore"),
     INPUT_MENU("inputMenu"),
+    DATE_SELECT("dateSelect"),
+    TIME_SELECT("timeSelect"),
 }

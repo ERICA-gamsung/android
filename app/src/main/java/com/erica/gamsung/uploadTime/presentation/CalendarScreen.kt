@@ -17,12 +17,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.component.GsButton
 
 @Suppress("magicnumber")
 @Preview
 @Composable
-fun MyCalendarScreen(viewModel: CalendarViewModel = viewModel()) {
+fun MyCalendarScreen(
+    navController: NavHostController = rememberNavController(),
+    viewModel: CalendarViewModel = viewModel(),
+) {
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
     // val selectedDatesMap = remember { mutableStateMapOf<YearMonth, List<LocalDate>>() }
     // 현재 달을 기준으로 초기화
@@ -57,8 +62,7 @@ fun MyCalendarScreen(viewModel: CalendarViewModel = viewModel()) {
             )
             Spacer(modifier = Modifier.height(32.dp))
             GsButton(text = "확정하기", containerColor = Color.Blue, onClick = {
-                // val selectedDatesString = selectedDates.value.joinToString(separator = ",") { it.toString() }
-                // navController.navigate("scheduleScreen/$selectedDatesString")
+                navController.navigate("timeSelect")
             })
         }
     }
