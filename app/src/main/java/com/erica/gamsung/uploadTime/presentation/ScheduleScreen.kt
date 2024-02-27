@@ -48,6 +48,7 @@ import com.erica.gamsung.store.presentation.utils.toDisplayString
 import java.time.LocalDate
 import java.time.YearMonth
 
+// UnusedParameter는 왜인지 모르지만 NavHostcontroller 를 사용 안했다 떠서 달아 놓았다.
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod", "UnusedParameter")
 @Preview
