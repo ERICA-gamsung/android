@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                     MainNavHost(
                         navController = navController,
                         calendarViewModel = calendarViewModel,
-                        database = database
+                        database = database,
                     )
                 }
             }

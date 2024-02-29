@@ -13,8 +13,8 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import com.erica.gamsung.core.di.GamsungDatabase
+import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import org.junit.AfterClass
 import org.junit.Assert.*
 import org.junit.Before
