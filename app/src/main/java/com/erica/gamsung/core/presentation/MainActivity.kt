@@ -14,7 +14,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.di.GamsungDatabase
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
+import com.erica.gamsung.menu.data.remote.MenuApi
+import com.erica.gamsung.menu.data.repository.MenuRepositoryImpl
 import com.erica.gamsung.menu.presentation.InputMenuScreen
 import com.erica.gamsung.menu.presentation.InputMenuViewModel
 import com.erica.gamsung.store.presentation.InputStoreScreen
@@ -27,6 +30,7 @@ import com.erica.gamsung.uploadTime.presentation.MyScheduleScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val database = GamsungDatabase.getInstance(this)!!
         setContent {
             GamsungTheme {
                 Surface(
@@ -36,7 +40,11 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     // ViewModel 여기서 생성
                     val calendarViewModel: CalendarViewModel = viewModel()
-                    MainNavHost(navController, calendarViewModel)
+                    MainNavHost(
+                        navController = navController,
+                        calendarViewModel = calendarViewModel,
+                        database = database
+                    )
                 }
             }
         }
@@ -47,6 +55,7 @@ class MainActivity : ComponentActivity() {
 fun MainNavHost(
     navController: NavHostController,
     calendarViewModel: CalendarViewModel,
+    database: GamsungDatabase,
 ) {
     NavHost(navController = navController, startDestination = Screen.MAIN.route) {
         composable(Screen.MAIN.route) { MainScreen(navController = navController) }
@@ -55,7 +64,17 @@ fun MainNavHost(
         composable(Screen.CHECK_POSTING.route) { CheckPostingScreen() }
         composable(Screen.INPUT_STORE.route) { InputStoreScreen(navController = navController) }
         composable(Screen.INPUT_MENU.route) {
-            InputMenuScreen(navController = navController, inputMenuViewModel = InputMenuViewModel())
+            InputMenuScreen(
+                navController = navController,
+                inputMenuViewModel =
+                    InputMenuViewModel(
+                        menuRepository =
+                            MenuRepositoryImpl(
+                                menuDao = database.menuDao(),
+                                menuApi = MenuApi.service,
+                            ),
+                    ),
+            )
         }
         composable(Screen.DATE_SELECT.route) {
             MyCalendarScreen(navController = navController, viewModel = calendarViewModel)
