@@ -1,6 +1,7 @@
 package com.erica.gamsung.menu.presentation
 
 import androidx.lifecycle.ViewModel
+import com.erica.gamsung.menu.data.repository.FakeMenuRepositoryImpl
 import com.erica.gamsung.menu.domain.Menu
 import com.erica.gamsung.menu.domain.MenuRepository
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 class InputMenuViewModel(
     initialMenus: List<Menu> = emptyList(),
     initialInputMenuState: InputMenuState = InputMenuState(),
-    private val menuRepository: MenuRepository,
+    private val menuRepository: MenuRepository = FakeMenuRepositoryImpl(),
 ) : ViewModel() {
     private var _menusState = MutableStateFlow(initialMenus)
     val menusState = _menusState.asStateFlow()
