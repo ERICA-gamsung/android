@@ -4,7 +4,7 @@ import com.erica.gamsung.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object SingletonModule {
+object NetworkModule {
     private const val BASE_URL = BuildConfig.SERVER_BASE_URL
 
     val retrofit: Retrofit =
