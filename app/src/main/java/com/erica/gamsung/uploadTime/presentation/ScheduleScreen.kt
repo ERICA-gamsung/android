@@ -35,6 +35,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.component.DropdownInputTextBox
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsOutlinedButton
@@ -45,11 +48,15 @@ import com.erica.gamsung.store.presentation.utils.toDisplayString
 import java.time.LocalDate
 import java.time.YearMonth
 
+// UnusedParameter는 왜인지 모르지만 NavHostcontroller 를 사용 안했다 떠서 달아 놓았다.
 @OptIn(ExperimentalMaterial3Api::class)
-@Suppress("LongMethod")
+@Suppress("LongMethod", "UnusedParameter")
 @Preview
 @Composable
-fun MyScheduleScreen() {
+fun MyScheduleScreen(
+    navController: NavHostController = rememberNavController(),
+    viewModel: CalendarViewModel = viewModel(),
+) {
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
     val selectedDatesMap = remember { mutableStateMapOf<YearMonth, List<LocalDate>>() }
     // 현재 달을 기준으로 초기화
@@ -61,8 +68,8 @@ fun MyScheduleScreen() {
     var text by remember { mutableStateOf("") }
 
     // TimePicker에 필요한 변수
-    var openTimePickerState = TimePickerState(0, 0, false)
-    var onOpenTimeUpdate: (TimePickerState) -> Unit = { /*TODO*/ }
+    val openTimePickerState = TimePickerState(0, 0, false)
+    val onOpenTimeUpdate: (TimePickerState) -> Unit = { /*TODO*/ }
 
     val options =
         listOf(
@@ -82,9 +89,13 @@ fun MyScheduleScreen() {
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            ScheduleView()
-            // Spacer(modifier = Modifier.height(16.dp))
-
+            CalendarView(
+                selectedDatesMap = viewModel.selectedDatesMap,
+                onDateSelected = { date, isSelected ->
+                    viewModel.toggleDateSelection(date, isSelected)
+                },
+                onToggleValid = false,
+            )
             HoursSection(
                 title = "발행 시각",
                 timePickerState = openTimePickerState,

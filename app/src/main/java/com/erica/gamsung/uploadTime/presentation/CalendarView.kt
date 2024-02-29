@@ -1,5 +1,6 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.erica.gamsung.uploadTime.domain.CalendarMoveType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -42,16 +43,11 @@ const val DATE_OF_FRAME = 42
 const val FILTER_NUM = 32
 const val CHUNK_NUM = 7
 
-enum class MoveDirection {
-    START,
-    LEFT,
-    RIGHT,
-}
-
 @Suppress("LongMethod")
 @Composable
 fun CalendarView(
     // focusedDate: LocalDate? = null,
+    selectedDatesMap: Map<YearMonth, List<LocalDate>>,
     onDateSelected: ((LocalDate, Boolean) -> Unit)? = null,
     onToggleValid: Boolean,
 ) {
@@ -59,13 +55,12 @@ fun CalendarView(
         mutableStateOf(YearMonth.now())
     }
     val now = YearMonth.now()
-    val selectedDatesMap =
-        remember {
-            mutableStateMapOf<YearMonth, List<LocalDate>>()
-        }
-
+//    val selectedDatesMap =
+//        remember {
+//            mutableStateMapOf<YearMonth, List<LocalDate>>()
+//        }
     var moveDirection by remember {
-        mutableStateOf(MoveDirection.START)
+        mutableStateOf(CalendarMoveType.START)
     }
 
     val canMoveLeft = currentYearMonth > now
@@ -77,23 +72,17 @@ fun CalendarView(
      */
     LaunchedEffect(moveDirection) {
         when (moveDirection) {
-            MoveDirection.LEFT -> if (canMoveLeft) currentYearMonth = currentYearMonth.minusMonths(1)
-            MoveDirection.RIGHT -> if (canMoveRight) currentYearMonth = currentYearMonth.plusMonths(1)
+            CalendarMoveType.LEFT -> if (canMoveLeft) currentYearMonth = currentYearMonth.minusMonths(1)
+            CalendarMoveType.RIGHT -> if (canMoveRight) currentYearMonth = currentYearMonth.plusMonths(1)
             else -> {} // START 상태일 때는 변경 없음
         }
     }
 
-    fun toggleDateSelection(
+    fun toggleDateSelectionInUI(
         date: LocalDate,
         isSelected: Boolean,
     ) {
-        val currentSelectedDates = selectedDatesMap[currentYearMonth]?.toMutableList() ?: mutableListOf()
-        if (isSelected) {
-            currentSelectedDates.remove(date)
-        } else {
-            currentSelectedDates.add(date)
-        }
-        selectedDatesMap[currentYearMonth] = currentSelectedDates
+        // UI에서 날짜 선택 토글을 처리하는 대신, 상위 컴포넌트에게 변경 사항을 알립니다.
         onDateSelected?.invoke(date, !isSelected)
     }
 
@@ -117,13 +106,13 @@ fun CalendarView(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "좌측 이동",
-                modifier = Modifier.clickable { moveDirection = MoveDirection.LEFT },
+                modifier = Modifier.clickable { moveDirection = CalendarMoveType.LEFT },
             )
             CalendarHeader(currentYearMonth)
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "우측 이동",
-                modifier = Modifier.clickable { moveDirection = MoveDirection.RIGHT },
+                modifier = Modifier.clickable { moveDirection = CalendarMoveType.RIGHT },
             )
         }
         Divider(
@@ -134,7 +123,7 @@ fun CalendarView(
         CalendarGrid(
             yearMonth = currentYearMonth,
             selectedDatesMap = selectedDatesMap,
-            onDateSelected = { date, isSelected -> if (onToggleValid) toggleDateSelection(date, isSelected) },
+            onDateSelected = { date, isSelected -> if (onToggleValid) toggleDateSelectionInUI(date, isSelected) },
         )
     }
 }
@@ -170,7 +159,7 @@ fun DaysOfWeekRow() {
     val daysOfWeek =
         listOf(DayOfWeek.SUNDAY) +
             DayOfWeek
-                .values()
+                .entries
                 .filter { it != DayOfWeek.SUNDAY }
     Row {
         daysOfWeek
@@ -230,19 +219,26 @@ fun CalendarGrid(
             week
                 .forEach { day ->
                     if (day > 0 && day != FILTER_NUM) {
+                        val date = yearMonth.atDay(day)
+                        val isSelected = selectedDatesMap[yearMonth]?.contains(date) ?: false
                         DateView(
                             modifier =
                                 Modifier
                                     .weight(1f),
-                            date =
-                                yearMonth
-                                    .atDay(day),
-                            currentYearMonth = yearMonth,
-                            selectedDatesMap = selectedDatesMap,
-                            onDateSelected = { selectedDate, isSelected ->
+                            date = date,
+                            isSelected = isSelected,
+                            onDateSelected = { selectedDate, _ ->
                                 // 선택된 날짜를 처리 하는 로직
                                 onDateSelected?.invoke(selectedDate, !isSelected)
                                 // 변경된 날짜 목록을 상위 Component 로 전달
+                                Log.d("CalendarGrid", "Selected Date: $selectedDate, Is Selected: ${!isSelected}")
+                                val mapContents =
+                                    selectedDatesMap
+                                        .entries
+                                        .joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
+                                            "$key=${value.joinToString()}"
+                                        }
+                                Log.d("CalendarGrid", "Current selectedDatesMap: $mapContents")
                             },
                         )
                     } else {
@@ -267,19 +263,10 @@ fun CalendarGrid(
 fun DateView(
     modifier: Modifier = Modifier,
     date: LocalDate,
-    currentYearMonth: YearMonth,
     focusedDate: LocalDate? = null,
-    selectedDatesMap: Map<YearMonth, List<LocalDate>>,
+    isSelected: Boolean,
     onDateSelected: ((LocalDate, Boolean) -> Unit)? = null,
 ) {
-    // UI의 즉각적인 변화를 위해 selectedDAtesMap[currentYearMonth] 직접 참조
-    val isSelected =
-        remember(
-            selectedDatesMap[currentYearMonth],
-            date,
-        ) {
-            selectedDatesMap[currentYearMonth]?.contains(date) ?: false
-        }
     val isFocused = date == focusedDate
     val backGroundColor =
         when {

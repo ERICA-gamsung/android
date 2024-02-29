@@ -44,6 +44,7 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             Spacer(modifier = Modifier.height(30.dp))
 
             MainButton("발행 현황 확인하기") { navController.navigate(Screen.CHECK_POSTING.route) }
+            MainButton("기능 확인") { navController.navigate(Screen.DATE_SELECT.route) }
         }
     }
 }

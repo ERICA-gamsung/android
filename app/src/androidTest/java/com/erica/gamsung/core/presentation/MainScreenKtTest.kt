@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -27,7 +28,7 @@ class MainScreenKtTest {
         rule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            MainNavHost(navController = navController)
+            MainNavHost(navController = navController, calendarViewModel = CalendarViewModel())
         }
     }
 
