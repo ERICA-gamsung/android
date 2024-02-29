@@ -8,6 +8,9 @@ plugins {
 
     // detekt
     id("io.gitlab.arturbosch.detekt") version("1.23.4")
+
+    // kapt
+    kotlin("kapt") version "1.9.0" apply false
 }
 
 allprojects {
