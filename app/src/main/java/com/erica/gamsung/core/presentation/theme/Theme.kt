@@ -1,4 +1,4 @@
-package com.erica.gamsung.ui.theme
+package com.erica.gamsung.core.presentation.theme
 
 import android.app.Activity
 import android.os.Build

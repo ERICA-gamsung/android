@@ -1,5 +1,6 @@
 package com.erica.gamsung.core.presentation
 
+import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -9,10 +10,15 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.erica.gamsung.core.di.GamsungDatabase
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
+import org.junit.AfterClass
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,14 +27,18 @@ import org.junit.runner.RunWith
 class MainScreenKtTest {
     @get:Rule
     val rule: ComposeContentTestRule = createComposeRule()
-    lateinit var navController: TestNavHostController
+    private lateinit var navController: TestNavHostController
 
     @Before
     fun setUp() {
         rule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            MainNavHost(navController = navController, calendarViewModel = CalendarViewModel())
+            MainNavHost(
+                navController = navController,
+                calendarViewModel = CalendarViewModel(),
+                database = database,
+            )
         }
     }
 
@@ -87,5 +97,22 @@ class MainScreenKtTest {
 
         val route = navController.currentDestination?.route
         assertEquals(route, Screen.CHECK_POSTING.route)
+    }
+
+    companion object {
+        private lateinit var database: GamsungDatabase
+
+        @BeforeClass
+        @JvmStatic
+        fun createDb() {
+            val context = ApplicationProvider.getApplicationContext<Context>()
+            database = Room.inMemoryDatabaseBuilder(context, GamsungDatabase::class.java).build()
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun closeDb() {
+            database.close()
+        }
     }
 }
