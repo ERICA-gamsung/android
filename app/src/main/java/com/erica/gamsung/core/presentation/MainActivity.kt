@@ -33,6 +33,8 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject lateinit var database: GamsungDatabase
 
+    @Inject lateinit var menuApi: MenuApi
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -44,10 +46,18 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     // ViewModel 여기서 생성
                     val calendarViewModel: CalendarViewModel = viewModel()
+                    val inputMenuViewModel =
+                        InputMenuViewModel(
+                            menuRepository =
+                                MenuRepositoryImpl(
+                                    menuDao = database.menuDao(),
+                                    menuApi = menuApi,
+                                ),
+                        )
                     MainNavHost(
                         navController = navController,
                         calendarViewModel = calendarViewModel,
-                        database = database,
+                        inputMenuViewModel = inputMenuViewModel,
                     )
                 }
             }
@@ -59,7 +69,7 @@ class MainActivity : ComponentActivity() {
 fun MainNavHost(
     navController: NavHostController,
     calendarViewModel: CalendarViewModel,
-    database: GamsungDatabase,
+    inputMenuViewModel: InputMenuViewModel,
 ) {
     NavHost(navController = navController, startDestination = Screen.MAIN.route) {
         composable(Screen.MAIN.route) { MainScreen(navController = navController) }
@@ -70,14 +80,7 @@ fun MainNavHost(
         composable(Screen.INPUT_MENU.route) {
             InputMenuScreen(
                 navController = navController,
-                inputMenuViewModel =
-                    InputMenuViewModel(
-                        menuRepository =
-                            MenuRepositoryImpl(
-                                menuDao = database.menuDao(),
-                                menuApi = MenuApi.service,
-                            ),
-                    ),
+                inputMenuViewModel = inputMenuViewModel,
             )
         }
         composable(Screen.DATE_SELECT.route) {
