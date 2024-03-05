@@ -16,7 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.erica.gamsung.core.data.GamsungDatabase
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import org.junit.AfterClass
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -37,7 +37,6 @@ class MainScreenKtTest {
             MainNavHost(
                 navController = navController,
                 calendarViewModel = CalendarViewModel(),
-                database = database,
             )
         }
     }
