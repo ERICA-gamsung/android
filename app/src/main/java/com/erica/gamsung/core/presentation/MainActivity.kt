@@ -14,10 +14,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.erica.gamsung.core.data.GamsungDatabase
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
-import com.erica.gamsung.menu.data.remote.MenuApi
-import com.erica.gamsung.menu.data.repository.MenuRepositoryImpl
+import com.erica.gamsung.menu.domain.MenuRepository
 import com.erica.gamsung.menu.presentation.InputMenuScreen
 import com.erica.gamsung.menu.presentation.InputMenuViewModel
 import com.erica.gamsung.store.presentation.InputStoreScreen
@@ -31,9 +29,7 @@ import javax.inject.Inject
 // 일단은 상위 컴포넌트에서 생성해서 사용.
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject lateinit var database: GamsungDatabase
-
-    @Inject lateinit var menuApi: MenuApi
+    @Inject lateinit var menuRepository: MenuRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,14 +42,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     // ViewModel 여기서 생성
                     val calendarViewModel: CalendarViewModel = viewModel()
-                    val inputMenuViewModel =
-                        InputMenuViewModel(
-                            menuRepository =
-                                MenuRepositoryImpl(
-                                    menuDao = database.menuDao(),
-                                    menuApi = menuApi,
-                                ),
-                        )
+                    val inputMenuViewModel = InputMenuViewModel(menuRepository = menuRepository)
                     MainNavHost(
                         navController = navController,
                         calendarViewModel = calendarViewModel,
