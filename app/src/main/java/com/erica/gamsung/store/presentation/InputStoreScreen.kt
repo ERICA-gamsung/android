@@ -85,7 +85,10 @@ fun InputStoreScreen(
                 storeViewModel.onEvent(InputStoreUiEvent.PhoneNumberChanged(it))
             })
             Spacer(modifier = Modifier.weight(1f))
-            RegisterStoreButton(onClick = { navController.navigate(Screen.INPUT_MENU.route) })
+            RegisterStoreButton(
+                onClick = { navController.navigate(Screen.INPUT_MENU.route) },
+                enabled = inputStoreState.isValid,
+            )
         }
     }
 }
@@ -266,7 +269,10 @@ private fun StorePhoneNumberSection(
 }
 
 @Composable
-private fun RegisterStoreButton(onClick: () -> Unit = {}) {
+private fun RegisterStoreButton(
+    onClick: () -> Unit = {},
+    enabled: Boolean = true,
+) {
     GsButton(
         modifier =
             Modifier
@@ -275,6 +281,7 @@ private fun RegisterStoreButton(onClick: () -> Unit = {}) {
                 .padding(vertical = 12.dp),
         text = "가게 등록하기",
         onClick = onClick,
+        enabled = enabled,
     )
 }
 

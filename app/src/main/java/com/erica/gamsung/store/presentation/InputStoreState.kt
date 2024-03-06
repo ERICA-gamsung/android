@@ -15,4 +15,30 @@ data class InputStoreState(
         DayOfWeek.entries.associateWith { false },
     val openTime: TimePickerState? = null,
     val closeTime: TimePickerState? = null,
-)
+) {
+    private val isNameValid: Boolean
+        get() = name?.isNotBlank() ?: false
+
+    private val isAddressValid: Boolean
+        get() = address?.isNotBlank() ?: false
+
+    private val isPhoneNumberValid: Boolean
+        get() = phoneNumber?.matches(Regex("^0(2|[0-9]{2})-(\\d{3,4})-(\\d{4})$")) ?: false
+
+    private val isTypeValid: Boolean
+        get() = type != null
+
+    private val isBusinessDaysValid: Boolean
+        get() = businessDays.containsValue(true)
+
+    private val isOpenTimeValid: Boolean
+        get() = openTime != null
+
+    private val isCloseTimeValid: Boolean
+        get() = closeTime != null
+
+    val isValid: Boolean
+        get() =
+            isNameValid and isAddressValid and isPhoneNumberValid and
+                isTypeValid and isBusinessDaysValid and isOpenTimeValid and isCloseTimeValid
+}
