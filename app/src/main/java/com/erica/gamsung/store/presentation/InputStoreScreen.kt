@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
@@ -48,7 +49,10 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InputStoreScreen(navController: NavHostController = rememberNavController()) {
+fun InputStoreScreen(
+    navController: NavHostController = rememberNavController(),
+    storeViewModel: StoreViewModel = viewModel(),
+) {
     Scaffold(
         topBar = { GsTopAppBar(title = "식당 정보 입력 (1/2)") },
     ) { paddingValues ->
@@ -58,7 +62,7 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                     .fillMaxSize()
                     .padding(top = paddingValues.calculateTopPadding(), start = 8.dp, end = 8.dp),
         ) {
-            StoreNameSection(onValueChange = { /* TODO */ }, isValid = true)
+            StoreNameSection(onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.NameChanged(it)) })
             StoreTypeSection(onClick = { /* TODO */ }, selectedStoreType = StoreType.CAFE)
             StoreBusinessHoursSection(
                 openTimePickerState = TimePickerState(0, 0, false),
@@ -79,8 +83,10 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                         DayOfWeek.SATURDAY to false,
                     ),
             )
-            StoreAddressSection(onValueChange = { /* TODO */ }, isValid = true)
-            StorePhoneNumberSection(onValueChange = { /* TODO */ }, isValid = true)
+            StoreAddressSection(onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.AddressChanged(it)) })
+            StorePhoneNumberSection(onValueChange = {
+                storeViewModel.onEvent(InputStoreUiEvent.PhoneNumberChanged(it))
+            })
             Spacer(modifier = Modifier.weight(1f))
             RegisterStoreButton(onClick = { navController.navigate(Screen.INPUT_MENU.route) })
         }
@@ -208,6 +214,7 @@ private fun HoursSection(
     }
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 @Composable
 private fun StoreBusinessDaysSection(
     onClick: (DayOfWeek) -> Unit = {},
