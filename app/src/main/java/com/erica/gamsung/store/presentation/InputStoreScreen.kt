@@ -268,12 +268,12 @@ private fun StorePhoneNumberSection(
 @Composable
 private fun RegisterStoreButton(onClick: () -> Unit = {}) {
     GsButton(
-        text = "가게 등록하기",
         modifier =
             Modifier
                 .fillMaxWidth()
                 .height(70.dp)
                 .padding(vertical = 12.dp),
+        text = "가게 등록하기",
         onClick = onClick,
     )
 }

@@ -28,6 +28,7 @@ fun GsButton(
     text: String,
     onClick: () -> Unit = {},
     containerColor: Color = VividBlue,
+    enabled: Boolean = true,
 ) {
     Button(
         shape = RoundedCornerShape(10.dp),
@@ -40,6 +41,7 @@ fun GsButton(
             )
         },
         modifier = modifier,
+        enabled = enabled,
     )
 }
 

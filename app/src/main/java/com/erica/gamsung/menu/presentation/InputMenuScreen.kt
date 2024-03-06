@@ -71,12 +71,12 @@ fun InputMenuScreen(
             }
             Divider()
             GsButton(
-                text = "메뉴 등록하기",
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .height(70.dp)
                         .padding(horizontal = 8.dp, vertical = 12.dp),
+                text = "메뉴 등록하기",
                 onClick = {
                     inputMenuViewModel.onEvent(InputMenuUiEvent.SendMenus)
                     if (shouldNavigate) {
