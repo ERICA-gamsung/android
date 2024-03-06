@@ -71,10 +71,10 @@ fun InputStoreScreen(
                 selectedStoreType = inputStoreState.type,
             )
             StoreBusinessHoursSection(
-                openTimePickerState = TimePickerState(0, 0, false),
-                closeTimePickerState = null,
-                onOpenTimeUpdate = { /* TODO */ },
-                onCloseTimeUpdate = { /* TODO */ },
+                openTimePickerState = inputStoreState.openTime,
+                closeTimePickerState = inputStoreState.closeTime,
+                onOpenTimeUpdate = { storeViewModel.onEvent(InputStoreUiEvent.OpenTimeUpdate(it)) },
+                onCloseTimeUpdate = { storeViewModel.onEvent(InputStoreUiEvent.CloseTimeUpdate(it)) },
             )
             StoreBusinessDaysSection(
                 onClick = { storeViewModel.onEvent(InputStoreUiEvent.BusinessDaysChanged(it)) },

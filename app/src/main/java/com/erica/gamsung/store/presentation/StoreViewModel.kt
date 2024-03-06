@@ -1,10 +1,12 @@
 package com.erica.gamsung.store.presentation
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+@OptIn(ExperimentalMaterial3Api::class)
 class StoreViewModel : ViewModel() {
     private var _inputStoreState = MutableStateFlow(InputStoreState())
     val inputStoreState = _inputStoreState.asStateFlow()
@@ -16,6 +18,8 @@ class StoreViewModel : ViewModel() {
             is InputStoreUiEvent.PhoneNumberChanged -> handlePhoneNumberChanged(event)
             is InputStoreUiEvent.TypeChanged -> handleTypeChanged(event)
             is InputStoreUiEvent.BusinessDaysChanged -> handleBusinessDaysChanged(event)
+            is InputStoreUiEvent.OpenTimeUpdate -> handleOpenTimeUpdate(event)
+            is InputStoreUiEvent.CloseTimeUpdate -> handleCloseTimeUpdate(event)
         }
     }
 
@@ -58,6 +62,22 @@ class StoreViewModel : ViewModel() {
                     it.businessDays.toMutableMap().apply {
                         this[event.day] = !(this[event.day] ?: false)
                     },
+            )
+        }
+    }
+
+    private fun handleOpenTimeUpdate(event: InputStoreUiEvent.OpenTimeUpdate) {
+        _inputStoreState.update {
+            it.copy(
+                openTime = event.timePickerState,
+            )
+        }
+    }
+
+    private fun handleCloseTimeUpdate(event: InputStoreUiEvent.CloseTimeUpdate) {
+        _inputStoreState.update {
+            it.copy(
+                closeTime = event.timePickerState,
             )
         }
     }
