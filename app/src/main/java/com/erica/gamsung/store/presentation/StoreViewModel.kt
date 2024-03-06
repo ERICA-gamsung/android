@@ -14,6 +14,8 @@ class StoreViewModel : ViewModel() {
             is InputStoreUiEvent.NameChanged -> handleNameChanged(event)
             is InputStoreUiEvent.AddressChanged -> handleAddressChanged(event)
             is InputStoreUiEvent.PhoneNumberChanged -> handlePhoneNumberChanged(event)
+            is InputStoreUiEvent.TypeChanged -> handleTypeChanged(event)
+            is InputStoreUiEvent.BusinessDaysChanged -> handleBusinessDaysChanged(event)
         }
     }
 
@@ -37,6 +39,25 @@ class StoreViewModel : ViewModel() {
         _inputStoreState.update {
             it.copy(
                 phoneNumber = event.phoneNumber,
+            )
+        }
+    }
+
+    private fun handleTypeChanged(event: InputStoreUiEvent.TypeChanged) {
+        _inputStoreState.update {
+            it.copy(
+                type = event.type,
+            )
+        }
+    }
+
+    private fun handleBusinessDaysChanged(event: InputStoreUiEvent.BusinessDaysChanged) {
+        _inputStoreState.update {
+            it.copy(
+                businessDays =
+                    it.businessDays.toMutableMap().apply {
+                        this[event.day] = !(this[event.day] ?: false)
+                    },
             )
         }
     }

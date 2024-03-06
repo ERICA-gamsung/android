@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,8 @@ fun InputStoreScreen(
     navController: NavHostController = rememberNavController(),
     storeViewModel: StoreViewModel = viewModel(),
 ) {
+    val inputStoreState by storeViewModel.inputStoreState.collectAsState()
+
     Scaffold(
         topBar = { GsTopAppBar(title = "식당 정보 입력 (1/2)") },
     ) { paddingValues ->
@@ -63,7 +66,10 @@ fun InputStoreScreen(
                     .padding(top = paddingValues.calculateTopPadding(), start = 8.dp, end = 8.dp),
         ) {
             StoreNameSection(onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.NameChanged(it)) })
-            StoreTypeSection(onClick = { /* TODO */ }, selectedStoreType = StoreType.CAFE)
+            StoreTypeSection(
+                onClick = { storeViewModel.onEvent(InputStoreUiEvent.TypeChanged(it)) },
+                selectedStoreType = inputStoreState.type,
+            )
             StoreBusinessHoursSection(
                 openTimePickerState = TimePickerState(0, 0, false),
                 closeTimePickerState = null,
@@ -71,17 +77,8 @@ fun InputStoreScreen(
                 onCloseTimeUpdate = { /* TODO */ },
             )
             StoreBusinessDaysSection(
-                onClick = { /* TODO */ },
-                week =
-                    mapOf(
-                        DayOfWeek.SUNDAY to false,
-                        DayOfWeek.MONDAY to true,
-                        DayOfWeek.TUESDAY to false,
-                        DayOfWeek.WEDNESDAY to true,
-                        DayOfWeek.THURSDAY to false,
-                        DayOfWeek.FRIDAY to true,
-                        DayOfWeek.SATURDAY to false,
-                    ),
+                onClick = { storeViewModel.onEvent(InputStoreUiEvent.BusinessDaysChanged(it)) },
+                week = inputStoreState.businessDays,
             )
             StoreAddressSection(onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.AddressChanged(it)) })
             StorePhoneNumberSection(onValueChange = {
