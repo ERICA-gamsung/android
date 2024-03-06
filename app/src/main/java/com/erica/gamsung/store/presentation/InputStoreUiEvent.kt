@@ -34,4 +34,6 @@ sealed interface InputStoreUiEvent {
     data class CloseTimeUpdate(
         val timePickerState: TimePickerState,
     ) : InputStoreUiEvent
+
+    data object SendStore : InputStoreUiEvent
 }

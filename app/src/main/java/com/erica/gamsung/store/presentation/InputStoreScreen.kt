@@ -86,7 +86,10 @@ fun InputStoreScreen(
             })
             Spacer(modifier = Modifier.weight(1f))
             RegisterStoreButton(
-                onClick = { navController.navigate(Screen.INPUT_MENU.route) },
+                onClick = {
+                    storeViewModel.onEvent(InputStoreUiEvent.SendStore)
+                    navController.navigate(Screen.INPUT_MENU.route)
+                },
                 enabled = inputStoreState.isValid,
             )
         }

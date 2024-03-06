@@ -2,7 +2,9 @@ package com.erica.gamsung.store.presentation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
+import com.erica.gamsung.store.domain.Store
 import com.erica.gamsung.store.domain.StoreType
+import com.erica.gamsung.store.presentation.utils.toLocalTime
 import java.time.DayOfWeek
 
 @OptIn(ExperimentalStdlibApi::class, ExperimentalMaterial3Api::class)
@@ -16,6 +18,17 @@ data class InputStoreState(
     val openTime: TimePickerState? = null,
     val closeTime: TimePickerState? = null,
 ) {
+    fun toDomainModel(): Store =
+        Store(
+            name = name!!,
+            address = address!!,
+            phoneNumber = phoneNumber!!,
+            type = type!!,
+            businessDays = businessDays,
+            openTime = openTime!!.toLocalTime(),
+            closeTime = closeTime!!.toLocalTime(),
+        )
+
     private val isNameValid: Boolean
         get() = name?.isNotBlank() ?: false
 
