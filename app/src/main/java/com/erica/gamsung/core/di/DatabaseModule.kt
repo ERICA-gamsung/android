@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.erica.gamsung.core.data.GamsungDatabase
 import com.erica.gamsung.menu.data.local.MenuDao
+import com.erica.gamsung.store.data.local.StoreDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,4 +30,8 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideMenuDao(database: GamsungDatabase): MenuDao = database.menuDao()
+
+    @Singleton
+    @Provides
+    fun provideStoreDao(database: GamsungDatabase): StoreDao = database.storeDao()
 }
