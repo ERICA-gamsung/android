@@ -49,7 +49,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideMovieApi(retrofit: Retrofit): MenuApi = retrofit.create(MenuApi::class.java)
+    fun provideMenuApi(retrofit: Retrofit): MenuApi = retrofit.create(MenuApi::class.java)
 
     @Singleton
     @Provides
