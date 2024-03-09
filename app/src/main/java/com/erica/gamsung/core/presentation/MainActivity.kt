@@ -14,23 +14,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.erica.gamsung.core.di.GamsungDatabase
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
-import com.erica.gamsung.menu.data.remote.MenuApi
-import com.erica.gamsung.menu.data.repository.MenuRepositoryImpl
 import com.erica.gamsung.menu.presentation.InputMenuScreen
-import com.erica.gamsung.menu.presentation.InputMenuViewModel
 import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import com.erica.gamsung.uploadTime.presentation.MyCalendarScreen
 import com.erica.gamsung.uploadTime.presentation.MyScheduleScreen
+import dagger.hilt.android.AndroidEntryPoint
 
 // 동일한 viewmodel을 2개의 page가 공유하기 위해서는 hilt를 이용한 DI가 필요하다고 한다.
 // 일단은 상위 컴포넌트에서 생성해서 사용.
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val database = GamsungDatabase.getInstance(this)!!
         setContent {
             GamsungTheme {
                 Surface(
@@ -43,7 +40,6 @@ class MainActivity : ComponentActivity() {
                     MainNavHost(
                         navController = navController,
                         calendarViewModel = calendarViewModel,
-                        database = database,
                     )
                 }
             }
@@ -55,7 +51,6 @@ class MainActivity : ComponentActivity() {
 fun MainNavHost(
     navController: NavHostController,
     calendarViewModel: CalendarViewModel,
-    database: GamsungDatabase,
 ) {
     NavHost(navController = navController, startDestination = Screen.MAIN.route) {
         composable(Screen.MAIN.route) { MainScreen(navController = navController) }
@@ -63,19 +58,7 @@ fun MainNavHost(
         composable(Screen.PUBLISH_POSTING.route) { PublishPostingScreen() }
         composable(Screen.CHECK_POSTING.route) { CheckPostingScreen() }
         composable(Screen.INPUT_STORE.route) { InputStoreScreen(navController = navController) }
-        composable(Screen.INPUT_MENU.route) {
-            InputMenuScreen(
-                navController = navController,
-                inputMenuViewModel =
-                    InputMenuViewModel(
-                        menuRepository =
-                            MenuRepositoryImpl(
-                                menuDao = database.menuDao(),
-                                menuApi = MenuApi.service,
-                            ),
-                    ),
-            )
-        }
+        composable(Screen.INPUT_MENU.route) { InputMenuScreen(navController = navController) }
         composable(Screen.DATE_SELECT.route) {
             MyCalendarScreen(navController = navController, viewModel = calendarViewModel)
         }

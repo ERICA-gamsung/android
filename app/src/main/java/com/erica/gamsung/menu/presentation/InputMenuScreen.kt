@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
@@ -45,7 +45,7 @@ import com.erica.gamsung.menu.domain.Menu
 @Composable
 fun InputMenuScreen(
     navController: NavHostController = rememberNavController(),
-    inputMenuViewModel: InputMenuViewModel = viewModel(),
+    inputMenuViewModel: InputMenuViewModel = hiltViewModel(),
 ) {
     val menus by inputMenuViewModel.menusState.collectAsState()
     val inputMenuState by inputMenuViewModel.inputMenuState.collectAsState()
@@ -267,5 +267,5 @@ private fun TitleTextField(
 @Preview
 @Composable
 private fun InputMenuScreenPreview() {
-    InputMenuScreen(inputMenuViewModel = InputMenuViewModel(emptyList(), InputMenuState()))
+    InputMenuScreen()
 }
