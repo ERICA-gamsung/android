@@ -46,7 +46,7 @@ const val CHUNK_NUM = 7
 @Suppress("LongMethod")
 @Composable
 fun CalendarView(
-    // focusedDate: LocalDate? = null,
+    focusedDate: LocalDate? = null,
     selectedDatesMap: Map<YearMonth, List<LocalDate>>,
     onDateSelected: ((LocalDate, Boolean) -> Unit)? = null,
     onToggleValid: Boolean,
@@ -121,6 +121,7 @@ fun CalendarView(
         )
         DaysOfWeekRow()
         CalendarGrid(
+            focusedDate = focusedDate,
             yearMonth = currentYearMonth,
             selectedDatesMap = selectedDatesMap,
             onDateSelected = { date, isSelected -> if (onToggleValid) toggleDateSelectionInUI(date, isSelected) },
@@ -154,6 +155,7 @@ fun CalendarHeader(yearMonth: YearMonth) {
 }
 
 // 요일 (일,월,화,수,목,금)
+@OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun DaysOfWeekRow() {
     val daysOfWeek =
@@ -187,6 +189,7 @@ fun DaysOfWeekRow() {
 @Suppress("LongMethod", "MagicNumber")
 @Composable
 fun CalendarGrid(
+    focusedDate: LocalDate? = null,
     yearMonth: YearMonth,
     selectedDatesMap: Map<YearMonth, List<LocalDate>>,
     onDateSelected: ((LocalDate, Boolean) -> Unit)? = null,
@@ -227,6 +230,7 @@ fun CalendarGrid(
                                     .weight(1f),
                             date = date,
                             isSelected = isSelected,
+                            focusedDate = focusedDate,
                             onDateSelected = { selectedDate, _ ->
                                 // 선택된 날짜를 처리 하는 로직
                                 onDateSelected?.invoke(selectedDate, !isSelected)
@@ -270,8 +274,8 @@ fun DateView(
     val isFocused = date == focusedDate
     val backGroundColor =
         when {
+            isFocused -> Color.Blue
             isSelected -> MaterialTheme.colorScheme.primary
-            isFocused -> Color.Red
             else -> Color.Transparent
         }
     val textColor = if (isSelected || isFocused) Color.White else MaterialTheme.colorScheme.onSurface

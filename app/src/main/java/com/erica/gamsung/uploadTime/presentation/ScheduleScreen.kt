@@ -24,6 +24,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +58,7 @@ fun MyScheduleScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: CalendarViewModel = viewModel(),
 ) {
+    val focusedDate by viewModel.focusedDate.observeAsState()
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
     val selectedDatesMap = remember { mutableStateMapOf<YearMonth, List<LocalDate>>() }
     // 현재 달을 기준으로 초기화
@@ -90,9 +92,13 @@ fun MyScheduleScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             CalendarView(
+                focusedDate = focusedDate,
                 selectedDatesMap = viewModel.selectedDatesMap,
                 onDateSelected = { date, isSelected ->
                     viewModel.toggleDateSelection(date, isSelected)
+                    if (!isSelected) {
+                        viewModel.setFocusedDate(date)
+                    }
                 },
                 onToggleValid = false,
             )
@@ -137,7 +143,13 @@ fun MyScheduleScreen(
             ) {
                 GsOutlinedButton(text = "취소하기")
                 Spacer(modifier = Modifier.width(32.dp))
-                GsButton(text = "선택하기", containerColor = Color.Blue)
+                GsButton(
+                    text = "선택하기",
+                    containerColor = Color.Blue,
+                    onClick = {
+                        viewModel.moveToNextDate()
+                    },
+                )
             }
         }
     }
