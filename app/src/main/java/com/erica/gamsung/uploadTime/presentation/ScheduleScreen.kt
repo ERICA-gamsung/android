@@ -1,5 +1,6 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -67,11 +68,18 @@ fun MyScheduleScreen(
     selectedDatesMap[currentMonth] = listOf(LocalDate.now())
 
     // 사용자 입력을 저장할 상태 변수
-    var text by remember { mutableStateOf("") }
+    // var text by remember { mutableStateOf("") }
+
+    // 날짜에 따른 사용자의 입력 데이터를 저장할 상태 변수
+    var time by remember { mutableStateOf("") }
+    var textOption by remember { mutableStateOf("") }
+    var message by remember { mutableStateOf("") }
 
     // TimePicker에 필요한 변수
     val openTimePickerState = TimePickerState(0, 0, false)
-    val onOpenTimeUpdate: (TimePickerState) -> Unit = { /*TODO*/ }
+    val onOpenTimeUpdate: (TimePickerState) -> Unit = { newState ->
+        time = newState.toDisplayString()
+    }
 
     val options =
         listOf(
@@ -117,7 +125,7 @@ fun MyScheduleScreen(
                 hintText = "선택 없음",
                 description = (" (선택)"),
                 onValueChange = { newText ->
-                    text = newText
+                    textOption = newText
                 },
                 items = options,
                 isValid = false,
@@ -132,7 +140,7 @@ fun MyScheduleScreen(
                 description = (" (선택)"),
                 hintText = "ex. 서비스가 괜찮아요",
                 onValueChange = { newText ->
-                    text = newText
+                    message = newText
                 },
                 keyboardType = KeyboardType.Text,
                 isValid = false,
@@ -147,7 +155,16 @@ fun MyScheduleScreen(
                     text = "선택하기",
                     containerColor = Color.Blue,
                     onClick = {
+                        viewModel.updateScheduleData(time, textOption, message)
                         viewModel.moveToNextDate()
+                        val mapContents =
+                            viewModel
+                                .scheduleDataMap
+                                .entries
+                                .joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
+                                    "$key=${value.date}, ${value.time}, ${value.textOption}, ${value.message}"
+                                }
+                        Log.d("ScheduleDataList", "DataList: $mapContents")
                     },
                 )
             }
