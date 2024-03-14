@@ -8,6 +8,12 @@ plugins {
 
     // detekt
     id("io.gitlab.arturbosch.detekt") version("1.23.4")
+
+    // kapt
+    kotlin("kapt") version "1.9.0" apply false
+
+    // hilt
+    id("com.google.dagger.hilt.android") version "2.46" apply false
 }
 
 allprojects {

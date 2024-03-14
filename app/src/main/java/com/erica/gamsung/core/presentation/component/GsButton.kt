@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -19,8 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-
-private val VividBlue = Color(0xFF1268FB)
+import com.erica.gamsung.core.presentation.theme.VividBlue
 
 @Composable
 fun GsButton(
@@ -28,6 +27,7 @@ fun GsButton(
     text: String,
     onClick: () -> Unit = {},
     containerColor: Color = VividBlue,
+    enabled: Boolean = true,
 ) {
     Button(
         shape = RoundedCornerShape(10.dp),
@@ -40,6 +40,7 @@ fun GsButton(
             )
         },
         modifier = modifier,
+        enabled = enabled,
     )
 }
 
@@ -84,7 +85,7 @@ fun GsTextButtonWithIcon(
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "KeyboardArrowRight",
             )
         },
