@@ -19,8 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-
-private val VividBlue = Color(0xFF1268FB)
+import com.erica.gamsung.core.presentation.theme.VividBlue
 
 @Composable
 fun GsButton(

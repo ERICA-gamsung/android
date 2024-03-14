@@ -11,4 +11,5 @@ enum class Screen(
     INPUT_MENU("inputMenu"),
     DATE_SELECT("dateSelect"),
     TIME_SELECT("timeSelect"),
+    LOGIN("login"),
 }

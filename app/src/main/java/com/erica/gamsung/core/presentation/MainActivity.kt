@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
+import com.erica.gamsung.login.presentation.LoginScreen
 import com.erica.gamsung.menu.presentation.InputMenuScreen
 import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
@@ -65,6 +66,7 @@ fun MainNavHost(
         composable(Screen.TIME_SELECT.route) {
             MyScheduleScreen(navController = navController, viewModel = calendarViewModel)
         }
+        composable(Screen.LOGIN.route) { LoginScreen(navController = navController) }
     }
 }
 
