@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.erica.gamsung.uploadTime.utils.Event
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -19,8 +20,17 @@ class CalendarViewModel : ViewModel() {
     val selectedDatesMap = mutableStateMapOf<YearMonth, List<LocalDate>>()
     val scheduleDataMap = mutableStateMapOf<LocalDate, ScheduleData>()
 
+    private val _navigateToNextPage = MutableLiveData<Event<Unit>>()
+    val navigateToNextPage: LiveData<Event<Unit>> = _navigateToNextPage
+
     private var _focusedDate = MutableLiveData<LocalDate?>()
     val focusedDate: LiveData<LocalDate?> = _focusedDate
+
+    private val _textOption = MutableLiveData("")
+    val textOption: LiveData<String> = _textOption
+
+    private val _message = MutableLiveData("")
+    val message: LiveData<String> = _message
 
     init {
         val currentMonth = YearMonth.now()
@@ -30,6 +40,14 @@ class CalendarViewModel : ViewModel() {
 
     fun setFocusedDate(date: LocalDate?) {
         _focusedDate.value = date
+    }
+
+    fun setTextOption(newValue: String) {
+        _textOption.value = newValue
+    }
+
+    fun setMessage(newValue: String) {
+        _message.value = newValue
     }
 
     fun moveToNextDate() {
@@ -47,11 +65,12 @@ class CalendarViewModel : ViewModel() {
 //                }
 //            }
         if (nextDate == null) {
-            onNavigateToNextPage()
+            _navigateToNextPage.value = Event(Unit)
+        } else {
+            _focusedDate.value = nextDate
         }
         // MutableLiveData의 값을 업데이트하기 위해 setValue() 사용. 메인 스레드에서 호출
         // 혹은 postValue를 사용할 수 도 있음.(백그라운드 스레드에서 호출 가능)
-        _focusedDate.value = nextDate
     }
 
     fun toggleDateSelection(
@@ -85,10 +104,5 @@ class CalendarViewModel : ViewModel() {
                 )
             scheduleDataMap[date] = updatedScheduleData
         }
-    }
-
-    private fun onNavigateToNextPage() {
-        // navController.navigate("nextPage")
-        TODO()
     }
 }
