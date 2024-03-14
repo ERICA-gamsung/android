@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.erica.gamsung.uploadTime.utils.Event
+import com.erica.gamsung.uploadTime.presentation.utils.Event
 import java.time.LocalDate
 import java.time.YearMonth
 

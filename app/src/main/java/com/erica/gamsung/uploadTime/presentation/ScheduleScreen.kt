@@ -47,7 +47,7 @@ import com.erica.gamsung.core.presentation.component.GsOutlinedButton
 import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.core.presentation.component.TimeInputBox
 import com.erica.gamsung.store.presentation.utils.toDisplayString
-import com.erica.gamsung.uploadTime.component.CustomInputTextBox
+import com.erica.gamsung.uploadTime.presentation.component.CustomInputTextBox
 import java.time.LocalDate
 import java.time.YearMonth
 

@@ -1,4 +1,4 @@
-package com.erica.gamsung.uploadTime.utils
+package com.erica.gamsung.uploadTime.presentation.utils
 
 open class Event<out T>(
     private val content: T,

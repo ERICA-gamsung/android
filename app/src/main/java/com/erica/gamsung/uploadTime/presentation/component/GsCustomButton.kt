@@ -1,4 +1,4 @@
-package com.erica.gamsung.uploadTime.component
+package com.erica.gamsung.uploadTime.presentation.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
