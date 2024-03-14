@@ -218,18 +218,20 @@ fun InputTextBox(
     )
 }
 
+// 상태 호이스팅 적용
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownInputTextBox(
     modifier: Modifier = Modifier,
     hintText: String,
     items: List<String>,
+    selectedText: String,
     onValueChange: (String) -> Unit,
     isError: Boolean = false,
 ) {
-    var textState by remember {
-        mutableStateOf("")
-    }
+//    var textState by remember {
+//        mutableStateOf("")
+//    }
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -241,9 +243,9 @@ fun DropdownInputTextBox(
         modifier = modifier.fillMaxWidth(),
     ) {
         OutlinedTextField(
-            value = textState,
+            value = selectedText,
             onValueChange = {
-                textState = it
+                // textState = it
                 onValueChange(it)
             },
             readOnly = true,
@@ -274,7 +276,7 @@ fun DropdownInputTextBox(
             items.forEach { label ->
                 DropdownMenuItem(
                     onClick = {
-                        textState = label
+                        // textState = label
                         onValueChange(label)
                         expanded = false
                     },
@@ -330,13 +332,6 @@ private fun GsTextPreview() {
             },
             modifier = Modifier.fillMaxWidth(1f),
             innerTextModifier = Modifier.padding(16.dp),
-        )
-        DropdownInputTextBox(
-            hintText = "test",
-            items = options,
-            onValueChange = { newText ->
-                text = newText
-            },
         )
     }
 }
