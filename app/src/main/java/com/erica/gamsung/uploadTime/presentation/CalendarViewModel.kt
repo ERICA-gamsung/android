@@ -88,7 +88,7 @@ class CalendarViewModel : ViewModel() {
     }
 
     // focusedDate.value(날짜) 를 date로 받는다.
-    // 해당 date에 엮인 Data들을 리스트에 추가해준다.
+    // 해당 Date에 엮인 Data들을 리스트에 추가해준다.
     fun updateScheduleData(
         time: String,
         textOption: String,

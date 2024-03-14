@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
@@ -43,10 +44,10 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.component.DropdownInputTextBox
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsOutlinedButton
-import com.erica.gamsung.core.presentation.component.InputTextBox
 import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.core.presentation.component.TimeInputBox
 import com.erica.gamsung.store.presentation.utils.toDisplayString
+import com.erica.gamsung.uploadTime.component.CustomInputTextBox
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -60,6 +61,9 @@ fun MyScheduleScreen(
     viewModel: CalendarViewModel = viewModel(),
 ) {
     val focusedDate by viewModel.focusedDate.observeAsState()
+
+    val navigateEvent by viewModel.navigateToNextPage.observeAsState()
+
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
     val selectedDatesMap = remember { mutableStateMapOf<YearMonth, List<LocalDate>>() }
     // 현재 달을 기준으로 초기화
@@ -83,10 +87,16 @@ fun MyScheduleScreen(
 
     val options =
         listOf(
-            "option1", "option2", "option3", "option1",
-            "option2", "option3", "option1", "option2",
-            "option3", "option1", "option2", "option3",
+            "option1", "option2", "option3", "option4",
+            "option5", "option6", "option7", "option8",
+            "option9", "option10", "option11", "option12",
         )
+
+    LaunchedEffect(navigateEvent) {
+        navigateEvent?.getContentIfNotHandled()?.let {
+            navController.navigate("dateTimeListCheck")
+        }
+    }
 
     Scaffold {
         Column(
@@ -124,11 +134,12 @@ fun MyScheduleScreen(
                 title = "강조 메뉴",
                 hintText = "선택 없음",
                 description = (" (선택)"),
+                items = options,
+                isValid = false,
+                selectedText = textOption,
                 onValueChange = { newText ->
                     textOption = newText
                 },
-                items = options,
-                isValid = false,
             )
             // Spacer(modifier = Modifier.height(8.dp))
             TitleTextField(
@@ -139,6 +150,7 @@ fun MyScheduleScreen(
                 title = "고객에게 전하고 싶은 메세지",
                 description = (" (선택)"),
                 hintText = "ex. 서비스가 괜찮아요",
+                selectedText = message,
                 onValueChange = { newText ->
                     message = newText
                 },
@@ -156,6 +168,8 @@ fun MyScheduleScreen(
                     containerColor = Color.Blue,
                     onClick = {
                         viewModel.updateScheduleData(time, textOption, message)
+                        textOption = ""
+                        message = ""
                         viewModel.moveToNextDate()
                         val mapContents =
                             viewModel
@@ -232,6 +246,7 @@ private fun TitleTextField(
     hintText: String,
     description: String?,
     onValueChange: (String) -> Unit,
+    selectedText: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     isValid: Boolean,
 ) {
@@ -246,13 +261,14 @@ private fun TitleTextField(
         Box(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            InputTextBox(
+            CustomInputTextBox(
                 modifier =
                     Modifier
                         .padding(top = 5.dp, end = 10.dp)
                         .fillMaxWidth(),
                 hintText = hintText,
                 onValueChange = onValueChange,
+                selectedText = selectedText,
                 keyboardType = keyboardType,
             )
         }
@@ -265,9 +281,10 @@ private fun DropTitleTextField(
     title: String,
     hintText: String,
     description: String?,
-    onValueChange: (String) -> Unit,
     items: List<String>,
     isValid: Boolean,
+    selectedText: String,
+    onValueChange: (String) -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -285,6 +302,7 @@ private fun DropTitleTextField(
             hintText = hintText,
             items = items,
             onValueChange = onValueChange,
+            selectedText = selectedText,
         )
     }
 }
