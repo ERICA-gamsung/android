@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
@@ -48,7 +50,12 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InputStoreScreen(navController: NavHostController = rememberNavController()) {
+fun InputStoreScreen(
+    navController: NavHostController = rememberNavController(),
+    storeViewModel: StoreViewModel = hiltViewModel(),
+) {
+    val inputStoreState by storeViewModel.inputStoreState.collectAsState()
+
     Scaffold(
         topBar = { GsTopAppBar(title = "식당 정보 입력 (1/2)") },
     ) { paddingValues ->
@@ -58,31 +65,33 @@ fun InputStoreScreen(navController: NavHostController = rememberNavController())
                     .fillMaxSize()
                     .padding(top = paddingValues.calculateTopPadding(), start = 8.dp, end = 8.dp),
         ) {
-            StoreNameSection(onValueChange = { /* TODO */ }, isValid = true)
-            StoreTypeSection(onClick = { /* TODO */ }, selectedStoreType = StoreType.CAFE)
+            StoreNameSection(onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.NameChanged(it)) })
+            StoreTypeSection(
+                onClick = { storeViewModel.onEvent(InputStoreUiEvent.TypeChanged(it)) },
+                selectedStoreType = inputStoreState.type,
+            )
             StoreBusinessHoursSection(
-                openTimePickerState = TimePickerState(0, 0, false),
-                closeTimePickerState = null,
-                onOpenTimeUpdate = { /* TODO */ },
-                onCloseTimeUpdate = { /* TODO */ },
+                openTimePickerState = inputStoreState.openTime,
+                closeTimePickerState = inputStoreState.closeTime,
+                onOpenTimeUpdate = { storeViewModel.onEvent(InputStoreUiEvent.OpenTimeUpdate(it)) },
+                onCloseTimeUpdate = { storeViewModel.onEvent(InputStoreUiEvent.CloseTimeUpdate(it)) },
             )
             StoreBusinessDaysSection(
-                onClick = { /* TODO */ },
-                week =
-                    mapOf(
-                        DayOfWeek.SUNDAY to false,
-                        DayOfWeek.MONDAY to true,
-                        DayOfWeek.TUESDAY to false,
-                        DayOfWeek.WEDNESDAY to true,
-                        DayOfWeek.THURSDAY to false,
-                        DayOfWeek.FRIDAY to true,
-                        DayOfWeek.SATURDAY to false,
-                    ),
+                onClick = { storeViewModel.onEvent(InputStoreUiEvent.BusinessDaysChanged(it)) },
+                week = inputStoreState.businessDays,
             )
-            StoreAddressSection(onValueChange = { /* TODO */ }, isValid = true)
-            StorePhoneNumberSection(onValueChange = { /* TODO */ }, isValid = true)
+            StoreAddressSection(onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.AddressChanged(it)) })
+            StorePhoneNumberSection(onValueChange = {
+                storeViewModel.onEvent(InputStoreUiEvent.PhoneNumberChanged(it))
+            })
             Spacer(modifier = Modifier.weight(1f))
-            RegisterStoreButton(onClick = { navController.navigate(Screen.INPUT_MENU.route) })
+            RegisterStoreButton(
+                onClick = {
+                    storeViewModel.onEvent(InputStoreUiEvent.SendStore)
+                    navController.navigate(Screen.INPUT_MENU.route)
+                },
+                enabled = inputStoreState.isValid,
+            )
         }
     }
 }
@@ -208,6 +217,7 @@ private fun HoursSection(
     }
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 @Composable
 private fun StoreBusinessDaysSection(
     onClick: (DayOfWeek) -> Unit = {},
@@ -262,15 +272,19 @@ private fun StorePhoneNumberSection(
 }
 
 @Composable
-private fun RegisterStoreButton(onClick: () -> Unit = {}) {
+private fun RegisterStoreButton(
+    onClick: () -> Unit = {},
+    enabled: Boolean = true,
+) {
     GsButton(
-        text = "가게 등록하기",
         modifier =
             Modifier
                 .fillMaxWidth()
                 .height(70.dp)
                 .padding(vertical = 12.dp),
+        text = "가게 등록하기",
         onClick = onClick,
+        enabled = enabled,
     )
 }
 

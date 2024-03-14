@@ -61,9 +61,9 @@ fun MyCalendarScreen(
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(32.dp))
-            GsButton(text = "확정하기", containerColor = Color.Blue, onClick = {
+            GsButton(text = "확정하기", onClick = {
                 navController.navigate("timeSelect")
-            })
+            }, containerColor = Color.Blue)
         }
     }
 }
