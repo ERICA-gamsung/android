@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
 import com.erica.gamsung.login.presentation.LoginScreen
 import com.erica.gamsung.menu.presentation.InputMenuScreen
+import com.erica.gamsung.setting.presentation.SettingScreen
 import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import com.erica.gamsung.uploadTime.presentation.MyCalendarScreen
@@ -72,11 +73,6 @@ fun MainNavHost(
         }
         composable(Screen.LOGIN.route) { LoginScreen(navController = navController) }
     }
-}
-
-@Composable
-fun SettingScreen() {
-    Text(text = "SettingScreen") // TODO 구현 시작 시 제거 및 코드 이동
 }
 
 @Composable
