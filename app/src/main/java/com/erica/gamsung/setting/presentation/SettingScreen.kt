@@ -1,23 +1,29 @@
 package com.erica.gamsung.setting.presentation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.erica.gamsung.core.presentation.component.GsOutlinedButton
 import com.erica.gamsung.core.presentation.component.GsTextButtonWithIcon
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 
@@ -74,21 +80,37 @@ private fun AccountSection(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
         )
-        GsOutlinedButton(
-            text = "로그아웃",
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-        )
-        GsOutlinedButton(
-            text = "회원 탈퇴",
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-        )
+
+        AccountButton(text = "로그아웃", onClick = { /* TODO */ })
+        AccountButton(text = "회원탈퇴", onClick = { /* TODO */ })
     }
+}
+
+@Composable
+private fun AccountButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(
+        shape = RoundedCornerShape(10.dp),
+        onClick = onClick,
+        content = {
+            Text(
+                text = text,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = "KeyboardArrowRight",
+                tint = Color.LightGray,
+            )
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        border = BorderStroke(1.dp, Color.LightGray),
+        modifier = Modifier.height(ButtonHeight),
+    )
 }
 
 @Preview
