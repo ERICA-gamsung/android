@@ -21,6 +21,7 @@ import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import com.erica.gamsung.uploadTime.presentation.MyCalendarScreen
 import com.erica.gamsung.uploadTime.presentation.MyScheduleScreen
+import com.erica.gamsung.uploadTime.presentation.ScheduleListScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 // 동일한 viewmodel을 2개의 page가 공유하기 위해서는 hilt를 이용한 DI가 필요하다고 한다.
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     val navController = rememberNavController()
-                    // ViewModel 여기서 생성
+                    // calendarViewModel 여기서 생성
                     val calendarViewModel: CalendarViewModel = viewModel()
                     MainNavHost(
                         navController = navController,
@@ -65,6 +66,9 @@ fun MainNavHost(
         }
         composable(Screen.TIME_SELECT.route) {
             MyScheduleScreen(navController = navController, viewModel = calendarViewModel)
+        }
+        composable(Screen.DATE_TIME_LIST_CHECK.route) {
+            ScheduleListScreen(navController = navController, viewModel = calendarViewModel)
         }
         composable(Screen.LOGIN.route) { LoginScreen(navController = navController) }
     }
