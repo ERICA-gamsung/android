@@ -60,8 +60,18 @@ fun MainNavHost(
         composable(Screen.Setting.route) { SettingScreen(navController = navController) }
         composable(Screen.PublishPosting.route) { PublishPostingScreen() }
         composable(Screen.CheckPosting.route) { CheckPostingScreen() }
-        composable(Screen.InputStore.route) { InputStoreScreen(navController = navController) }
-        composable(Screen.InputMenu.route) { InputMenuScreen(navController = navController) }
+        composable(Screen.InputStore(isEditMode = true).route) {
+            InputStoreScreen(navController = navController, isEditMode = true)
+        }
+        composable(Screen.InputStore(isEditMode = false).route) {
+            InputStoreScreen(navController = navController, isEditMode = false)
+        }
+        composable(Screen.InputMenu(isEditMode = true).route) {
+            InputMenuScreen(navController = navController, isEditMode = true)
+        }
+        composable(Screen.InputMenu(isEditMode = false).route) {
+            InputMenuScreen(navController = navController, isEditMode = false)
+        }
         composable(Screen.DateTimeListCheck.route) {
             MyCalendarScreen(navController = navController, viewModel = calendarViewModel)
         }

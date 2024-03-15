@@ -89,7 +89,7 @@ fun InputStoreScreen(
             RegisterStoreButton(
                 onClick = {
                     storeViewModel.onEvent(InputStoreUiEvent.SendStore)
-                    navController.navigate(Screen.InputMenu.route)
+                    navController.navigate(Screen.InputMenu(isEditMode = false).route)
                 },
                 enabled = inputStoreState.isValid,
                 isEditMode = isEditMode,

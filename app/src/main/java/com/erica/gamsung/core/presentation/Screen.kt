@@ -11,9 +11,13 @@ sealed class Screen(
 
     data object CheckPosting : Screen("checkPosting")
 
-    data object InputStore : Screen("inputStore")
+    data class InputStore(
+        val isEditMode: Boolean,
+    ) : Screen("inputStore/$isEditMode")
 
-    data object InputMenu : Screen("inputMenu")
+    data class InputMenu(
+        val isEditMode: Boolean,
+    ) : Screen("inputMenu/$isEditMode")
 
     data object DateSelect : Screen("dateSelect")
 

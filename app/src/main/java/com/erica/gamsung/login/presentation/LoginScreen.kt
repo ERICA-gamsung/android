@@ -119,7 +119,7 @@ private fun InstagramButton(
             if (hasAccount()) {
                 onNavigate(Screen.Main)
             } else {
-                onNavigate(Screen.InputStore)
+                onNavigate(Screen.InputStore(isEditMode = false))
             }
         },
         shape = RoundedCornerShape(50.dp),
