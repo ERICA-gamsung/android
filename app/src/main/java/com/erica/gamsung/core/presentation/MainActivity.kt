@@ -57,7 +57,7 @@ fun MainNavHost(
 ) {
     NavHost(navController = navController, startDestination = Screen.MAIN.route) {
         composable(Screen.MAIN.route) { MainScreen(navController = navController) }
-        composable(Screen.SETTING.route) { SettingScreen() }
+        composable(Screen.SETTING.route) { SettingScreen(navController = navController) }
         composable(Screen.PUBLISH_POSTING.route) { PublishPostingScreen() }
         composable(Screen.CHECK_POSTING.route) { CheckPostingScreen() }
         composable(Screen.INPUT_STORE.route) { InputStoreScreen(navController = navController) }

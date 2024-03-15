@@ -53,11 +53,12 @@ import java.util.Locale
 fun InputStoreScreen(
     navController: NavHostController = rememberNavController(),
     storeViewModel: StoreViewModel = hiltViewModel(),
+    isEditMode: Boolean = false,
 ) {
     val inputStoreState by storeViewModel.inputStoreState.collectAsState()
 
     Scaffold(
-        topBar = { GsTopAppBar(title = "식당 정보 입력 (1/2)") },
+        topBar = { GsTopAppBar(title = if (isEditMode) "식당 정보 수정" else "식당 정보 입력 (1/2)") },
     ) { paddingValues ->
         Column(
             modifier =
@@ -88,9 +89,10 @@ fun InputStoreScreen(
             RegisterStoreButton(
                 onClick = {
                     storeViewModel.onEvent(InputStoreUiEvent.SendStore)
-                    navController.navigate(Screen.INPUT_MENU.route)
+                    navController.navigate(Screen.InputMenu.route)
                 },
                 enabled = inputStoreState.isValid,
+                isEditMode = isEditMode,
             )
         }
     }
@@ -275,6 +277,7 @@ private fun StorePhoneNumberSection(
 private fun RegisterStoreButton(
     onClick: () -> Unit = {},
     enabled: Boolean = true,
+    isEditMode: Boolean = false,
 ) {
     GsButton(
         modifier =
@@ -282,7 +285,7 @@ private fun RegisterStoreButton(
                 .fillMaxWidth()
                 .height(70.dp)
                 .padding(vertical = 12.dp),
-        text = "가게 등록하기",
+        text = if (isEditMode) "가게 수정하기" else "가게 등록하기",
         onClick = onClick,
         enabled = enabled,
     )

@@ -46,13 +46,14 @@ import com.erica.gamsung.menu.domain.Menu
 fun InputMenuScreen(
     navController: NavHostController = rememberNavController(),
     inputMenuViewModel: InputMenuViewModel = hiltViewModel(),
+    isEditMode: Boolean = false,
 ) {
     val menus by inputMenuViewModel.menusState.collectAsState()
     val inputMenuState by inputMenuViewModel.inputMenuState.collectAsState()
     val shouldNavigate by inputMenuViewModel.shouldNavigateState.collectAsState()
 
     Scaffold(
-        topBar = { GsTopAppBar(title = "메뉴 입력 (2/2)") },
+        topBar = { GsTopAppBar(title = if (isEditMode) "메뉴 수정" else "메뉴 입력 (2/2)") },
     ) { paddingValues ->
         Column(
             modifier =
@@ -76,11 +77,11 @@ fun InputMenuScreen(
                         .fillMaxWidth()
                         .height(70.dp)
                         .padding(horizontal = 8.dp, vertical = 12.dp),
-                text = "메뉴 등록하기",
+                text = if (isEditMode) "메뉴 수정하기" else "메뉴 등록하기",
                 onClick = {
                     inputMenuViewModel.onEvent(InputMenuUiEvent.SendMenus)
                     if (shouldNavigate) {
-                        navController.navigate(Screen.MAIN.route)
+                        navController.navigate(Screen.Main.route)
                     }
                 },
             )

@@ -24,13 +24,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTextButtonWithIcon
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 
 private val ButtonHeight = 70.dp
 
 @Composable
-fun SettingScreen() {
+fun SettingScreen(navController: NavHostController = rememberNavController()) {
     Scaffold(
         topBar = { GsTopAppBar(title = "마이페이지") },
     ) { paddingValues ->
@@ -44,7 +47,12 @@ fun SettingScreen() {
             Column(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                StoreSection(modifier = Modifier.weight(2f))
+                StoreSection(
+                    modifier = Modifier.weight(2f),
+                    onNavigate = { screen ->
+                        navController.navigate(screen.route)
+                    },
+                )
                 Divider()
                 AccountSection(modifier = Modifier.weight(2f))
                 Spacer(modifier = Modifier.weight(1f))
@@ -54,7 +62,10 @@ fun SettingScreen() {
 }
 
 @Composable
-private fun StoreSection(modifier: Modifier = Modifier) {
+private fun StoreSection(
+    modifier: Modifier = Modifier,
+    onNavigate: (Screen) -> Unit,
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -64,8 +75,16 @@ private fun StoreSection(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
         )
-        GsTextButtonWithIcon(text = "가게 정보 관리하기", modifier = Modifier.height(ButtonHeight))
-        GsTextButtonWithIcon(text = "메뉴 정보 관리하기", modifier = Modifier.height(ButtonHeight))
+        GsTextButtonWithIcon(
+            text = "가게 정보 관리하기",
+            modifier = Modifier.height(ButtonHeight),
+            onClick = { onNavigate(Screen.INPUT_STORE) },
+        )
+        GsTextButtonWithIcon(
+            text = "메뉴 정보 관리하기",
+            modifier = Modifier.height(ButtonHeight),
+            onClick = { onNavigate(Screen.INPUT_MENU) },
+        )
     }
 }
 
