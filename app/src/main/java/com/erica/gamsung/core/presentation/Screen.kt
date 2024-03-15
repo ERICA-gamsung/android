@@ -1,16 +1,25 @@
 package com.erica.gamsung.core.presentation
 
-enum class Screen(
+sealed class Screen(
     val route: String,
 ) {
-    MAIN("main"),
-    SETTING("setting"),
-    PUBLISH_POSTING("publishPosting"),
-    CHECK_POSTING("checkPosting"),
-    INPUT_STORE("inputStore"),
-    INPUT_MENU("inputMenu"),
-    DATE_SELECT("dateSelect"),
-    TIME_SELECT("timeSelect"),
-    DATE_TIME_LIST_CHECK("dateTimeListCheck"),
-    LOGIN("login"),
+    data object Main : Screen("main")
+
+    data object Setting : Screen("setting")
+
+    data object PublishPosting : Screen("publishPosting")
+
+    data object CheckPosting : Screen("checkPosting")
+
+    data object InputStore : Screen("inputStore")
+
+    data object InputMenu : Screen("inputMenu")
+
+    data object DateSelect : Screen("dateSelect")
+
+    data object TimeSelect : Screen("timeSelect")
+
+    data object DateTimeListCheck : Screen("dateTimeListCheck")
+
+    data object Login : Screen("login")
 }

@@ -78,12 +78,12 @@ private fun StoreSection(
         GsTextButtonWithIcon(
             text = "가게 정보 관리하기",
             modifier = Modifier.height(ButtonHeight),
-            onClick = { onNavigate(Screen.INPUT_STORE) },
+            onClick = { onNavigate(Screen.InputStore) },
         )
         GsTextButtonWithIcon(
             text = "메뉴 정보 관리하기",
             modifier = Modifier.height(ButtonHeight),
-            onClick = { onNavigate(Screen.INPUT_MENU) },
+            onClick = { onNavigate(Screen.InputMenu) },
         )
     }
 }

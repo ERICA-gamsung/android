@@ -57,7 +57,7 @@ class MainScreenKtTest {
             .performClick()
 
         val route = navController.currentDestination?.route
-        assertEquals(route, Screen.SETTING.route)
+        assertEquals(route, Screen.Setting.route)
     }
 
     /** 메인 페이지에 글 발행 버튼이 화면에 보인다 */
@@ -76,7 +76,7 @@ class MainScreenKtTest {
             .performClick()
 
         val route = navController.currentDestination?.route
-        assertEquals(route, Screen.PUBLISH_POSTING.route)
+        assertEquals(route, Screen.PublishPosting.route)
     }
 
     /** 메인 페이지에 발행 현황 확인 버튼이 화면에 보인다 */
@@ -95,7 +95,7 @@ class MainScreenKtTest {
             .performClick()
 
         val route = navController.currentDestination?.route
-        assertEquals(route, Screen.CHECK_POSTING.route)
+        assertEquals(route, Screen.CheckPosting.route)
     }
 
     companion object {

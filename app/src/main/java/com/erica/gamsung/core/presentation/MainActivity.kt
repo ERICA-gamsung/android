@@ -55,23 +55,23 @@ fun MainNavHost(
     navController: NavHostController,
     calendarViewModel: CalendarViewModel,
 ) {
-    NavHost(navController = navController, startDestination = Screen.MAIN.route) {
-        composable(Screen.MAIN.route) { MainScreen(navController = navController) }
-        composable(Screen.SETTING.route) { SettingScreen(navController = navController) }
-        composable(Screen.PUBLISH_POSTING.route) { PublishPostingScreen() }
-        composable(Screen.CHECK_POSTING.route) { CheckPostingScreen() }
-        composable(Screen.INPUT_STORE.route) { InputStoreScreen(navController = navController) }
-        composable(Screen.INPUT_MENU.route) { InputMenuScreen(navController = navController) }
-        composable(Screen.DATE_SELECT.route) {
+    NavHost(navController = navController, startDestination = Screen.Main.route) {
+        composable(Screen.Main.route) { MainScreen(navController = navController) }
+        composable(Screen.Setting.route) { SettingScreen(navController = navController) }
+        composable(Screen.PublishPosting.route) { PublishPostingScreen() }
+        composable(Screen.CheckPosting.route) { CheckPostingScreen() }
+        composable(Screen.InputStore.route) { InputStoreScreen(navController = navController) }
+        composable(Screen.InputMenu.route) { InputMenuScreen(navController = navController) }
+        composable(Screen.DateTimeListCheck.route) {
             MyCalendarScreen(navController = navController, viewModel = calendarViewModel)
         }
-        composable(Screen.TIME_SELECT.route) {
+        composable(Screen.TimeSelect.route) {
             MyScheduleScreen(navController = navController, viewModel = calendarViewModel)
         }
-        composable(Screen.DATE_TIME_LIST_CHECK.route) {
+        composable(Screen.DateTimeListCheck.route) {
             ScheduleListScreen(navController = navController, viewModel = calendarViewModel)
         }
-        composable(Screen.LOGIN.route) { LoginScreen(navController = navController) }
+        composable(Screen.Login.route) { LoginScreen(navController = navController) }
     }
 }
 
