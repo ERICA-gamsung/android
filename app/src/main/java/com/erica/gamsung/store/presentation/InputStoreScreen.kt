@@ -66,7 +66,10 @@ fun InputStoreScreen(
                     .fillMaxSize()
                     .padding(top = paddingValues.calculateTopPadding(), start = 8.dp, end = 8.dp),
         ) {
-            StoreNameSection(onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.NameChanged(it)) })
+            StoreNameSection(
+                value = inputStoreState.name,
+                onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.NameChanged(it)) },
+            )
             StoreTypeSection(
                 onClick = { storeViewModel.onEvent(InputStoreUiEvent.TypeChanged(it)) },
                 selectedStoreType = inputStoreState.type,
@@ -81,10 +84,16 @@ fun InputStoreScreen(
                 onClick = { storeViewModel.onEvent(InputStoreUiEvent.BusinessDaysChanged(it)) },
                 week = inputStoreState.businessDays,
             )
-            StoreAddressSection(onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.AddressChanged(it)) })
-            StorePhoneNumberSection(onValueChange = {
-                storeViewModel.onEvent(InputStoreUiEvent.PhoneNumberChanged(it))
-            })
+            StoreAddressSection(
+                value = inputStoreState.address,
+                onValueChange = { storeViewModel.onEvent(InputStoreUiEvent.AddressChanged(it)) },
+            )
+            StorePhoneNumberSection(
+                value = inputStoreState.phoneNumber,
+                onValueChange = {
+                    storeViewModel.onEvent(InputStoreUiEvent.PhoneNumberChanged(it))
+                },
+            )
             Spacer(modifier = Modifier.weight(1f))
             RegisterStoreButton(
                 onClick = {
@@ -100,12 +109,14 @@ fun InputStoreScreen(
 
 @Composable
 fun StoreNameSection(
+    value: String?,
     onValueChange: (String) -> Unit = {},
     isValid: Boolean = true,
 ) {
     TitleTextField(
         title = "음식점 이름",
         hintText = "ex. 감성식당",
+        value = value ?: "",
         onValueChange = onValueChange,
         isValid = isValid,
         modifier = Modifier.fillMaxWidth(),
@@ -248,12 +259,14 @@ private fun StoreBusinessDaysSection(
 
 @Composable
 private fun StoreAddressSection(
+    value: String?,
     onValueChange: (String) -> Unit = {},
     isValid: Boolean = true,
 ) {
     TitleTextField(
         title = "주소",
         hintText = "ex. 안산시 상록구 한양대학로 99 1층",
+        value = value ?: "",
         onValueChange = onValueChange,
         isValid = isValid,
     )
@@ -261,12 +274,14 @@ private fun StoreAddressSection(
 
 @Composable
 private fun StorePhoneNumberSection(
+    value: String?,
     onValueChange: (String) -> Unit = {},
     isValid: Boolean = true,
 ) {
     TitleTextField(
         title = "전화 번호",
         hintText = "ex. 010-1234-1234",
+        value = value ?: "",
         onValueChange = onValueChange,
         isValid = isValid,
         keyboardType = KeyboardType.Number,

@@ -77,6 +77,7 @@ fun GsTextBox(
                 onValueChange = { text = TextFieldValue(it) },
                 keyboardType = KeyboardType.Text,
                 isError = false,
+                value = "",
             )
         }
     }
@@ -182,17 +183,14 @@ private fun DropdownTextBox(
 fun InputTextBox(
     modifier: Modifier = Modifier,
     hintText: String,
+    value: String,
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
     isError: Boolean = false,
 ) {
-    var textState by remember {
-        mutableStateOf("")
-    }
     OutlinedTextField(
-        value = textState,
+        value = value,
         onValueChange = {
-            textState = it
             onValueChange(it)
         },
         placeholder = {

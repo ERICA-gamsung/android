@@ -258,6 +258,7 @@ private fun TitleTextField(
         InputTextBox(
             modifier = Modifier.padding(top = 5.dp, end = 10.dp),
             hintText = hintText,
+            value = "",
             onValueChange = onValueChange,
             keyboardType = keyboardType,
             isError = !isValid,
