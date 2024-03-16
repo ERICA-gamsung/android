@@ -5,18 +5,17 @@ import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
-/**
- * {
- *     "id": 1,
- *     "name": "감성식당",
- *     "type": "음식점",
- *     "openTime": "09:00:00",
- *     "closeTime": "21:00:00",
- *     "openDay": "월화수목금",
- *     "address": "한양대학 1길",
- *     "phoneNumber": "02-1234-5678"
- * }
- */
+data class GetStoreResponse(
+    val id: Long,
+    val name: String,
+    val type: String,
+    val openTime: LocalTime,
+    val closeTime: LocalTime,
+    val openDay: String,
+    val address: String,
+    val phoneNumber: String,
+)
+
 data class UpdateStoreRequest(
     val id: Long = 1L,
     val name: String,
