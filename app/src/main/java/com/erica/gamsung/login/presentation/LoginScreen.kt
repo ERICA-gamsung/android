@@ -117,9 +117,9 @@ private fun InstagramButton(
         onClick = {
             // TODO 인스타 소셜로그인 연결
             if (hasAccount()) {
-                onNavigate(Screen.MAIN)
+                onNavigate(Screen.Main)
             } else {
-                onNavigate(Screen.INPUT_STORE)
+                onNavigate(Screen.InputStore(isEditMode = false))
             }
         },
         shape = RoundedCornerShape(50.dp),

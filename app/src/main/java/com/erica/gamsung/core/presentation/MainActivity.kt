@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
 import com.erica.gamsung.login.presentation.LoginScreen
 import com.erica.gamsung.menu.presentation.InputMenuScreen
+import com.erica.gamsung.setting.presentation.SettingScreen
 import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import com.erica.gamsung.uploadTime.presentation.MyCalendarScreen
@@ -54,29 +55,34 @@ fun MainNavHost(
     navController: NavHostController,
     calendarViewModel: CalendarViewModel,
 ) {
-    NavHost(navController = navController, startDestination = Screen.MAIN.route) {
-        composable(Screen.MAIN.route) { MainScreen(navController = navController) }
-        composable(Screen.SETTING.route) { SettingScreen() }
-        composable(Screen.PUBLISH_POSTING.route) { PublishPostingScreen() }
-        composable(Screen.CHECK_POSTING.route) { CheckPostingScreen() }
-        composable(Screen.INPUT_STORE.route) { InputStoreScreen(navController = navController) }
-        composable(Screen.INPUT_MENU.route) { InputMenuScreen(navController = navController) }
-        composable(Screen.DATE_SELECT.route) {
+    NavHost(navController = navController, startDestination = Screen.Main.route) {
+        composable(Screen.Main.route) { MainScreen(navController = navController) }
+        composable(Screen.Setting.route) { SettingScreen(navController = navController) }
+        composable(Screen.PublishPosting.route) { PublishPostingScreen() }
+        composable(Screen.CheckPosting.route) { CheckPostingScreen() }
+        composable(Screen.InputStore(isEditMode = true).route) {
+            InputStoreScreen(navController = navController, isEditMode = true)
+        }
+        composable(Screen.InputStore(isEditMode = false).route) {
+            InputStoreScreen(navController = navController, isEditMode = false)
+        }
+        composable(Screen.InputMenu(isEditMode = true).route) {
+            InputMenuScreen(navController = navController, isEditMode = true)
+        }
+        composable(Screen.InputMenu(isEditMode = false).route) {
+            InputMenuScreen(navController = navController, isEditMode = false)
+        }
+        composable(Screen.DateTimeListCheck.route) {
             MyCalendarScreen(navController = navController, viewModel = calendarViewModel)
         }
-        composable(Screen.TIME_SELECT.route) {
+        composable(Screen.TimeSelect.route) {
             MyScheduleScreen(navController = navController, viewModel = calendarViewModel)
         }
-        composable(Screen.DATE_TIME_LIST_CHECK.route) {
+        composable(Screen.DateTimeListCheck.route) {
             ScheduleListScreen(navController = navController, viewModel = calendarViewModel)
         }
-        composable(Screen.LOGIN.route) { LoginScreen(navController = navController) }
+        composable(Screen.Login.route) { LoginScreen(navController = navController) }
     }
-}
-
-@Composable
-fun SettingScreen() {
-    Text(text = "SettingScreen") // TODO 구현 시작 시 제거 및 코드 이동
 }
 
 @Composable
