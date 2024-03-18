@@ -19,6 +19,17 @@ data class StoreEntity(
     @PrimaryKey
     val id: Long = 0L,
 ) {
+    fun toDomainModel(): Store =
+        Store(
+            name = name,
+            address = address,
+            phoneNumber = phoneNumber,
+            type = type,
+            businessDays = businessDays,
+            openTime = openTime,
+            closeTime = closeTime,
+        )
+
     companion object {
         fun from(store: Store) =
             StoreEntity(
