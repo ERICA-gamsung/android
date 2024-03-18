@@ -2,7 +2,9 @@ package com.erica.gamsung.store.presentation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.erica.gamsung.store.domain.StoreRepository
+import com.erica.gamsung.store.presentation.utils.toTimePickerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,30 @@ class StoreViewModel
     ) : ViewModel() {
         private var _inputStoreState = MutableStateFlow(InputStoreState())
         val inputStoreState = _inputStoreState.asStateFlow()
+
+        init {
+            loadStore()
+        }
+
+        private fun loadStore() {
+            viewModelScope.launch(Dispatchers.IO) {
+                storeRepository.getStore().collect { store ->
+                    store?.let {
+                        _inputStoreState.update { currentState ->
+                            currentState.copy(
+                                name = store.name,
+                                address = store.address,
+                                phoneNumber = store.phoneNumber,
+                                type = store.type,
+                                businessDays = store.businessDays,
+                                openTime = store.openTime.toTimePickerState(),
+                                closeTime = store.closeTime.toTimePickerState(),
+                            )
+                        }
+                    }
+                }
+            }
+        }
 
         fun onEvent(event: InputStoreUiEvent) {
             when (event) {
