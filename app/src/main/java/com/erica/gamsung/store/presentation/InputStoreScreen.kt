@@ -98,7 +98,8 @@ fun InputStoreScreen(
             RegisterStoreButton(
                 onClick = {
                     storeViewModel.onEvent(InputStoreUiEvent.SendStore)
-                    navController.navigate(Screen.InputMenu(isEditMode = false).route)
+                    val toNavigate = if (isEditMode) Screen.Setting else Screen.InputMenu(isEditMode = false)
+                    navController.navigate(toNavigate.route)
                 },
                 enabled = inputStoreState.isValid,
                 isEditMode = isEditMode,
