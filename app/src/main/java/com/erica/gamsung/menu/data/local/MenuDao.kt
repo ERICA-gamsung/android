@@ -19,4 +19,7 @@ interface MenuDao {
         deleteAll()
         insertAll(*menus.toTypedArray())
     }
+
+    @Query("SELECT * FROM menus")
+    fun getAll(): List<MenuEntity>
 }
