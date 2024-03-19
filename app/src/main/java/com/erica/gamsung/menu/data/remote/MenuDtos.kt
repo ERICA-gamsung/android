@@ -10,3 +10,9 @@ data class UpdateMenusResponse(
     val name: String,
     val price: Int,
 )
+
+data class GetMenusResponse(
+    val id: Long,
+    val name: String,
+    val price: Int,
+)
