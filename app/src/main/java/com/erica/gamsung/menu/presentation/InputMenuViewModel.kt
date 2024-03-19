@@ -2,6 +2,7 @@ package com.erica.gamsung.menu.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.erica.gamsung.menu.data.repository.FakeMenuRepositoryImpl
 import com.erica.gamsung.menu.domain.Menu
 import com.erica.gamsung.menu.domain.MenuRepository
@@ -29,6 +30,18 @@ class InputMenuViewModel
 
         private var _shouldNavigateState = MutableStateFlow(false)
         val shouldNavigateState = _shouldNavigateState.asStateFlow()
+
+        init {
+            loadMenus()
+        }
+
+        private fun loadMenus() {
+            viewModelScope.launch(Dispatchers.IO) {
+                menuRepository.getMenus().collect { menus ->
+                    _menusState.update { menus }
+                }
+            }
+        }
 
         fun onEvent(event: InputMenuUiEvent) {
             when (event) {
