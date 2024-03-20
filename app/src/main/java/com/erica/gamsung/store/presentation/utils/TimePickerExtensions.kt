@@ -16,3 +16,5 @@ fun TimePickerState.toDisplayString(): String {
 }
 
 fun TimePickerState.toLocalTime(): LocalTime = LocalTime.of(hour, minute)
+
+fun LocalTime.toTimePickerState(): TimePickerState = TimePickerState(hour, minute, false)

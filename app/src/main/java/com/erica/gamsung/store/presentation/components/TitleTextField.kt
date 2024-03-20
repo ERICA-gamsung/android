@@ -18,6 +18,7 @@ fun TitleTextField(
     modifier: Modifier = Modifier,
     title: String,
     hintText: String,
+    value: String,
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
     isValid: Boolean = true,
@@ -34,6 +35,7 @@ fun TitleTextField(
         InputTextBox(
             modifier = Modifier.fillMaxWidth(),
             hintText = hintText,
+            value = value,
             onValueChange = onValueChange,
             keyboardType = keyboardType,
             isError = !isValid,
@@ -50,6 +52,7 @@ private fun TitleTextFieldPreview() {
         TitleTextField(
             title = "음식점 이름",
             hintText = "ex. 감성식당",
+            value = "",
             onValueChange = {},
             isValid = true,
             modifier = Modifier.fillMaxWidth(),
@@ -58,6 +61,7 @@ private fun TitleTextFieldPreview() {
         TitleTextField(
             title = "음식점 이름",
             hintText = "ex. 감성식당",
+            value = "",
             onValueChange = {},
             isValid = false,
             modifier = Modifier.fillMaxWidth(),

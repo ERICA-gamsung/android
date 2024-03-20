@@ -6,6 +6,8 @@ import com.erica.gamsung.menu.data.remote.UpdateMenusRequest
 import com.erica.gamsung.menu.data.toMenuEntity
 import com.erica.gamsung.menu.domain.Menu
 import com.erica.gamsung.menu.domain.MenuRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class MenuRepositoryImpl(
     private val menuDao: MenuDao,
@@ -28,4 +30,19 @@ class MenuRepositoryImpl(
             },
         )
     }
+
+    override suspend fun getMenus(): Flow<List<Menu>> =
+        flow {
+            // 1. 로컬 DB에 있는 데이터 반환
+            val localData = menuDao.getAll().map { it.toDomainModel() }
+            emit(localData)
+
+            // 2. 서버에서 받은 데이터 동기화 및 반환
+            runCatching {
+                menuApi.getMenus()
+            }.onSuccess { remoteData ->
+                menuDao.updateAll(remoteData.map { it.toMenuEntity() })
+                emit(remoteData.map { it.toDomainModel() })
+            }
+        }
 }

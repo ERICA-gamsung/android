@@ -81,7 +81,8 @@ fun InputMenuScreen(
                 onClick = {
                     inputMenuViewModel.onEvent(InputMenuUiEvent.SendMenus)
                     if (shouldNavigate) {
-                        navController.navigate(Screen.Main.route)
+                        val toNavigate = if (isEditMode) Screen.Setting else Screen.Main
+                        navController.navigate(toNavigate.route)
                     }
                 },
             )
@@ -110,6 +111,8 @@ private fun InputMenuSection(
 
         item {
             InputMenuItem(
+                name = inputMenuState.name,
+                price = inputMenuState.price,
                 nameChanged = {
                     inputMenuViewModel.onEvent(InputMenuUiEvent.NameChanged(it))
                 },
@@ -197,6 +200,8 @@ private fun MenuItemContainer(
 
 @Composable
 private fun InputMenuItem(
+    name: String,
+    price: String,
     nameChanged: (String) -> Unit,
     priceChanged: (String) -> Unit,
     isNameValid: Boolean = true,
@@ -218,6 +223,7 @@ private fun InputMenuItem(
                     .weight(1f),
             title = "메뉴 이름",
             hintText = "ex. 고등어 구이 정식",
+            value = name,
             onValueChange = nameChanged,
             keyboardType = KeyboardType.Text,
             isValid = isNameValid,
@@ -230,6 +236,7 @@ private fun InputMenuItem(
                     .weight(1f),
             title = "가격",
             hintText = "ex. 15000",
+            value = price,
             onValueChange = priceChanged,
             keyboardType = KeyboardType.Number,
             isValid = isPriceValid,
@@ -243,6 +250,7 @@ private fun TitleTextField(
     modifier: Modifier = Modifier,
     title: String,
     hintText: String,
+    value: String,
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
     isValid: Boolean = true,
@@ -258,6 +266,7 @@ private fun TitleTextField(
         InputTextBox(
             modifier = Modifier.padding(top = 5.dp, end = 10.dp),
             hintText = hintText,
+            value = value,
             onValueChange = onValueChange,
             keyboardType = keyboardType,
             isError = !isValid,
