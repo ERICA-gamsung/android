@@ -173,7 +173,7 @@ fun MyScheduleScreen(
                         viewModel.moveToNextDate()
                         val mapContents =
                             viewModel
-                                .scheduleDataMap
+                                .scheduleDataModelMap
                                 .entries
                                 .joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
                                     "$key=${value.date}, ${value.time}, ${value.textOption}, ${value.message}"

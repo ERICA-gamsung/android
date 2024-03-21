@@ -133,7 +133,7 @@ private fun TimeSlotListSection(
     onTimeSlotSelected: (String) -> Unit,
 ) {
     // 시간 슬롯 목록, ViewModel에서 가져올 수 있습니다.
-    val scheduleDataMap = calendarViewModel.scheduleDataMap
+    val scheduleDataMap = calendarViewModel.scheduleDataModelMap
 
     Column {
         scheduleDataMap.forEach { (date, scheduleData) ->
