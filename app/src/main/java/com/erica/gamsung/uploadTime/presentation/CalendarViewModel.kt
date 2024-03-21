@@ -4,21 +4,16 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.erica.gamsung.uploadTime.domain.ScheduleDataList
+import com.erica.gamsung.uploadTime.domain.ScheduleDataModel
 import com.erica.gamsung.uploadTime.presentation.utils.Event
 import java.time.LocalDate
 import java.time.YearMonth
 
-data class ScheduleData(
-    val date: LocalDate?,
-    val time: String,
-    val textOption: String,
-    val message: String,
-)
-
 @Suppress("VariableNaming")
 class CalendarViewModel : ViewModel() {
     val selectedDatesMap = mutableStateMapOf<YearMonth, List<LocalDate>>()
-    val scheduleDataMap = mutableStateMapOf<LocalDate, ScheduleData>()
+    val scheduleDataModelMap = mutableStateMapOf<LocalDate, ScheduleDataModel>()
 
     private val _navigateToNextPage = MutableLiveData<Event<Unit>>()
     val navigateToNextPage: LiveData<Event<Unit>> = _navigateToNextPage
@@ -95,14 +90,28 @@ class CalendarViewModel : ViewModel() {
         message: String,
     ) {
         focusedDate.value?.let { date ->
-            val updatedScheduleData =
-                ScheduleData(
+            val updatedScheduleDataModel =
+                ScheduleDataModel(
                     date = date,
                     time = time,
                     textOption = textOption,
                     message = message,
                 )
-            scheduleDataMap[date] = updatedScheduleData
+            scheduleDataModelMap[date] = updatedScheduleDataModel
         }
+    }
+
+    // 서버 전송을 위한 데이터 가공
+    fun preparedScheduledDataForUpload(): ScheduleDataList {
+        val scheduleDataList =
+            scheduleDataModelMap.values.map { scheduleDataModel ->
+                ScheduleDataModel(
+                    date = scheduleDataModel.date ?: LocalDate.now(),
+                    time = scheduleDataModel.time,
+                    textOption = scheduleDataModel.textOption,
+                    message = scheduleDataModel.message,
+                )
+            }
+        return ScheduleDataList(scheduleList = scheduleDataList)
     }
 }
