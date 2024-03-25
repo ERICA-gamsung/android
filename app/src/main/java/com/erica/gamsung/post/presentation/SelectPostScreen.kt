@@ -28,11 +28,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Suppress("MagicNumber")
 @Preview
 @Composable
 fun SelectPostScreen() {
+    val serverDate = LocalDate.of(2024, 3, 25)
+    val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
+    val date = serverDate.format(formatter)
+
+    val time = "09시 00분"
+    val text = dateTextInput(date, time)
+
     Scaffold(
         topBar = { GsTopAppBar(title = "글 선택 페이지") },
     ) {
@@ -43,7 +52,7 @@ fun SelectPostScreen() {
                     .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            TextSection(Modifier.weight(1f))
+            TextSection(Modifier.weight(1f), text = text)
             PicSection(Modifier.weight(5f))
 //            Spacer(
 //                modifier = Modifier
@@ -56,13 +65,25 @@ fun SelectPostScreen() {
 }
 
 @Composable
-fun TextSection(modifier: Modifier) {
+fun dateTextInput(
+    date: String,
+    time: String,
+): String {
+    val text = "$date ${time}\n 글 선택 중.."
+    return text
+}
+
+@Composable
+fun TextSection(
+    modifier: Modifier,
+    text: String,
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "1/15 09시 00분\n글 선택 중...",
+            text = text,
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
         )
