@@ -27,7 +27,7 @@ import com.erica.gamsung.core.presentation.component.GsTopAppBar
 @Composable
 fun PreviewPost() {
     val text = "안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~..."
-    val pic = { /*TODO*/ }
+    // val pic 구현 예정
     Scaffold(
         topBar = { GsTopAppBar(title = "글 미리보기") },
     ) {
