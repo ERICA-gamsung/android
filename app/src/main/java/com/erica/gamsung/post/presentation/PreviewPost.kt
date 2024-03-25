@@ -26,6 +26,8 @@ import com.erica.gamsung.core.presentation.component.GsTopAppBar
 @Preview
 @Composable
 fun PreviewPost() {
+    val text = "안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~..."
+    val pic = { /*TODO*/ }
     Scaffold(
         topBar = { GsTopAppBar(title = "글 미리보기") },
     ) {
@@ -44,7 +46,7 @@ fun PreviewPost() {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 PicSection(modifier = Modifier.weight(5f))
-                TextField(Modifier.weight(2f))
+                TextField(Modifier.weight(2f), text)
             }
             OneButtonSection(modifier = Modifier.weight(2f))
         }
@@ -52,11 +54,14 @@ fun PreviewPost() {
 }
 
 @Composable
-fun TextField(modifier: Modifier) {
+fun TextField(
+    modifier: Modifier,
+    text: String,
+) {
     Box(
         modifier.padding(16.dp),
     ) {
-        Text(text = "안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~...")
+        Text(text = text)
     }
 }
 
