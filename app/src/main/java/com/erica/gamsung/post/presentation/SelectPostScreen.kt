@@ -64,7 +64,6 @@ fun SelectPostScreen() {
     }
 }
 
-@Composable
 fun dateTextInput(
     date: String,
     time: String,
