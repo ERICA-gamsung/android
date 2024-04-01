@@ -5,15 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.erica.gamsung.uploadTime.data.remote.ApiResponse
-import com.erica.gamsung.uploadTime.data.remote.ScheduleApi
+import com.erica.gamsung.uploadTime.data.repository.ScheduleRepository
 import com.erica.gamsung.uploadTime.domain.ScheduleDataList
 import com.erica.gamsung.uploadTime.domain.ScheduleDataModel
 import com.erica.gamsung.uploadTime.presentation.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
 import java.time.LocalDate
 import java.time.YearMonth
@@ -24,8 +22,8 @@ import javax.inject.Inject
 class ScheduleViewModel
     @Inject
     constructor(
-        private val scheduleApi: ScheduleApi,
-        // private val repository: ScheduleRepository,
+        // private val scheduleApi: ScheduleApi,
+        private val repository: ScheduleRepository,
     ) : ViewModel() {
         val selectedDatesMap = mutableStateMapOf<YearMonth, List<LocalDate>>()
         val scheduleDataModelMap = mutableStateMapOf<LocalDate, ScheduleDataModel>()
@@ -133,13 +131,12 @@ class ScheduleViewModel
         fun uploadSchedulesToServer() {
             viewModelScope.launch {
                 try {
-                    val scheduleDataList = preparedScheduledDataForUpload()
-                    val response: Response<ApiResponse> = scheduleApi.uploadSchedules(scheduleDataList)
-
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        println("Schedules successfully uploaded: ${response.body()?.message}")
-                    } else {
-                        println("Failed to upload schedules: ${response.errorBody()?.string()}")
+                    repository.uploadSchedules(scheduleDataModelMap).let { result ->
+                        if (result.isSuccess) {
+                            println("Schedules successfully uploaded")
+                        } else {
+                            println("Failed to upload schedules")
+                        }
                     }
                 } catch (e: HttpException) {
                     // Http 통신 중 발생한 예외 처리
