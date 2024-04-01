@@ -58,7 +58,7 @@ import java.time.YearMonth
 @Composable
 fun MyScheduleScreen(
     navController: NavHostController = rememberNavController(),
-    viewModel: CalendarViewModel = viewModel(),
+    viewModel: ScheduleViewModel = viewModel(),
 ) {
     val focusedDate by viewModel.focusedDate.observeAsState()
 

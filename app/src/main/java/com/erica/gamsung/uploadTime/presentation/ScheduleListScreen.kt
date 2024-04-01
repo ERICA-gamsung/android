@@ -39,7 +39,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ScheduleListScreen(
     navController: NavHostController = rememberNavController(),
-    viewModel: CalendarViewModel = viewModel(),
+    viewModel: ScheduleViewModel = viewModel(),
 ) {
     // 여기서 remember를 사용하여 상태를 저장합니다.
     var selectedTimeSlot by remember { mutableStateOf("") }
@@ -128,7 +128,7 @@ private fun ButtonSection() {
 
 @Composable
 private fun TimeSlotListSection(
-    calendarViewModel: CalendarViewModel,
+    calendarViewModel: ScheduleViewModel,
     selectedTimeSlot: String?,
     onTimeSlotSelected: (String) -> Unit,
 ) {
