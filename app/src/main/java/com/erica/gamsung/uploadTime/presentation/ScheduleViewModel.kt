@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.erica.gamsung.uploadTime.data.repository.ScheduleRepository
-import com.erica.gamsung.uploadTime.domain.ScheduleDataList
 import com.erica.gamsung.uploadTime.domain.ScheduleDataModel
 import com.erica.gamsung.uploadTime.presentation.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -112,20 +111,6 @@ class ScheduleViewModel
                     )
                 scheduleDataModelMap[date] = updatedScheduleDataModel
             }
-        }
-
-        // 서버 전송을 위한 데이터 가공
-        fun preparedScheduledDataForUpload(): ScheduleDataList {
-            val scheduleDataList =
-                scheduleDataModelMap.values.map { scheduleDataModel ->
-                    ScheduleDataModel(
-                        date = scheduleDataModel.date ?: LocalDate.now(),
-                        time = scheduleDataModel.time,
-                        textOption = scheduleDataModel.textOption,
-                        message = scheduleDataModel.message,
-                    )
-                }
-            return ScheduleDataList(scheduleList = scheduleDataList)
         }
 
         fun uploadSchedulesToServer() {

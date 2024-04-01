@@ -72,7 +72,7 @@ fun ScheduleListScreen(
 //                        TimeSlotButton("1월 9일", "13시 00분", selectedTimeSlot) { selectedTimeSlot = it }
 //                        TimeSlotButton("1월 9일", "13시 00분", selectedTimeSlot) { selectedTimeSlot = it }
 //                    }
-                ButtonSection()
+                ButtonSection(viewModel)
             }
         }
     }
@@ -94,7 +94,7 @@ private fun TitleTextSection(text: String) {
 }
 
 @Composable
-private fun ButtonSection() {
+private fun ButtonSection(viewModel: ScheduleViewModel) {
     Column {
         Divider(modifier = Modifier.padding(bottom = 16.dp))
         Row(
@@ -112,7 +112,10 @@ private fun ButtonSection() {
             Button(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(7.dp),
-                onClick = { /* 선택 확인 액션 */ },
+                onClick = {
+                    // 선택 확인 액션
+                    viewModel.uploadSchedulesToServer()
+                },
             ) {
                 Text("Confirm")
             }
