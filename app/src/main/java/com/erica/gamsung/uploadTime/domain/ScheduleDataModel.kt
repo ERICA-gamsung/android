@@ -5,7 +5,8 @@ import java.time.LocalDate
 data class ScheduleDataModel(
     val date: LocalDate?,
     val time: String,
-    val textOption: String,
+    val menu: String,
+    val event: String?,
     val message: String,
 )
 

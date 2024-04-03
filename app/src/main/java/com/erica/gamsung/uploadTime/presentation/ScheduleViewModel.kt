@@ -98,7 +98,7 @@ class ScheduleViewModel
         // 해당 Date에 엮인 Data들을 리스트에 추가해준다.
         fun updateScheduleData(
             time: String,
-            textOption: String,
+            menu: String,
             message: String,
         ) {
             focusedDate.value?.let { date ->
@@ -106,8 +106,9 @@ class ScheduleViewModel
                     ScheduleDataModel(
                         date = date,
                         time = time,
-                        textOption = textOption,
+                        menu = menu,
                         message = message,
+                        event = null,
                     )
                 scheduleDataModelMap[date] = updatedScheduleDataModel
             }

@@ -20,8 +20,9 @@ class ScheduleRepository
                         ScheduleDataModel(
                             date = scheduleDataModel.date,
                             time = scheduleDataModel.time,
-                            textOption = scheduleDataModel.textOption,
+                            menu = scheduleDataModel.menu,
                             message = scheduleDataModel.message,
+                            event = null,
                         )
                     }
                 val response = scheduleApi.uploadSchedules(ScheduleDataList(scheduleList = scheduleDataList))

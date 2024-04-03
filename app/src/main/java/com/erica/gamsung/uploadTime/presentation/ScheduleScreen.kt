@@ -76,7 +76,7 @@ fun MyScheduleScreen(
 
     // 날짜에 따른 사용자의 입력 데이터를 저장할 상태 변수
     var time by remember { mutableStateOf("") }
-    var textOption by remember { mutableStateOf("") }
+    var menu by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
 
     // TimePicker에 필요한 변수
@@ -136,9 +136,9 @@ fun MyScheduleScreen(
                 description = (" (선택)"),
                 items = options,
                 isValid = false,
-                selectedText = textOption,
+                selectedText = menu,
                 onValueChange = { newText ->
-                    textOption = newText
+                    menu = newText
                 },
             )
             // Spacer(modifier = Modifier.height(8.dp))
@@ -167,8 +167,8 @@ fun MyScheduleScreen(
                     text = "선택하기",
                     containerColor = Color.Blue,
                     onClick = {
-                        viewModel.updateScheduleData(time, textOption, message)
-                        textOption = ""
+                        viewModel.updateScheduleData(time, menu, message)
+                        menu = ""
                         message = ""
                         viewModel.moveToNextDate()
                         val mapContents =
@@ -176,7 +176,7 @@ fun MyScheduleScreen(
                                 .scheduleDataModelMap
                                 .entries
                                 .joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
-                                    "$key=${value.date}, ${value.time}, ${value.textOption}, ${value.message}"
+                                    "$key=${value.date}, ${value.time}, ${value.menu}, ${value.message}"
                                 }
                         Log.d("ScheduleDataList", "DataList: $mapContents")
                     },
