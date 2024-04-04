@@ -17,6 +17,9 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
 import com.erica.gamsung.login.presentation.LoginScreen
 import com.erica.gamsung.menu.presentation.InputMenuScreen
+import com.erica.gamsung.post.presentation.PostStatusScreen
+import com.erica.gamsung.post.presentation.PreviewPost
+import com.erica.gamsung.post.presentation.SelectPostScreen
 import com.erica.gamsung.setting.presentation.SettingScreen
 import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
@@ -82,6 +85,15 @@ fun MainNavHost(
             ScheduleListScreen(navController = navController, viewModel = calendarViewModel)
         }
         composable(Screen.Login.route) { LoginScreen(navController = navController) }
+        composable(Screen.SelectNewPost.route) {
+            SelectPostScreen(navController = navController)
+        }
+        composable(Screen.PreviewNewPost.route) {
+            PreviewPost(navController = navController)
+        }
+        composable(Screen.PostsStatus.route) {
+            PostStatusScreen(navController = navController)
+        }
     }
 }
 
