@@ -20,12 +20,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 
 @Suppress("MagicNumber")
 @Preview
 @Composable
-fun PreviewPost() {
+fun PreviewPost(navController: NavHostController = rememberNavController()) {
     val text = "안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~안녕하세요! 안녕하세요! 안녕하세요~..."
     // val pic 구현 예정
     Scaffold(
@@ -45,10 +48,10 @@ fun PreviewPost() {
                         .border(1.dp, Color.Gray, RoundedCornerShape(16.dp)),
             ) {
                 Spacer(modifier = Modifier.weight(1f))
-                PicSection(modifier = Modifier.weight(5f))
+                // PicSection(modifier = Modifier.weight(5f))
                 TextField(Modifier.weight(2f), text)
             }
-            OneButtonSection(modifier = Modifier.weight(2f))
+            OneButtonSection(modifier = Modifier.weight(2f)) { navController.navigate(Screen.PostsStatus.route) }
         }
     }
 }
@@ -66,7 +69,10 @@ fun TextField(
 }
 
 @Composable
-fun OneButtonSection(modifier: Modifier) {
+fun OneButtonSection(
+    modifier: Modifier,
+    onClick: () -> Unit = {},
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -84,10 +90,7 @@ fun OneButtonSection(modifier: Modifier) {
                     Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
-                onClick = {
-                    // 완료 액션 처리
-                    // TODO
-                },
+                onClick = onClick,
                 border = BorderStroke(1.dp, Color.LightGray),
                 shape = RoundedCornerShape(10.dp),
             ) {
