@@ -6,7 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface ScheduleApi {
-    @POST("/api/schedules")
+    @POST("postings/option")
     suspend fun uploadSchedules(
         @Body scheduleDataList: ScheduleDataList,
     ): Response<ApiResponse>

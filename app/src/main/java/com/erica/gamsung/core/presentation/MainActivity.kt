@@ -72,7 +72,7 @@ fun MainNavHost(
         composable(Screen.InputMenu(isEditMode = false).route) {
             InputMenuScreen(navController = navController, isEditMode = false)
         }
-        composable(Screen.DateTimeListCheck.route) {
+        composable(Screen.DateSelect.route) {
             MyCalendarScreen(navController = navController, viewModel = scheduleViewModel)
         }
         composable(Screen.TimeSelect.route) {
