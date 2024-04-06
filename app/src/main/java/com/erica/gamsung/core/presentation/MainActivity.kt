@@ -92,7 +92,7 @@ fun MainNavHost(
             PreviewPost(navController = navController)
         }
         composable(Screen.PostsStatus.route) {
-            PostStatusScreen(navController = navController)
+            PostStatusScreen()
         }
     }
 }

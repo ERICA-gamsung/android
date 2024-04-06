@@ -118,39 +118,41 @@ fun PicSection(
     posts: State<List<Post>>,
     pagerState: PagerState,
 ) {
-    Box(
-        // 사진 들어갈 곳
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .background(Color.LightGray),
+    //    Box(
+    //        // 사진 들어갈 곳
+    //        modifier =
+    //            modifier
+    //                .fillMaxWidth()
+    //                .background(Color.LightGray),
+    //    ) {
+    Column(
+        modifier = modifier,
     ) {
-        Column {
-            HorizontalPager(state = pagerState) { page ->
-                PostItem(post = posts.value[page], pageOffset = calculatePageOffset(pagerState, page))
+        Row(
+            Modifier
+                .wrapContentHeight()
+                .fillMaxWidth(),
+            // .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            repeat(pagerState.pageCount) { iteration ->
+                val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                Box(
+                    modifier =
+                        Modifier
+                            .padding(2.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(16.dp),
+                )
             }
-            Row(
-                Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                repeat(pagerState.pageCount) { iteration ->
-                    val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
-                    Box(
-                        modifier =
-                            Modifier
-                                .padding(2.dp)
-                                .clip(CircleShape)
-                                .background(color)
-                                .size(16.dp),
-                    )
-                }
-            }
+        }
+        HorizontalPager(state = pagerState) { page ->
+            PostItem(post = posts.value[page], pageOffset = calculatePageOffset(pagerState, page))
         }
     }
 }
+
 //    Text(
 //        text = "게시글",
 //        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
