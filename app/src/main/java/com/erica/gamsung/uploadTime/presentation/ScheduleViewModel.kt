@@ -1,10 +1,13 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.erica.gamsung.store.presentation.utils.toLocalTime
 import com.erica.gamsung.uploadTime.data.repository.ScheduleRepository
 import com.erica.gamsung.uploadTime.domain.ScheduleDataModel
 import com.erica.gamsung.uploadTime.presentation.utils.Event
@@ -16,6 +19,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("VariableNaming")
 @HiltViewModel
 class ScheduleViewModel
@@ -33,6 +37,9 @@ class ScheduleViewModel
         private var _focusedDate = MutableLiveData<LocalDate?>()
         val focusedDate: LiveData<LocalDate?> = _focusedDate
 
+        private var _selectTime = MutableLiveData<TimePickerState>()
+        val selectTime: LiveData<TimePickerState> = _selectTime
+
         private val _textOption = MutableLiveData("")
         val textOption: LiveData<String> = _textOption
 
@@ -47,6 +54,10 @@ class ScheduleViewModel
 
         fun setFocusedDate(date: LocalDate?) {
             _focusedDate.value = date
+        }
+
+        fun updateSelectedTime(newTime: TimePickerState) {
+            _selectTime.value = newTime
         }
 
         fun setTextOption(newValue: String) {
@@ -96,8 +107,9 @@ class ScheduleViewModel
 
         // focusedDate.value(날짜) 를 date로 받는다.
         // 해당 Date에 엮인 Data들을 리스트에 추가해준다.
+        @OptIn(ExperimentalMaterial3Api::class)
         fun updateScheduleData(
-            time: String,
+            time: TimePickerState?,
             menu: String,
             message: String,
         ) {
@@ -105,7 +117,7 @@ class ScheduleViewModel
                 val updatedScheduleDataModel =
                     ScheduleDataModel(
                         date = date,
-                        time = time,
+                        time = time?.toLocalTime(),
                         menu = menu,
                         message = message,
                         event = null,

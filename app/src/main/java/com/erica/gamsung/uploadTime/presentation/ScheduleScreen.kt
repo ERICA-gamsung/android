@@ -74,15 +74,18 @@ fun MyScheduleScreen(
     // 사용자 입력을 저장할 상태 변수
     // var text by remember { mutableStateOf("") }
 
+    val time by viewModel.selectTime.observeAsState()
+
     // 날짜에 따른 사용자의 입력 데이터를 저장할 상태 변수
-    var time by remember { mutableStateOf("") }
+    // var time by remember { mutableStateOf("") }
+
     var menu by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
 
     // TimePicker에 필요한 변수
     val openTimePickerState = TimePickerState(0, 0, false)
     val onOpenTimeUpdate: (TimePickerState) -> Unit = { newState ->
-        time = newState.toDisplayString()
+        viewModel.updateSelectedTime(newState)
     }
 
     val options =

@@ -13,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
@@ -26,10 +27,20 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         val localTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val gson =
             GsonBuilder()
                 .registerTypeAdapter(
+                    LocalDate::class.java,
+                    JsonDeserializer { json, _, _ ->
+                        LocalDate.parse(json.asJsonPrimitive.asString, dateFormatter)
+                    },
+                ).registerTypeAdapter(
+                    LocalDate::class.java,
+                    JsonSerializer<LocalDate> { src, _, _ ->
+                        GsonBuilder().create().toJsonTree(src.format(dateFormatter))
+                    },
+                ).registerTypeAdapter(
                     LocalTime::class.java,
                     JsonDeserializer { json, _, _ ->
                         LocalTime.parse(json.asJsonPrimitive.asString, localTimeFormatter)

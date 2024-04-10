@@ -141,7 +141,7 @@ private fun TimeSlotListSection(
     Column {
         scheduleDataMap.forEach { (date, scheduleData) ->
             val dateText = scheduleData.date?.format(DateTimeFormatter.ofPattern("M월 d일")) ?: ""
-            val timeText = scheduleData.time
+            val timeText = scheduleData.time.toString()
             TimeSlotButton(
                 dateSlot = dateText,
                 timeSlot = timeText,
