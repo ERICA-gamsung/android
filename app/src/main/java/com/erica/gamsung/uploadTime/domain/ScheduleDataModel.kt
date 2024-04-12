@@ -7,7 +7,7 @@ data class ScheduleDataModel(
     val date: LocalDate?,
     val time: LocalTime?,
     val menu: String,
-    val event: String?,
+    val event: String,
     val message: String,
 )
 

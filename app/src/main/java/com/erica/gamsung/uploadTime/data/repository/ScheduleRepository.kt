@@ -1,7 +1,6 @@
 package com.erica.gamsung.uploadTime.data.repository
 
 import com.erica.gamsung.uploadTime.data.remote.ScheduleApi
-import com.erica.gamsung.uploadTime.domain.ScheduleDataList
 import com.erica.gamsung.uploadTime.domain.ScheduleDataModel
 import retrofit2.HttpException
 import java.io.IOException
@@ -22,14 +21,19 @@ class ScheduleRepository
                             time = scheduleDataModel.time,
                             menu = scheduleDataModel.menu,
                             message = scheduleDataModel.message,
-                            event = null,
+                            event = scheduleDataModel.event,
                         )
                     }
-                val response = scheduleApi.uploadSchedules(ScheduleDataList(scheduleList = scheduleDataList))
-                if (response.isSuccessful && response.body()?.success == true) {
-                    Result.success(true)
+                val response = scheduleApi.uploadSchedules(scheduleDataList)
+                if (response.isSuccessful) {
+                    val allSuccess = response.body()?.all { it.success } ?: false
+                    if (allSuccess) {
+                        Result.success(true)
+                    } else {
+                        Result.failure(Exception("Not all schedules were successfully uploaded"))
+                    }
                 } else {
-                    Result.failure(Exception("Failed to upload schedules"))
+                    Result.failure(Exception("Failed to upload schedules, HTTP error"))
                 }
             } catch (e: IOException) {
                 Result.failure(Exception("Network error: ${e.message}"))

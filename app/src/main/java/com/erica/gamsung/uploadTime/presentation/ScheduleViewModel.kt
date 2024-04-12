@@ -112,6 +112,7 @@ class ScheduleViewModel
             time: TimePickerState?,
             menu: String,
             message: String,
+            event: String,
         ) {
             focusedDate.value?.let { date ->
                 val updatedScheduleDataModel =
@@ -120,7 +121,7 @@ class ScheduleViewModel
                         time = time?.toLocalTime(),
                         menu = menu,
                         message = message,
-                        event = null,
+                        event = event,
                     )
                 scheduleDataModelMap[date] = updatedScheduleDataModel
             }

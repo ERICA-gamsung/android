@@ -170,7 +170,7 @@ fun MyScheduleScreen(
                     text = "선택하기",
                     containerColor = Color.Blue,
                     onClick = {
-                        viewModel.updateScheduleData(time, menu, message)
+                        viewModel.updateScheduleData(time, menu, message, event = "")
                         menu = ""
                         message = ""
                         viewModel.moveToNextDate()
