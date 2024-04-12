@@ -18,6 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.post.data.mock.mockSchedules
 import com.erica.gamsung.post.domain.ScheduleList
 import com.erica.gamsung.uploadTime.presentation.TimeSlotButton
@@ -25,11 +30,16 @@ import com.erica.gamsung.uploadTime.presentation.TitleTextSection
 
 @Preview
 @Composable
-fun PostStatusScreen() {
+fun PostStatusScreen(
+    navController: NavController = rememberNavController(),
+    postViewModel: PostViewModel = hiltViewModel(),
+) {
     val scheduleList = mockSchedules
     var selectedTimeSlot by remember {
         mutableStateOf("")
     }
+//    val reservationId by postViewModel.reservationId.observeAsState(0)
+
     Scaffold {
         Column(
             modifier =
@@ -50,7 +60,12 @@ fun PostStatusScreen() {
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                TimeSlotListSection(scheduleList = scheduleList, selectedTimeSlot = selectedTimeSlot) {
+                TimeSlotListSection(
+                    scheduleList = scheduleList,
+                    navController = navController,
+                    viewModel = postViewModel,
+                    selectedTimeSlot = selectedTimeSlot,
+                ) {
                     selectedTimeSlot = it
                 }
             }
@@ -66,6 +81,8 @@ fun PostStatusScreen() {
 
 @Composable
 private fun TimeSlotListSection(
+    viewModel: PostViewModel,
+    navController: NavController,
     scheduleList: ScheduleList,
     selectedTimeSlot: String?,
     onTimeSlotSelected: (String) -> Unit,
@@ -77,7 +94,11 @@ private fun TimeSlotListSection(
                 dateSlot = schedule.date,
                 timeSlot = schedule.time,
                 isSelected = slot == selectedTimeSlot,
-                onTimeSlotSelected = { onTimeSlotSelected(slot) },
+                onTimeSlotSelected = {
+                    onTimeSlotSelected(slot)
+                    viewModel.selectReservation(schedule.reservationId)
+                    navController.navigate(Screen.SelectNewPost.route)
+                },
             )
             Spacer(modifier = Modifier.height(8.dp)) // 버튼 사이의 간격
         }

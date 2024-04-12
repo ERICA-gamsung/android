@@ -31,7 +31,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
@@ -58,27 +60,37 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class,
+)
 @Suppress("MagicNumber")
 @Preview
 @Composable
 fun SelectPostScreen(
     navController: NavHostController = rememberNavController(),
-    postViewModel: PostViewModel = viewModel(),
+    postViewModel: PostViewModel = hiltViewModel(),
 ) {
+    val reservationId by postViewModel.reservationId.observeAsState()
+    val postData by postViewModel.postData.observeAsState()
+
+    LaunchedEffect(key1 = true) {
+        reservationId?.let { postViewModel.fetchPostData(it) }
+    }
+
     val serverDate = LocalDate.of(2024, 3, 25)
     val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
     val date = serverDate.format(formatter)
 
-    val time = "09시 00분"
-    val text = dateTextInput(date, time)
+    val time = postData?.time
+    val text = time?.let { dateTextInput(date, it) }
 
     val pagerState =
         rememberPagerState(pageCount = {
             3
         })
 
-    val post = postViewModel.posts.observeAsState(initial = emptyList())
+    val contents = postViewModel.contents.observeAsState(initial = emptyList())
+
     Scaffold(
         topBar = { GsTopAppBar(title = "글 선택 페이지") },
     ) {
@@ -89,8 +101,10 @@ fun SelectPostScreen(
                     .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            TextSection(Modifier.weight(1f), text = text)
-            PicSection(Modifier.weight(5f), post, pagerState)
+            if (text != null) {
+                TextSection(Modifier.weight(1f), text = text)
+            }
+            PicSection(Modifier.weight(5f), contents, pagerState)
 
             ButtonSection(
                 modifier = Modifier.weight(3f),
