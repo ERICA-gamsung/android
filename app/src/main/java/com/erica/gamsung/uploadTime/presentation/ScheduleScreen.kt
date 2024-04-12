@@ -51,9 +51,8 @@ import com.erica.gamsung.uploadTime.presentation.component.CustomInputTextBox
 import java.time.LocalDate
 import java.time.YearMonth
 
-// UnusedParameter는 왜인지 모르지만 NavHostcontroller 를 사용 안했다 떠서 달아 놓았다.
 @OptIn(ExperimentalMaterial3Api::class)
-@Suppress("LongMethod", "UnusedParameter")
+@Suppress("LongMethod")
 @Preview
 @Composable
 fun MyScheduleScreen(
