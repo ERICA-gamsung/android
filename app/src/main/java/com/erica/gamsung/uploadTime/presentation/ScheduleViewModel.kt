@@ -29,6 +29,7 @@ class ScheduleViewModel
         private val repository: ScheduleRepository,
     ) : ViewModel() {
         val selectedDatesMap = mutableStateMapOf<YearMonth, List<LocalDate>>()
+
         val scheduleDataModelMap = mutableStateMapOf<LocalDate, ScheduleDataModel>()
 
         private val _navigateToNextPage = MutableLiveData<Event<Unit>>()
@@ -45,6 +46,9 @@ class ScheduleViewModel
 
         private val _message = MutableLiveData("")
         val message: LiveData<String> = _message
+
+        private val _uploadResult = MutableLiveData<Boolean>()
+        val uploadResult: LiveData<Boolean> = _uploadResult
 
         init {
             val currentMonth = YearMonth.now()
@@ -76,12 +80,6 @@ class ScheduleViewModel
                         entry.value.filter { it > currentFocusedDate }
                     }.sorted()
             val nextDate = allDateAfterFocused.firstOrNull()
-//        val nextDate =
-//            selectedDatesMap.keys.minOrNull()?.let { currentMonth ->
-//                selectedDatesMap[currentMonth]?.let { dates ->
-//                    dates.firstOrNull { it > (_focusedDate.value ?: LocalDate.now()) }
-//                }
-//            }
             if (nextDate == null) {
                 _navigateToNextPage.value = Event(Unit)
             } else {
@@ -133,16 +131,20 @@ class ScheduleViewModel
                     repository.uploadSchedules(scheduleDataModelMap).let { result ->
                         if (result.isSuccess) {
                             println("Schedules successfully uploaded")
+                            _uploadResult.postValue(true)
                         } else {
                             println("Failed to upload schedules")
+                            _uploadResult.postValue(false)
                         }
                     }
                 } catch (e: HttpException) {
                     // Http 통신 중 발생한 예외 처리
                     println("HttpException: ${e.message}")
+                    _uploadResult.postValue(false)
                 } catch (e: IOException) {
                     // 네트워크 I/O 예외 처리
                     println("Network error: ${e.message}")
+                    _uploadResult.postValue(false)
                 }
             }
         }

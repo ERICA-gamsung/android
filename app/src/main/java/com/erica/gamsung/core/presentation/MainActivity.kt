@@ -24,6 +24,7 @@ import com.erica.gamsung.uploadTime.presentation.MyCalendarScreen
 import com.erica.gamsung.uploadTime.presentation.MyScheduleScreen
 import com.erica.gamsung.uploadTime.presentation.ScheduleListScreen
 import com.erica.gamsung.uploadTime.presentation.ScheduleViewModel
+import com.erica.gamsung.uploadTime.presentation.UploadTimeConfirmScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 // 동일한 viewmodel을 2개의 page가 공유하기 위해서는 hilt를 이용한 DI가 필요하다고 한다.
@@ -80,6 +81,9 @@ fun MainNavHost(
         }
         composable(Screen.DateTimeListCheck.route) {
             ScheduleListScreen(navController = navController, viewModel = scheduleViewModel)
+        }
+        composable(Screen.DateTimeFinish.route) {
+            UploadTimeConfirmScreen(navController = navController)
         }
         composable(Screen.Login.route) { LoginScreen(navController = navController) }
     }
