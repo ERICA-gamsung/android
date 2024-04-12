@@ -77,7 +77,7 @@ fun ScheduleListScreen(
 }
 
 @Composable
-private fun TitleTextSection(text: String) {
+fun TitleTextSection(text: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -165,7 +165,7 @@ private fun TimeSlotListSection(
 
 @Suppress("MaxLineLength")
 @Composable
-private fun TimeSlotButton(
+fun TimeSlotButton(
     dateSlot: String,
     timeSlot: String,
     // selectedTimeSlot: String,
