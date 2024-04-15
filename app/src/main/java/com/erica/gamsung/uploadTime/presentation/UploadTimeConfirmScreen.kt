@@ -1,5 +1,6 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +28,9 @@ import com.erica.gamsung.core.presentation.Screen
 @Preview
 @Composable
 fun UploadTimeConfirmScreen(navController: NavHostController = rememberNavController()) {
-    // val scheduledDataMap = viewModel.scheduleDataMap
+    BackHandler(enabled = true) {
+//
+    }
     Scaffold {
         Column(
             modifier =

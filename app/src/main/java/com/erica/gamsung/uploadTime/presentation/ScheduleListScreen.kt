@@ -1,6 +1,7 @@
 package com.erica.gamsung.uploadTime.presentation
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +45,9 @@ fun ScheduleListScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: ScheduleViewModel = viewModel(),
 ) {
+    BackHandler(enabled = true) {
+//
+    }
     // 여기서 remember를 사용하여 상태를 저장합니다.
     var selectedTimeSlot by remember { mutableStateOf("") }
 

@@ -1,6 +1,7 @@
 package com.erica.gamsung.uploadTime.presentation
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,6 +60,9 @@ fun MyScheduleScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: ScheduleViewModel = viewModel(),
 ) {
+    BackHandler(enabled = true) {
+//
+    }
     val focusedDate by viewModel.focusedDate.observeAsState()
 
     val navigateEvent by viewModel.navigateToNextPage.observeAsState()
