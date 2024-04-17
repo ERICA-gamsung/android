@@ -1,6 +1,7 @@
 package com.erica.gamsung.uploadTime.presentation
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,15 +52,17 @@ import com.erica.gamsung.uploadTime.presentation.component.CustomInputTextBox
 import java.time.LocalDate
 import java.time.YearMonth
 
-// UnusedParameter는 왜인지 모르지만 NavHostcontroller 를 사용 안했다 떠서 달아 놓았다.
 @OptIn(ExperimentalMaterial3Api::class)
-@Suppress("LongMethod", "UnusedParameter")
+@Suppress("LongMethod")
 @Preview
 @Composable
 fun MyScheduleScreen(
     navController: NavHostController = rememberNavController(),
-    viewModel: CalendarViewModel = viewModel(),
+    viewModel: ScheduleViewModel = viewModel(),
 ) {
+    BackHandler(enabled = true) {
+//
+    }
     val focusedDate by viewModel.focusedDate.observeAsState()
 
     val navigateEvent by viewModel.navigateToNextPage.observeAsState()
@@ -74,15 +77,18 @@ fun MyScheduleScreen(
     // 사용자 입력을 저장할 상태 변수
     // var text by remember { mutableStateOf("") }
 
+    val time by viewModel.selectTime.observeAsState()
+
     // 날짜에 따른 사용자의 입력 데이터를 저장할 상태 변수
-    var time by remember { mutableStateOf("") }
-    var textOption by remember { mutableStateOf("") }
+    // var time by remember { mutableStateOf("") }
+
+    var menu by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
 
     // TimePicker에 필요한 변수
     val openTimePickerState = TimePickerState(0, 0, false)
     val onOpenTimeUpdate: (TimePickerState) -> Unit = { newState ->
-        time = newState.toDisplayString()
+        viewModel.updateSelectedTime(newState)
     }
 
     val options =
@@ -136,9 +142,9 @@ fun MyScheduleScreen(
                 description = (" (선택)"),
                 items = options,
                 isValid = false,
-                selectedText = textOption,
+                selectedText = menu,
                 onValueChange = { newText ->
-                    textOption = newText
+                    menu = newText
                 },
             )
             // Spacer(modifier = Modifier.height(8.dp))
@@ -167,16 +173,16 @@ fun MyScheduleScreen(
                     text = "선택하기",
                     containerColor = Color.Blue,
                     onClick = {
-                        viewModel.updateScheduleData(time, textOption, message)
-                        textOption = ""
+                        viewModel.updateScheduleData(time, menu, message, event = "")
+                        menu = ""
                         message = ""
                         viewModel.moveToNextDate()
                         val mapContents =
                             viewModel
-                                .scheduleDataMap
+                                .scheduleDataModelMap
                                 .entries
                                 .joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
-                                    "$key=${value.date}, ${value.time}, ${value.textOption}, ${value.message}"
+                                    "$key=${value.date}, ${value.time}, ${value.menu}, ${value.message}"
                                 }
                         Log.d("ScheduleDataList", "DataList: $mapContents")
                     },

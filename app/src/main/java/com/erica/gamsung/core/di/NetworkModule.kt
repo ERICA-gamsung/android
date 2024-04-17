@@ -3,6 +3,7 @@ package com.erica.gamsung.core.di
 import com.erica.gamsung.BuildConfig
 import com.erica.gamsung.menu.data.remote.MenuApi
 import com.erica.gamsung.store.data.remote.StoreApi
+import com.erica.gamsung.uploadTime.data.remote.ScheduleApi
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
@@ -12,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
@@ -25,10 +27,20 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         val localTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val gson =
             GsonBuilder()
                 .registerTypeAdapter(
+                    LocalDate::class.java,
+                    JsonDeserializer { json, _, _ ->
+                        LocalDate.parse(json.asJsonPrimitive.asString, dateFormatter)
+                    },
+                ).registerTypeAdapter(
+                    LocalDate::class.java,
+                    JsonSerializer<LocalDate> { src, _, _ ->
+                        GsonBuilder().create().toJsonTree(src.format(dateFormatter))
+                    },
+                ).registerTypeAdapter(
                     LocalTime::class.java,
                     JsonDeserializer { json, _, _ ->
                         LocalTime.parse(json.asJsonPrimitive.asString, localTimeFormatter)
@@ -54,4 +66,8 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideStoreApi(retrofit: Retrofit): StoreApi = retrofit.create(StoreApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideScheduleService(retrofit: Retrofit): ScheduleApi = retrofit.create(ScheduleApi::class.java)
 }
