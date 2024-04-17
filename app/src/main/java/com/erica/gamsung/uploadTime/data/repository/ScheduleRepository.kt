@@ -4,6 +4,7 @@ import com.erica.gamsung.uploadTime.data.remote.PostScheduleDataResponseModel
 import com.erica.gamsung.uploadTime.data.remote.ScheduleApi
 import com.erica.gamsung.uploadTime.domain.ScheduleDataModel
 import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
@@ -35,7 +36,7 @@ class ScheduleRepository
                 )
             }
 
-        private fun handleResponse(response: retrofit2.Response<List<PostScheduleDataResponseModel>>): Result<Boolean> {
+        private fun handleResponse(response: Response<List<PostScheduleDataResponseModel>>): Result<Boolean> {
             println("HTTP status: ${response.code()}")
             if (!response.isSuccessful) {
                 println("Response error body: ${response.errorBody()?.string()}")
