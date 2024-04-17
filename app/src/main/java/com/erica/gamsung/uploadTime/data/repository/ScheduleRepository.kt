@@ -1,6 +1,6 @@
 package com.erica.gamsung.uploadTime.data.repository
 
-import com.erica.gamsung.uploadTime.data.remote.ApiResponse
+import com.erica.gamsung.uploadTime.data.remote.PostScheduleDataResponseModel
 import com.erica.gamsung.uploadTime.data.remote.ScheduleApi
 import com.erica.gamsung.uploadTime.domain.ScheduleDataModel
 import retrofit2.HttpException
@@ -35,21 +35,18 @@ class ScheduleRepository
                 )
             }
 
-        private fun handleResponse(response: retrofit2.Response<List<ApiResponse>>): Result<Boolean> {
+        private fun handleResponse(response: retrofit2.Response<List<PostScheduleDataResponseModel>>): Result<Boolean> {
             println("HTTP status: ${response.code()}")
             if (!response.isSuccessful) {
                 println("Response error body: ${response.errorBody()?.string()}")
                 return Result.failure(Exception("Failed to upload schedules, HTTP error"))
             }
             val body = response.body()
-            val allSuccess = body?.all { it.success } ?: false
-            println("All time Success: $allSuccess")
-            return if (allSuccess) {
+            val isSuccessful = !body.isNullOrEmpty()
+            println("All time Success: $isSuccessful")
+            return if (isSuccessful) {
                 Result.success(true)
             } else {
-                body?.forEach { item ->
-                    if (!item.success) println("Failed item: $item")
-                }
                 Result.failure(Exception("Not all schedules were successfully uploaded"))
             }
         }

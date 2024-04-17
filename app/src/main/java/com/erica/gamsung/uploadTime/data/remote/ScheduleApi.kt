@@ -9,5 +9,5 @@ interface ScheduleApi {
     @POST("postings/option")
     suspend fun uploadSchedules(
         @Body scheduleDataList: List<ScheduleDataModel>,
-    ): Response<List<ApiResponse>>
+    ): Response<List<PostScheduleDataResponseModel>>
 }
