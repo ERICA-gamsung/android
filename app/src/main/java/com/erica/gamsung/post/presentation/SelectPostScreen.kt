@@ -2,6 +2,7 @@ package com.erica.gamsung.post.presentation
 
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -55,6 +56,7 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.post.data.mock.Post
+import com.erica.gamsung.post.data.mock.beforeConnectPost
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -73,23 +75,33 @@ fun SelectPostScreen(
     val reservationId by postViewModel.reservationId.observeAsState()
     val postData by postViewModel.postData.observeAsState()
 
+    // 진입 시 해당 효과 Launch
+    // 서버에 reservationId에 해당하는 데이터를 요청한다
     LaunchedEffect(key1 = true) {
-        reservationId?.let { postViewModel.fetchPostData(it) }
+        // reservationId?.let { postViewModel.fetchPostData(it) }
+        reservationId?.let { postViewModel.fetchPostDataLocally() }
+        Log.d("ResID", "resID: $reservationId")
+        Log.d("Content", "content: $postData")
+        Log.d("VM_Hash", "Hash: ${postViewModel.hashCode()}")
     }
 
     val serverDate = LocalDate.of(2024, 3, 25)
     val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
     val date = serverDate.format(formatter)
+    val date2 = postData?.date
+//    val time = postData?.time
+//    val text = time?.let { dateTextInput(date, it) }
+//    val contents = postViewModel.contents.observeAsState(initial = beforeConnectPost)
 
     val time = postData?.time
-    val text = time?.let { dateTextInput(date, it) }
+    val text = time?.let { dateTextInput(date2, it) }
+    val contents = postViewModel.contents.observeAsState(initial = beforeConnectPost)
 
+    // contents의 글은 3개로 제한했기 때문에 3개로 고정한다
     val pagerState =
         rememberPagerState(pageCount = {
             3
         })
-
-    val contents = postViewModel.contents.observeAsState(initial = emptyList())
 
     Scaffold(
         topBar = { GsTopAppBar(title = "글 선택 페이지") },
@@ -104,7 +116,7 @@ fun SelectPostScreen(
             if (text != null) {
                 TextSection(Modifier.weight(1f), text = text)
             }
-            PicSection(Modifier.weight(5f), contents, pagerState)
+            PostSection(Modifier.weight(5f), contents, pagerState)
 
             ButtonSection(
                 modifier = Modifier.weight(3f),
@@ -116,7 +128,7 @@ fun SelectPostScreen(
 }
 
 fun dateTextInput(
-    date: String,
+    date: String?,
     time: String,
 ): String {
     val text = "$date ${time}\n 글 선택 중.."
@@ -142,7 +154,7 @@ fun TextSection(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PicSection(
+fun PostSection(
     modifier: Modifier,
     posts: State<List<Post>>,
     pagerState: PagerState,
@@ -169,8 +181,13 @@ fun PicSection(
                 )
             }
         }
-        HorizontalPager(state = pagerState) { page ->
-            PostItem(post = posts.value[page], pageOffset = calculatePageOffset(pagerState, page))
+        if (posts.value.isNotEmpty()) {
+            HorizontalPager(state = pagerState) { page ->
+                PostItem(post = posts.value[page], pageOffset = calculatePageOffset(pagerState, page))
+            }
+        } else {
+            // 적절한 메시지 표시 or 다른 UI 요소
+            Text("No posts available", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

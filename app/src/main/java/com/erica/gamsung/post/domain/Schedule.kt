@@ -11,6 +11,19 @@ data class Schedule(
     val imageUrl: List<String>,
 )
 
+data class ScheduleState(
+    val reservationId: Int,
+    // LocalDate
+    val date: String,
+    // LocalTime
+    val time: String,
+    val state: String,
+)
+
 data class ScheduleList(
     val schedules: List<Schedule>,
+)
+
+data class ScheduleStateList(
+    val scheduleState: List<ScheduleState>,
 )

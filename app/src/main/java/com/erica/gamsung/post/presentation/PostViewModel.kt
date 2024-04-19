@@ -1,10 +1,12 @@
 package com.erica.gamsung.post.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.erica.gamsung.post.data.mock.Post
+import com.erica.gamsung.post.data.mock.mockSchedule
 import com.erica.gamsung.post.data.remote.PostApi
 import com.erica.gamsung.post.domain.Schedule
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +31,7 @@ class PostViewModel
 
         fun selectReservation(id: Int) {
             _reservationId.value = id
+            Log.d("VM_Scope", "resID: ${_reservationId.value}")
         }
 
         fun fetchPostData(reservationId: Int) {
@@ -42,6 +45,15 @@ class PostViewModel
                     }
                 } catch (_: Exception) {
                 }
+            }
+        }
+
+        // 실제 통신에서는 reservationId를 사용한다
+        fun fetchPostDataLocally() {
+            val schedule = mockSchedule
+            if (schedule != null) {
+                _contents.value = schedule.contents
+                _postData.value = schedule
             }
         }
         // 사용자 action 처리

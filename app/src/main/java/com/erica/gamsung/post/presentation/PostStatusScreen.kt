@@ -1,5 +1,6 @@
 package com.erica.gamsung.post.presentation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -19,12 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
-import com.erica.gamsung.post.data.mock.mockSchedules
-import com.erica.gamsung.post.domain.ScheduleList
+import com.erica.gamsung.post.data.mock.mockStates
+import com.erica.gamsung.post.domain.ScheduleStateList
 import com.erica.gamsung.uploadTime.presentation.TimeSlotButton
 import com.erica.gamsung.uploadTime.presentation.TitleTextSection
 
@@ -34,7 +35,7 @@ fun PostStatusScreen(
     navController: NavController = rememberNavController(),
     postViewModel: PostViewModel = hiltViewModel(),
 ) {
-    val scheduleList = mockSchedules
+    val scheduleList = mockStates
     var selectedTimeSlot by remember {
         mutableStateOf("")
     }
@@ -61,7 +62,7 @@ fun PostStatusScreen(
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 TimeSlotListSection(
-                    scheduleList = scheduleList,
+                    scheduleStateList = scheduleList,
                     navController = navController,
                     viewModel = postViewModel,
                     selectedTimeSlot = selectedTimeSlot,
@@ -83,12 +84,13 @@ fun PostStatusScreen(
 private fun TimeSlotListSection(
     viewModel: PostViewModel,
     navController: NavController,
-    scheduleList: ScheduleList,
+    scheduleStateList: ScheduleStateList,
     selectedTimeSlot: String?,
     onTimeSlotSelected: (String) -> Unit,
 ) {
+    val reservationId by viewModel.reservationId.observeAsState()
     Column {
-        scheduleList.schedules.forEach { schedule ->
+        scheduleStateList.scheduleState.forEach { schedule ->
             val slot = "${schedule.date} ${schedule.time}"
             TimeSlotButton(
                 dateSlot = schedule.date,
@@ -97,6 +99,10 @@ private fun TimeSlotListSection(
                 onTimeSlotSelected = {
                     onTimeSlotSelected(slot)
                     viewModel.selectReservation(schedule.reservationId)
+                    Log.d("ResID", "resID: ${schedule.reservationId}")
+                    Log.d("VM_ResID", "resID: ${viewModel.reservationId}")
+                    Log.d("ObSt_ResID", "resID: $reservationId")
+                    Log.d("VM_Hash", "Hash: ${viewModel.hashCode()}")
                     navController.navigate(Screen.SelectNewPost.route)
                 },
             )
