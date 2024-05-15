@@ -1,5 +1,6 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,13 +21,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.Screen
 
 @Preview
 @Composable
-fun UploadTimeConfirmScreen(
-    // navController: NavHostController = rememberNavController(),
-) {
-    // val scheduledDataMap = viewModel.scheduleDataMap
+fun UploadTimeConfirmScreen(navController: NavHostController = rememberNavController()) {
+    BackHandler(enabled = true) {
+//
+    }
     Scaffold {
         Column(
             modifier =
@@ -37,21 +41,24 @@ fun UploadTimeConfirmScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.weight(1f))
-            ContentSection(modifier = Modifier.weight(2f))
+            ContentSection(modifier = Modifier.weight(2f), onClickEvent = { navController.navigate(Screen.Main.route) })
             Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
 
 @Composable
-private fun ContentSection(modifier: Modifier) {
+private fun ContentSection(
+    modifier: Modifier,
+    onClickEvent: () -> Unit = {},
+) {
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxWidth(),
     ) {
         TextSection(Modifier.weight(1f))
-        ActionButton(Modifier.weight(1f))
+        ActionButton(Modifier.weight(1f), onClick = onClickEvent)
     }
 }
 
@@ -81,7 +88,10 @@ private fun TextSection(modifier: Modifier) {
 
 @Suppress("MagicNumber")
 @Composable
-private fun ActionButton(modifier: Modifier) {
+private fun ActionButton(
+    modifier: Modifier,
+    onClick: () -> Unit = {},
+) {
     val isSelected = false
     Box(
         modifier = modifier,
@@ -111,6 +121,7 @@ private fun ActionButton(modifier: Modifier) {
                 ),
             onClick = {
                 !isSelected
+                onClick()
                 // TODO
             },
         ) {

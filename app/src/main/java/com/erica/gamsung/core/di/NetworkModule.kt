@@ -4,6 +4,7 @@ import com.erica.gamsung.BuildConfig
 import com.erica.gamsung.menu.data.remote.MenuApi
 import com.erica.gamsung.post.data.remote.PostApi
 import com.erica.gamsung.store.data.remote.StoreApi
+import com.erica.gamsung.uploadTime.data.remote.ScheduleApi
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
@@ -85,4 +86,9 @@ object NetworkModule {
     @Singleton
     @Provides
     fun providePostApi(retrofit: Retrofit): PostApi = retrofit.create(PostApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideScheduleService(retrofit: Retrofit): ScheduleApi = retrofit.create(ScheduleApi::class.java)
+
 }

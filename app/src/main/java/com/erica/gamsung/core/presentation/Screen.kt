@@ -25,6 +25,8 @@ sealed class Screen(
 
     data object DateTimeListCheck : Screen("dateTimeListCheck")
 
+    data object DateTimeFinish : Screen("dateTimeFinish")
+
     data object Login : Screen("login")
 
     data object SelectNewPost : Screen("selectPost")

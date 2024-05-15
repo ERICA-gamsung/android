@@ -1,5 +1,7 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.Screen
 import java.time.format.DateTimeFormatter
 
 @Suppress("UnusedParameter")
@@ -39,8 +43,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ScheduleListScreen(
     navController: NavHostController = rememberNavController(),
-    viewModel: CalendarViewModel = viewModel(),
+    viewModel: ScheduleViewModel = viewModel(),
 ) {
+    BackHandler(enabled = true) {
+//
+    }
     // 여기서 remember를 사용하여 상태를 저장합니다.
     var selectedTimeSlot by remember { mutableStateOf("") }
 
@@ -67,12 +74,7 @@ fun ScheduleListScreen(
                 TimeSlotListSection(calendarViewModel = viewModel, selectedTimeSlot = selectedTimeSlot) {
                     selectedTimeSlot = it
                 }
-//                    Column{
-//                        TimeSlotButton("1월 9일", "13시 00분", selectedTimeSlot) { selectedTimeSlot = it }
-//                        TimeSlotButton("1월 9일", "13시 00분", selectedTimeSlot) { selectedTimeSlot = it }
-//                        TimeSlotButton("1월 9일", "13시 00분", selectedTimeSlot) { selectedTimeSlot = it }
-//                    }
-                ButtonSection()
+                ButtonSection(viewModel) { navController.navigate(Screen.DateTimeFinish.route) }
             }
         }
     }
@@ -94,7 +96,11 @@ fun TitleTextSection(text: String) {
 }
 
 @Composable
-fun ButtonSection() {
+private fun ButtonSection(
+    viewModel: ScheduleViewModel,
+    onSuccess: () -> Unit = {},
+) {
+    val uploadResult by viewModel.uploadResult.observeAsState()
     Column {
         Divider(modifier = Modifier.padding(bottom = 16.dp))
         Row(
@@ -112,9 +118,20 @@ fun ButtonSection() {
             Button(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(7.dp),
-                onClick = { /* 선택 확인 액션 */ },
+                onClick = {
+                    // 선택 확인 액션
+                    viewModel.uploadSchedulesToServer()
+                    onSuccess()
+                },
             ) {
                 Text("Confirm")
+            }
+            uploadResult?.let {
+                if (it) {
+                    onSuccess()
+                } else {
+                    Log.d("ScheduledListScreenLogic", "업로드 실패")
+                }
             }
         }
         Box(
@@ -128,17 +145,17 @@ fun ButtonSection() {
 
 @Composable
 private fun TimeSlotListSection(
-    calendarViewModel: CalendarViewModel,
+    calendarViewModel: ScheduleViewModel,
     selectedTimeSlot: String?,
     onTimeSlotSelected: (String) -> Unit,
 ) {
     // 시간 슬롯 목록, ViewModel에서 가져올 수 있습니다.
-    val scheduleDataMap = calendarViewModel.scheduleDataMap
+    val scheduleDataMap = calendarViewModel.scheduleDataModelMap
 
     Column {
         scheduleDataMap.forEach { (date, scheduleData) ->
             val dateText = scheduleData.date?.format(DateTimeFormatter.ofPattern("M월 d일")) ?: ""
-            val timeText = scheduleData.time
+            val timeText = scheduleData.time.toString()
             TimeSlotButton(
                 dateSlot = dateText,
                 timeSlot = timeText,

@@ -14,7 +14,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.erica.gamsung.core.data.GamsungDatabase
-import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
+import com.erica.gamsung.uploadTime.presentation.ScheduleViewModel
 import org.junit.AfterClass
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -28,6 +28,7 @@ class MainScreenKtTest {
     @get:Rule
     val rule: ComposeContentTestRule = createComposeRule()
     private lateinit var navController: TestNavHostController
+    private lateinit var viewModel: ScheduleViewModel
 
     @Before
     fun setUp() {
@@ -36,7 +37,7 @@ class MainScreenKtTest {
             navController.navigatorProvider.addNavigator(ComposeNavigator())
             MainNavHost(
                 navController = navController,
-                calendarViewModel = CalendarViewModel(),
+                scheduleViewModel = viewModel,
             )
         }
     }

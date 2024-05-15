@@ -3,6 +3,7 @@ package com.erica.gamsung.core.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -10,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -24,10 +26,11 @@ import com.erica.gamsung.post.presentation.PreviewPost
 import com.erica.gamsung.post.presentation.SelectPostScreen
 import com.erica.gamsung.setting.presentation.SettingScreen
 import com.erica.gamsung.store.presentation.InputStoreScreen
-import com.erica.gamsung.uploadTime.presentation.CalendarViewModel
 import com.erica.gamsung.uploadTime.presentation.MyCalendarScreen
 import com.erica.gamsung.uploadTime.presentation.MyScheduleScreen
 import com.erica.gamsung.uploadTime.presentation.ScheduleListScreen
+import com.erica.gamsung.uploadTime.presentation.ScheduleViewModel
+import com.erica.gamsung.uploadTime.presentation.UploadTimeConfirmScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 // 동일한 viewmodel을 2개의 page가 공유하기 위해서는 hilt를 이용한 DI가 필요하다고 한다.
@@ -35,7 +38,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
+        val scheduleViewModel: ScheduleViewModel by viewModels()
         setContent {
             GamsungTheme {
                 Surface(
@@ -43,11 +49,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     val navController = rememberNavController()
-                    // calendarViewModel 여기서 생성
-                    val calendarViewModel: CalendarViewModel = viewModel()
                     MainNavHost(
                         navController = navController,
-                        calendarViewModel = calendarViewModel,
+                        scheduleViewModel = scheduleViewModel,
                     )
                 }
             }
@@ -58,7 +62,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainNavHost(
     navController: NavHostController,
-    calendarViewModel: CalendarViewModel,
+    scheduleViewModel: ScheduleViewModel,
 ) {
     val postViewModel: PostViewModel = hiltViewModel()
     NavHost(navController = navController, startDestination = Screen.Main.route) {
@@ -78,14 +82,17 @@ fun MainNavHost(
         composable(Screen.InputMenu(isEditMode = false).route) {
             InputMenuScreen(navController = navController, isEditMode = false)
         }
-        composable(Screen.DateTimeListCheck.route) {
-            MyCalendarScreen(navController = navController, viewModel = calendarViewModel)
+        composable(Screen.DateSelect.route) {
+            MyCalendarScreen(navController = navController, viewModel = scheduleViewModel)
         }
         composable(Screen.TimeSelect.route) {
-            MyScheduleScreen(navController = navController, viewModel = calendarViewModel)
+            MyScheduleScreen(navController = navController, viewModel = scheduleViewModel)
         }
         composable(Screen.DateTimeListCheck.route) {
-            ScheduleListScreen(navController = navController, viewModel = calendarViewModel)
+            ScheduleListScreen(navController = navController, viewModel = scheduleViewModel)
+        }
+        composable(Screen.DateTimeFinish.route) {
+            UploadTimeConfirmScreen(navController = navController)
         }
         composable(Screen.Login.route) { LoginScreen(navController = navController) }
         composable(Screen.SelectNewPost.route) {

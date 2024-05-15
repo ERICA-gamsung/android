@@ -26,7 +26,7 @@ import com.erica.gamsung.core.presentation.component.GsButton
 @Composable
 fun MyCalendarScreen(
     navController: NavHostController = rememberNavController(),
-    viewModel: CalendarViewModel = viewModel(),
+    viewModel: ScheduleViewModel = viewModel(),
 ) {
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
     // val selectedDatesMap = remember { mutableStateMapOf<YearMonth, List<LocalDate>>() }
