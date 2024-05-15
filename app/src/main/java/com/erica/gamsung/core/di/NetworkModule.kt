@@ -90,5 +90,4 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideScheduleService(retrofit: Retrofit): ScheduleApi = retrofit.create(ScheduleApi::class.java)
-
 }
