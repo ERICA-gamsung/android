@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -49,7 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
@@ -68,18 +70,17 @@ import kotlin.math.absoluteValue
 @Composable
 fun SelectPostScreen(
     navController: NavHostController = rememberNavController(),
-    // postViewModel: PostViewModel = hiltViewModel(),
-    postViewModel: PostViewModel = viewModel(),
+    postViewModel: PostViewModel = hiltViewModel(),
+    // postViewModel: PostViewModel = viewModel(),
 ) {
     val reservationId by postViewModel.reservationId.observeAsState()
     val postData by postViewModel.postData.observeAsState()
     val contents by postViewModel.contents.observeAsState(initial = beforeConnectPost)
     val content by postViewModel.content.observeAsState()
-    // val imgUri by postViewModel.imgUri.observeAsState()
     val imgBitmap by postViewModel.imgBitMap.observeAsState()
     val confirmAndNavigate = {
         postViewModel.confirmPostData(reservationId, content, imgBitmap)
-        navController.navigate(Screen.PreviewNewPost.route)
+        navController.navigate(Screen.PostsStatus.route)
     }
     val setContent = { c: String ->
         postViewModel.setContent(c)
@@ -91,18 +92,15 @@ fun SelectPostScreen(
 
         // reservationId?.let { postViewModel.fetchPostDataLocally() }
         Log.d("ResID", "resID: $reservationId")
-        Log.d("Content", "content: $postData")
-        Log.d("VM_Hash", "Hash: ${postViewModel.hashCode()}")
     }
 
 //    val serverDate = LocalDate.of(2024, 3, 25)
-    val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
 //    val date = serverDate.format(formatter)
-    val date = postData?.date?.format(formatter)
 //    val time = postData?.time
 //    val text = time?.let { dateTextInput(date, it) }
 //    val contents = postViewModel.contents.observeAsState(initial = beforeConnectPost)
-
+    val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
+    val date = postData?.date?.format(formatter)
     val time = postData?.let { formatTime(it.time) }
     val text = time?.let { dateTextInput(date, it) }
 
@@ -138,8 +136,8 @@ fun SelectPostScreen(
                 PostSection(Modifier.weight(5f), contents, pagerState, setContent)
                 ButtonSection(
                     modifier = Modifier.weight(1f),
-                    onNextClick = confirmAndNavigate,
-                    // onUploadClick = { imagePickerLauncher.launch("image/*") }
+                    onLeftClick = { navController.navigate(Screen.PreviewNewPost.route) },
+                    onRightClick = confirmAndNavigate,
                 )
             }
         },
@@ -281,24 +279,35 @@ private fun loadBitmapFromUri(
 @Composable
 fun ButtonSection(
     modifier: Modifier,
-    onNextClick: () -> Unit,
+    onRightClick: () -> Unit,
+    onLeftClick: () -> Unit,
 ) {
-    Box(
+    Row(
         modifier =
             modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-        contentAlignment = Alignment.Center,
     ) {
         OutlinedButton(
             modifier =
                 Modifier
-                    .fillMaxWidth(),
-            onClick = onNextClick,
+                    .weight(1f),
+            onClick = onLeftClick,
             shape = RoundedCornerShape(8.dp),
             // border = BorderStroke(1.dp, Color.LightGray),
         ) {
-            Text(text = "다음") // color = Color.Black)
+            Text(text = "미리보기") // color = Color.Black)
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        OutlinedButton(
+            modifier =
+                Modifier
+                    .weight(1f),
+            onClick = onRightClick,
+            shape = RoundedCornerShape(8.dp),
+            // border = BorderStroke(1.dp, Color.LightGray),
+        ) {
+            Text(text = "확정하기") // color = Color.Black)
         }
     }
 }
