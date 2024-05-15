@@ -144,6 +144,7 @@ private fun TimeSlotListSection(
                 timeSlot = timeText,
                 isSelected = "$dateText $timeText" == selectedTimeSlot,
                 onTimeSlotSelected = onTimeSlotSelected,
+                stateOption = null,
             )
             Spacer(modifier = Modifier.height(8.dp)) // 버튼 사이의 간격
         }
@@ -158,6 +159,7 @@ fun TimeSlotButton(
     // selectedTimeSlot: String,
     isSelected: Boolean,
     onTimeSlotSelected: (String) -> Unit,
+    stateOption: String?,
 ) {
     fun onCancel() {
         // TODO
@@ -183,7 +185,11 @@ fun TimeSlotButton(
         ) {
             Text(dateSlot)
             Text(timeSlot)
-            Text("Cancel", modifier = Modifier.clickable { onCancel() })
+            if (stateOption == null) {
+                Text("Cancel", modifier = Modifier.clickable { onCancel() })
+            } else {
+                Text(stateOption)
+            }
         }
     }
     Spacer(modifier = Modifier.height(8.dp))

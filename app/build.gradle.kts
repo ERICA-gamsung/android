@@ -17,7 +17,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -103,6 +102,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.46")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     kapt("com.google.dagger:hilt-android-compiler:2.46")
+
+    // okhttp3
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
 }
 
 kapt {

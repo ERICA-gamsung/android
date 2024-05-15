@@ -1,22 +1,22 @@
 package com.erica.gamsung.post.presentation
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -33,7 +33,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -50,15 +49,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
-import com.erica.gamsung.post.data.mock.Post
 import com.erica.gamsung.post.data.mock.beforeConnectPost
+import com.erica.gamsung.post.presentation.utils.formatTime
 import java.io.InputStream
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.absoluteValue
 
@@ -70,32 +68,43 @@ import kotlin.math.absoluteValue
 @Composable
 fun SelectPostScreen(
     navController: NavHostController = rememberNavController(),
-    postViewModel: PostViewModel = hiltViewModel(),
+    // postViewModel: PostViewModel = hiltViewModel(),
+    postViewModel: PostViewModel = viewModel(),
 ) {
     val reservationId by postViewModel.reservationId.observeAsState()
     val postData by postViewModel.postData.observeAsState()
-
+    val contents by postViewModel.contents.observeAsState(initial = beforeConnectPost)
+    val content by postViewModel.content.observeAsState()
+    // val imgUri by postViewModel.imgUri.observeAsState()
+    val imgBitmap by postViewModel.imgBitMap.observeAsState()
+    val confirmAndNavigate = {
+        postViewModel.confirmPostData(reservationId, content, imgBitmap)
+        navController.navigate(Screen.PreviewNewPost.route)
+    }
+    val setContent = { c: String ->
+        postViewModel.setContent(c)
+    }
     // 진입 시 해당 효과 Launch
     // 서버에 reservationId에 해당하는 데이터를 요청한다
     LaunchedEffect(key1 = true) {
-        // reservationId?.let { postViewModel.fetchPostData(it) }
-        reservationId?.let { postViewModel.fetchPostDataLocally() }
+        reservationId?.let { postViewModel.fetchPostData(it) }
+
+        // reservationId?.let { postViewModel.fetchPostDataLocally() }
         Log.d("ResID", "resID: $reservationId")
         Log.d("Content", "content: $postData")
         Log.d("VM_Hash", "Hash: ${postViewModel.hashCode()}")
     }
 
-    val serverDate = LocalDate.of(2024, 3, 25)
+//    val serverDate = LocalDate.of(2024, 3, 25)
     val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
-    val date = serverDate.format(formatter)
-    val date2 = postData?.date
+//    val date = serverDate.format(formatter)
+    val date = postData?.date?.format(formatter)
 //    val time = postData?.time
 //    val text = time?.let { dateTextInput(date, it) }
 //    val contents = postViewModel.contents.observeAsState(initial = beforeConnectPost)
 
-    val time = postData?.time
-    val text = time?.let { dateTextInput(date2, it) }
-    val contents = postViewModel.contents.observeAsState(initial = beforeConnectPost)
+    val time = postData?.let { formatTime(it.time) }
+    val text = time?.let { dateTextInput(date, it) }
 
     // contents의 글은 3개로 제한했기 때문에 3개로 고정한다
     val pagerState =
@@ -105,26 +114,36 @@ fun SelectPostScreen(
 
     Scaffold(
         topBar = { GsTopAppBar(title = "글 선택 페이지") },
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .padding(it)
-                    .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            if (text != null) {
-                TextSection(Modifier.weight(1f), text = text)
+        content = { padding ->
+            Column(
+                modifier =
+                    Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                if (text != null) {
+                    TextSection(Modifier.weight(1f), text = text)
+                }
+                PicSection(
+                    modifier = Modifier.weight(3f),
+                    imgBitmap = imgBitmap,
+                    onImageSelected = { bitmap ->
+                        if (bitmap != imgBitmap) {
+                            postViewModel.setImg(bitmap)
+                        }
+                    },
+                )
+                PostSection(Modifier.weight(5f), contents, pagerState, setContent)
+                ButtonSection(
+                    modifier = Modifier.weight(1f),
+                    onNextClick = confirmAndNavigate,
+                    // onUploadClick = { imagePickerLauncher.launch("image/*") }
+                )
             }
-            PostSection(Modifier.weight(5f), contents, pagerState)
-
-            ButtonSection(
-                modifier = Modifier.weight(3f),
-                onNextClick = { navController.navigate(Screen.PreviewNewPost.route) },
-                // onUploadClick = { imagePickerLauncher.launch("image/*") }
-            )
-        }
-    }
+        },
+    )
 }
 
 fun dateTextInput(
@@ -156,8 +175,9 @@ fun TextSection(
 @Composable
 fun PostSection(
     modifier: Modifier,
-    posts: State<List<Post>>,
+    posts: List<String>,
     pagerState: PagerState,
+    setContent: (String) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -181,9 +201,10 @@ fun PostSection(
                 )
             }
         }
-        if (posts.value.isNotEmpty()) {
+        if (posts.isNotEmpty()) {
             HorizontalPager(state = pagerState) { page ->
-                PostItem(post = posts.value[page], pageOffset = calculatePageOffset(pagerState, page))
+                PostItem(post = posts[page], pageOffset = calculatePageOffset(pagerState, page))
+                setContent(posts[page])
             }
         } else {
             // 적절한 메시지 표시 or 다른 UI 요소
@@ -193,79 +214,91 @@ fun PostSection(
 }
 
 @Composable
-fun ButtonSection(
+fun PicSection(
     modifier: Modifier,
-//    onUploadClick: () -> Unit = {},
-    onNextClick: () -> Unit = {},
+    imgBitmap: Bitmap?,
+    onImageSelected: (Bitmap?) -> Unit,
 ) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
-        Column(
-            modifier =
-                Modifier
-                    .weight(2f),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            PicBtn()
-            OutlinedButton(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                onClick = onNextClick,
-                border = BorderStroke(1.dp, Color.LightGray),
-                shape = RoundedCornerShape(10.dp),
-            ) {
-                Text(text = "다음", color = Color.Black)
+    val context = LocalContext.current
+    val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+            selectedImageUri.value = it
+        }
+    LaunchedEffect(selectedImageUri.value) {
+        selectedImageUri.value?.let { uri ->
+            val bitmap = loadBitmapFromUri(context = context, uri = uri)
+            if (bitmap != null && bitmap != imgBitmap) {
+                onImageSelected(bitmap)
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
+    }
+
+    Box(
+        modifier =
+            modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.Gray.copy(alpha = 0.2f))
+                .clickable { imagePickerLauncher.launch("image/*") },
+        contentAlignment = Alignment.Center,
+    ) {
+        if (selectedImageUri.value == null) {
+            Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+                Text("사진 업로드")
+            }
+        } else {
+            imgBitmap?.let {
+                Image(
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = "Selected Image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                )
+            } ?: run {
+                Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+                    Text("사진 업로드")
+                }
+            }
+        }
     }
 }
 
-@Composable
-fun PicBtn() {
-    val selectedImageUri =
-        remember {
-            mutableStateOf<Uri?>(null)
-        }
-    val context = LocalContext.current
+@Suppress("TooGenericExceptionCaught")
+private fun loadBitmapFromUri(
+    context: Context,
+    uri: Uri,
+): android.graphics.Bitmap? =
+    try {
+        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+        inputStream.use { BitmapFactory.decodeStream(it) }
+    } catch (e: Exception) {
+        Log.e("BitmapFromUri", "$e")
+        null
+    }
 
-    val imagePickerLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(),
-        ) {
-            selectedImageUri.value = it
-        }
-    Button(
+@Composable
+fun ButtonSection(
+    modifier: Modifier,
+    onNextClick: () -> Unit,
+) {
+    Box(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .padding(bottom = 8.dp),
-        onClick = { imagePickerLauncher.launch("image/*") },
-//                colors =
-//                ButtonDefaults.buttonColors(
-//                    contentColor = Color.White,
-//                    containerColor = MaterialTheme.colorScheme.primary,
-//                ),
-        shape = RoundedCornerShape(10.dp),
+                .padding(16.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        if (selectedImageUri.value == null) {
-            Text(text = "사진 업로드")
-        } else {
-            val inputStream: InputStream? = context.contentResolver.openInputStream(selectedImageUri.value!!)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            Image(
-                bitmap = bitmap.asImageBitmap(),
-                contentDescription = "SelectedImage",
-                modifier = Modifier.size(200.dp),
-                contentScale = ContentScale.Crop,
-            )
+        OutlinedButton(
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+            onClick = onNextClick,
+            shape = RoundedCornerShape(8.dp),
+            // border = BorderStroke(1.dp, Color.LightGray),
+        ) {
+            Text(text = "다음") // color = Color.Black)
         }
     }
 }
@@ -278,7 +311,7 @@ fun calculatePageOffset(
 
 @Composable
 fun PostItem(
-    post: Post,
+    post: String,
     pageOffset: Float,
 ) {
     Card(
@@ -293,10 +326,60 @@ fun PostItem(
                     )
             }.padding(16.dp),
     ) {
-        Column(
-            Modifier.padding(16.dp),
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(text = post.content, style = MaterialTheme.typography.bodyMedium)
+            Text(text = post, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
+
+// @Composable
+// fun PicBtn(
+//    //imgUri: Uri?,
+//    imgBitmap: Bitmap?,
+//    onImageSelected: (Bitmap?) -> Unit
+// ) {
+//    val context = LocalContext.current
+//    val selectedImageUri =
+//        remember {
+//            mutableStateOf<Uri?>(null)
+//        }
+//    val imagePickerLauncher =
+//        rememberLauncherForActivityResult(
+//            contract = ActivityResultContracts.GetContent()
+//        ) {
+//            selectedImageUri.value = it
+//        }
+//
+//    Button(
+//        modifier =
+//        Modifier
+//            .fillMaxWidth()
+//            .height(200.dp)
+//            .padding(bottom = 8.dp),
+//        onClick = { imagePickerLauncher.launch("image/*") },
+//        shape = RoundedCornerShape(10.dp),
+//    ) {
+//        if (selectedImageUri.value == null) {
+//            Text(text = "사진 업로드")
+//        } else {
+//            Log.d("사진 선택", "성공")
+//            val inputStream: InputStream? = context.contentResolver.openInputStream(selectedImageUri.value!!)
+//            //onImageSelected(imgUri)
+//            val bitmap = BitmapFactory.decodeStream(inputStream)
+//            onImageSelected(imgBitmap)
+//
+//            Image(
+//                bitmap = bitmap.asImageBitmap(),
+//                contentDescription = "SelectedImage",
+//                modifier = Modifier.size(200.dp),
+//                contentScale = ContentScale.Crop,
+//            )
+//        }
+//    }
+// }
