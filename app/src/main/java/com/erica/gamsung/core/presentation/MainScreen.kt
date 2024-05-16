@@ -39,12 +39,11 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            MainButton("글 발행하러 가기") { navController.navigate(Screen.PublishPosting.route) }
+            MainButton("글 발행하러 가기") { navController.navigate(Screen.DateSelect.route) }
 
             Spacer(modifier = Modifier.height(30.dp))
 
             MainButton("발행 현황 확인하기") { navController.navigate(Screen.PostsStatus.route) }
-            MainButton("시간 기능 확인") { navController.navigate(Screen.DateSelect.route) }
         }
     }
 }
