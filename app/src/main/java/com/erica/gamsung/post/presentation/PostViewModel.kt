@@ -147,7 +147,7 @@ class PostViewModel
 
         private fun bitmapToByteArray(bitmap: Bitmap?): ByteArray {
             ByteArrayOutputStream().apply {
-                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, this)
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 80, this)
                 return toByteArray()
             }
         }
