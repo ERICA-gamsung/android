@@ -188,7 +188,7 @@ private fun TimeSlotListSection(
                 timeSlot = formatTime(schedule.time),
                 isSelected = slot == selectedTimeSlot,
                 onTimeSlotSelected = {
-                    if (schedule.state == "ready") {
+                    if (schedule.state == "yet") {
                         onTimeSlotSelected(slot)
                         viewModel.selectReservation(schedule.reservationId)
                         Log.d("ResID", "resID: ${schedule.reservationId}")

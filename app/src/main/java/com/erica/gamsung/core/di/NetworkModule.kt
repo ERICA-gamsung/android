@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+@Suppress("MagicNumber")
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -62,6 +63,7 @@ object NetworkModule {
                 level = HttpLoggingInterceptor.Level.BODY
             }
 
+        // MagicNumber
         val client =
             OkHttpClient
                 .Builder()
