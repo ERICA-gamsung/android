@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,6 +20,10 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
 import com.erica.gamsung.login.presentation.LoginScreen
 import com.erica.gamsung.menu.presentation.InputMenuScreen
+import com.erica.gamsung.post.presentation.PostStatusScreen
+import com.erica.gamsung.post.presentation.PostViewModel
+import com.erica.gamsung.post.presentation.PreviewPost
+import com.erica.gamsung.post.presentation.SelectPostScreen
 import com.erica.gamsung.setting.presentation.SettingScreen
 import com.erica.gamsung.store.presentation.InputStoreScreen
 import com.erica.gamsung.uploadTime.presentation.MyCalendarScreen
@@ -59,6 +64,7 @@ fun MainNavHost(
     navController: NavHostController,
     scheduleViewModel: ScheduleViewModel,
 ) {
+    val postViewModel: PostViewModel = hiltViewModel()
     NavHost(navController = navController, startDestination = Screen.Main.route) {
         composable(Screen.Main.route) { MainScreen(navController = navController) }
         composable(Screen.Setting.route) { SettingScreen(navController = navController) }
@@ -89,6 +95,15 @@ fun MainNavHost(
             UploadTimeConfirmScreen(navController = navController)
         }
         composable(Screen.Login.route) { LoginScreen(navController = navController) }
+        composable(Screen.SelectNewPost.route) {
+            SelectPostScreen(navController = navController, postViewModel)
+        }
+        composable(Screen.PreviewNewPost.route) {
+            PreviewPost(navController = navController, postViewModel)
+        }
+        composable(Screen.PostsStatus.route) {
+            PostStatusScreen(navController = navController, postViewModel)
+        }
     }
 }
 

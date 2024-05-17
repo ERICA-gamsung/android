@@ -28,4 +28,10 @@ sealed class Screen(
     data object DateTimeFinish : Screen("dateTimeFinish")
 
     data object Login : Screen("login")
+
+    data object SelectNewPost : Screen("selectPost")
+
+    data object PreviewNewPost : Screen("previewPost")
+
+    data object PostsStatus : Screen("postsStatus")
 }

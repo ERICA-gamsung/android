@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +39,6 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import java.time.format.DateTimeFormatter
 
-@Suppress("UnusedParameter")
 @Preview
 @Composable
 fun ScheduleListScreen(
@@ -153,7 +153,7 @@ private fun TimeSlotListSection(
     val scheduleDataMap = calendarViewModel.scheduleDataModelMap
 
     Column {
-        scheduleDataMap.forEach { (date, scheduleData) ->
+        scheduleDataMap.forEach { (_, scheduleData) ->
             val dateText = scheduleData.date?.format(DateTimeFormatter.ofPattern("M월 d일")) ?: ""
             val timeText = scheduleData.time.toString()
             TimeSlotButton(
@@ -161,6 +161,7 @@ private fun TimeSlotListSection(
                 timeSlot = timeText,
                 isSelected = "$dateText $timeText" == selectedTimeSlot,
                 onTimeSlotSelected = onTimeSlotSelected,
+                stateOption = null,
             )
             Spacer(modifier = Modifier.height(8.dp)) // 버튼 사이의 간격
         }
@@ -175,6 +176,7 @@ fun TimeSlotButton(
     // selectedTimeSlot: String,
     isSelected: Boolean,
     onTimeSlotSelected: (String) -> Unit,
+    stateOption: String?,
 ) {
     fun onCancel() {
         // TODO
@@ -198,9 +200,13 @@ fun TimeSlotButton(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(dateSlot)
-            Text(timeSlot)
-            Text("Cancel", modifier = Modifier.clickable { onCancel() })
+            Text(dateSlot, color = Color.Companion.White)
+            Text(timeSlot, color = Color.Companion.White)
+            if (stateOption == null) {
+                Text("Cancel", color = Color.Companion.White, modifier = Modifier.clickable { onCancel() })
+            } else {
+                Text(stateOption, color = Color.Companion.White)
+            }
         }
     }
     Spacer(modifier = Modifier.height(8.dp))

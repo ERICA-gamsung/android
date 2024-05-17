@@ -2,6 +2,7 @@ package com.erica.gamsung.core.di
 
 import com.erica.gamsung.BuildConfig
 import com.erica.gamsung.menu.data.remote.MenuApi
+import com.erica.gamsung.post.data.remote.PostApi
 import com.erica.gamsung.store.data.remote.StoreApi
 import com.erica.gamsung.uploadTime.data.remote.ScheduleApi
 import com.google.gson.GsonBuilder
@@ -11,13 +12,17 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+@Suppress("MagicNumber")
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -52,9 +57,26 @@ object NetworkModule {
                     },
                 ).create()
 
+        // OkHttp 로깅 인터셉터 추가
+        val logging =
+            HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+
+        // MagicNumber
+        val client =
+            OkHttpClient
+                .Builder()
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(logging)
+                .build()
+
         return Retrofit
             .Builder()
             .baseUrl(BASE_URL)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
@@ -66,6 +88,10 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideStoreApi(retrofit: Retrofit): StoreApi = retrofit.create(StoreApi::class.java)
+
+    @Singleton
+    @Provides
+    fun providePostApi(retrofit: Retrofit): PostApi = retrofit.create(PostApi::class.java)
 
     @Singleton
     @Provides
