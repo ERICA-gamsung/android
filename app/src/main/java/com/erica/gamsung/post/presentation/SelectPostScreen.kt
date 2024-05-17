@@ -3,6 +3,7 @@ package com.erica.gamsung.post.presentation
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -51,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.exifinterface.media.ExifInterface
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -263,16 +265,27 @@ fun PicSection(
     }
 }
 
-@Suppress("TooGenericExceptionCaught")
+@Suppress("TooGenericExceptionCaught", "MagicNumber")
 private fun loadBitmapFromUri(
     context: Context,
     uri: Uri,
-): android.graphics.Bitmap? =
+): Bitmap? =
     try {
         val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-        inputStream.use { BitmapFactory.decodeStream(it) }
+        inputStream.use { stream ->
+            val bitmap = BitmapFactory.decodeStream(stream)
+            val exif = ExifInterface(context.contentResolver.openInputStream(uri)!!)
+            val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            val matrix = Matrix()
+            when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+                ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            }
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        }
     } catch (e: Exception) {
-        Log.e("BitmapFromUri", "$e")
+        Log.e("BitmapFromURi", "$e")
         null
     }
 
