@@ -84,7 +84,11 @@ fun PreviewPost(
         bottomBar = {
             OneButtonSection(
                 modifier = Modifier.padding(vertical = 8.dp),
-                onClick = { navController.navigate(Screen.SelectNewPost.route) },
+                onClick = {
+                    navController.navigate(Screen.SelectNewPost.route) {
+                        launchSingleTop = true
+                    }
+                },
             )
         },
     )

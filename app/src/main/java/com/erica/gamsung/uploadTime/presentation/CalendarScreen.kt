@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsButton
+import com.erica.gamsung.core.presentation.component.GsTopAppBar
 
 @Suppress("magicnumber")
 @Preview
@@ -35,7 +37,15 @@ fun MyCalendarScreen(
     // 현재 달에 대한 초기 선택된 날짜 리스트 (예: 오늘)
     // selectedDatesMap[currentMonth] = listOf(LocalDate.now())
 
-    Scaffold {
+    Scaffold(
+        topBar = {
+            GsTopAppBar(
+                title = "날짜 선택",
+                hasLeftIcon = true,
+                onNavigationClick = { navController.navigate(Screen.Main.route) },
+            )
+        },
+    ) {
         Column(
             modifier =
                 Modifier

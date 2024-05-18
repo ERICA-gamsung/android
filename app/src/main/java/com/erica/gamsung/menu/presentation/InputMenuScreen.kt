@@ -53,7 +53,20 @@ fun InputMenuScreen(
     val shouldNavigate by inputMenuViewModel.shouldNavigateState.collectAsState()
 
     Scaffold(
-        topBar = { GsTopAppBar(title = if (isEditMode) "메뉴 수정" else "메뉴 입력 (2/2)") },
+        topBar = {
+            GsTopAppBar(
+                title = if (isEditMode) "메뉴 수정" else "메뉴 입력 (2/2)",
+                hasLeftIcon = true,
+                onNavigationClick = {
+                    navController.navigate(Screen.Setting.route) {
+                        launchSingleTop = true
+                        popUpTo(Screen.Setting.route) {
+                            inclusive = false
+                        }
+                    }
+                },
+            )
+        },
     ) { paddingValues ->
         Column(
             modifier =
@@ -82,7 +95,12 @@ fun InputMenuScreen(
                     inputMenuViewModel.onEvent(InputMenuUiEvent.SendMenus)
                     if (shouldNavigate) {
                         val toNavigate = if (isEditMode) Screen.Setting else Screen.Main
-                        navController.navigate(toNavigate.route)
+                        navController.navigate(toNavigate.route) {
+                            launchSingleTop = true
+                            popUpTo(toNavigate.route) {
+                                inclusive = false
+                            }
+                        }
                     }
                 },
             )

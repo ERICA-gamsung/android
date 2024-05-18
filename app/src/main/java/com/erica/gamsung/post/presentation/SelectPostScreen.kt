@@ -67,7 +67,7 @@ import kotlin.math.absoluteValue
 @OptIn(
     ExperimentalFoundationApi::class,
 )
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "LongMethod")
 @Preview
 @Composable
 fun SelectPostScreen(
@@ -82,7 +82,11 @@ fun SelectPostScreen(
     val imgBitmap by postViewModel.imgBitMap.observeAsState()
     val confirmAndNavigate = {
         postViewModel.confirmPostData(reservationId, content, imgBitmap)
-        navController.navigate(Screen.PostsStatus.route)
+        navController.navigate(Screen.PostsStatus.route) {
+            popUpTo(navController.graph.startDestinationId) {
+                inclusive = false
+            }
+        }
     }
     val setContent = { c: String ->
         postViewModel.setContent(c)
@@ -113,7 +117,19 @@ fun SelectPostScreen(
         })
 
     Scaffold(
-        topBar = { GsTopAppBar(title = "글 선택 페이지") },
+        topBar = {
+            GsTopAppBar(
+                title = "글 선택 페이지",
+                hasLeftIcon = true,
+                onNavigationClick = {
+                    navController.navigate(Screen.PostsStatus.route) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                },
+            )
+        },
         content = { padding ->
             Column(
                 modifier =
