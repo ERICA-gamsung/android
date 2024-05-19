@@ -48,6 +48,7 @@ import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
 
+@Suppress("LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputStoreScreen(
@@ -58,7 +59,20 @@ fun InputStoreScreen(
     val inputStoreState by storeViewModel.inputStoreState.collectAsState()
 
     Scaffold(
-        topBar = { GsTopAppBar(title = if (isEditMode) "식당 정보 수정" else "식당 정보 입력 (1/2)") },
+        topBar = {
+            GsTopAppBar(
+                title = if (isEditMode) "식당 정보 수정" else "식당 정보 입력 (1/2)",
+                hasLeftIcon = true,
+                onNavigationClick = {
+                    navController.navigate(Screen.Setting.route) {
+                        launchSingleTop = true
+                        popUpTo(Screen.Setting.route) {
+                            inclusive = false
+                        }
+                    }
+                },
+            )
+        },
     ) { paddingValues ->
         Column(
             modifier =
@@ -99,7 +113,12 @@ fun InputStoreScreen(
                 onClick = {
                     storeViewModel.onEvent(InputStoreUiEvent.SendStore)
                     val toNavigate = if (isEditMode) Screen.Setting else Screen.InputMenu(isEditMode = false)
-                    navController.navigate(toNavigate.route)
+                    navController.navigate(toNavigate.route) {
+                        launchSingleTop = true
+                        popUpTo(toNavigate.route) {
+                            inclusive = false
+                        }
+                    }
                 },
                 enabled = inputStoreState.isValid,
                 isEditMode = isEditMode,

@@ -41,7 +41,14 @@ fun UploadTimeConfirmScreen(navController: NavHostController = rememberNavContro
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.weight(1f))
-            ContentSection(modifier = Modifier.weight(2f), onClickEvent = { navController.navigate(Screen.Main.route) })
+            ContentSection(modifier = Modifier.weight(2f), onClickEvent = {
+                navController.navigate(Screen.Main.route) {
+                    launchSingleTop = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            })
             Spacer(modifier = Modifier.weight(1f))
         }
     }

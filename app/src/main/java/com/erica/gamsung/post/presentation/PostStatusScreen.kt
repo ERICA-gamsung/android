@@ -40,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
+import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.post.domain.ScheduleState
 import com.erica.gamsung.post.presentation.utils.formatDate
 import com.erica.gamsung.post.presentation.utils.formatTime
@@ -84,7 +85,22 @@ fun PostStatusScreen(
                 else -> true
             }
         } ?: listOf()
-    Scaffold {
+    Scaffold(
+        topBar = {
+            GsTopAppBar(
+                title = "",
+                hasLeftIcon = true,
+                onNavigationClick = {
+                    navController.navigate(Screen.Main.route) {
+                        launchSingleTop = true
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                },
+            )
+        },
+    ) {
         Column(
             modifier =
                 Modifier
@@ -93,12 +109,6 @@ fun PostStatusScreen(
                     .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-//            Spacer(
-//                modifier =
-//                Modifier
-//                    .fillMaxWidth()
-//                    .size(75.dp),
-//            )
             TitleTextSection(text = "발행 중인 글 목록")
             StatusFilterButtons(selectedStatus = selectedStatus) { status ->
                 selectedStatus = status
