@@ -72,6 +72,7 @@ fun MyCalendarScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
             GsButton(text = "확정하기", onClick = {
+                viewModel.moveToNextPage()
                 navController.navigate("timeSelect")
             }, containerColor = Color.Blue)
         }

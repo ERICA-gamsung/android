@@ -1,5 +1,6 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.mutableStateMapOf
@@ -28,7 +29,7 @@ class ScheduleViewModel
         // private val scheduleApi: ScheduleApi,
         private val repository: ScheduleRepository,
     ) : ViewModel() {
-        val selectedDatesMap = mutableStateMapOf<YearMonth, List<LocalDate>>()
+        val selectedDatesMap = mutableStateMapOf<YearMonth, MutableList<LocalDate>>()
 
         val scheduleDataModelMap = mutableStateMapOf<LocalDate, ScheduleDataModel>()
 
@@ -52,7 +53,7 @@ class ScheduleViewModel
 
         init {
             val currentMonth = YearMonth.now()
-            selectedDatesMap[currentMonth] = listOf(LocalDate.now())
+            selectedDatesMap[currentMonth] = mutableListOf(LocalDate.now())
             _focusedDate.value = LocalDate.now()
         }
 
@@ -89,6 +90,12 @@ class ScheduleViewModel
             // 혹은 postValue를 사용할 수 도 있음.(백그라운드 스레드에서 호출 가능)
         }
 
+        fun moveToNextPage() {
+            val dateList = selectedDatesMap.flatMap { it.value }.sorted()
+            val nextDate = dateList.firstOrNull()
+            _focusedDate.value = nextDate
+        }
+
         fun toggleDateSelection(
             date: LocalDate,
             isSelected: Boolean,
@@ -100,7 +107,13 @@ class ScheduleViewModel
             } else {
                 updatedDates.add(date)
             }
-            selectedDatesMap[month] = updatedDates
+            if (updatedDates.isEmpty()) {
+                selectedDatesMap.remove(month)
+            } else {
+                selectedDatesMap[month] = updatedDates
+            }
+            Log.d("내용 확인", "${selectedDatesMap[month]}")
+            Log.d("내용 확인", "$selectedDatesMap")
         }
 
         // focusedDate.value(날짜) 를 date로 받는다.

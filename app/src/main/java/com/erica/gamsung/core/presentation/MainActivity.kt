@@ -88,7 +88,11 @@ fun MainNavHost(
             MyCalendarScreen(navController = navController, viewModel = scheduleViewModel)
         }
         composable(Screen.TimeSelect.route) {
-            MyScheduleScreen(navController = navController, viewModel = scheduleViewModel, menuViewModel = inputMenuViewModel)
+            MyScheduleScreen(
+                navController = navController,
+                viewModel = scheduleViewModel,
+                menuViewModel = inputMenuViewModel,
+            )
         }
         composable(Screen.DateTimeListCheck.route) {
             ScheduleListScreen(navController = navController, viewModel = scheduleViewModel)
