@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material3.ButtonDefaults
@@ -26,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
@@ -47,6 +50,7 @@ import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsOutlinedButton
 import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.core.presentation.component.TimeInputBox
+import com.erica.gamsung.menu.presentation.InputMenuViewModel
 import com.erica.gamsung.store.presentation.utils.toDisplayString
 import com.erica.gamsung.uploadTime.presentation.component.CustomInputTextBox
 import java.time.LocalDate
@@ -59,19 +63,22 @@ import java.time.YearMonth
 fun MyScheduleScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: ScheduleViewModel = viewModel(),
+    menuViewModel: InputMenuViewModel = viewModel(),
 ) {
     BackHandler(enabled = true) {
 //
     }
-    val focusedDate by viewModel.focusedDate.observeAsState()
+    val menus by menuViewModel.menusState.collectAsState()
+    val menuList: List<String> = menus.map { it.name }
 
+    val focusedDate by viewModel.focusedDate.observeAsState()
     val navigateEvent by viewModel.navigateToNextPage.observeAsState()
 
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
     val selectedDatesMap = remember { mutableStateMapOf<YearMonth, List<LocalDate>>() }
     // 현재 달을 기준으로 초기화
     val currentMonth = YearMonth.now()
-    // 현재 달에 대한 초기 선택된 날짜 리스트 (예: 오늘)
+    // 현재 달에 대한 초기 선택된 날짜 리스트 (예: 오늘    )
     selectedDatesMap[currentMonth] = listOf(LocalDate.now())
 
     // 사용자 입력을 저장할 상태 변수
@@ -83,20 +90,18 @@ fun MyScheduleScreen(
     // var time by remember { mutableStateOf("") }
 
     var menu by remember { mutableStateOf("") }
+    var event by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
+    var showTimePicker by remember { mutableStateOf(false) }
+    var isTimePickerValid by remember { mutableStateOf(false) }
+    var hasAttemptedSubmit by remember { mutableStateOf(false) }
 
     // TimePicker에 필요한 변수
     val openTimePickerState = TimePickerState(0, 0, false)
     val onOpenTimeUpdate: (TimePickerState) -> Unit = { newState ->
         viewModel.updateSelectedTime(newState)
+        isTimePickerValid = true
     }
-
-    val options =
-        listOf(
-            "option1", "option2", "option3", "option4",
-            "option5", "option6", "option7", "option8",
-            "option9", "option10", "option11", "option12",
-        )
 
     LaunchedEffect(navigateEvent) {
         navigateEvent?.getContentIfNotHandled()?.let {
@@ -110,7 +115,8 @@ fun MyScheduleScreen(
                 Modifier
                     .padding(it)
                     .padding(16.dp)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
@@ -130,6 +136,10 @@ fun MyScheduleScreen(
                 title = "발행 시각",
                 timePickerState = openTimePickerState,
                 onUpdate = onOpenTimeUpdate,
+                showTimePicker = showTimePicker,
+                onShowTimePickerChange = { showTimePicker = it },
+                isTimePickerValid = isTimePickerValid,
+                hasAttemptedSubmit = hasAttemptedSubmit,
                 modifier = Modifier,
             )
             DropTitleTextField(
@@ -140,7 +150,7 @@ fun MyScheduleScreen(
                 title = "강조 메뉴",
                 hintText = "선택 없음",
                 description = (" (선택)"),
-                items = options,
+                items = menuList,
                 isValid = false,
                 selectedText = menu,
                 onValueChange = { newText ->
@@ -148,6 +158,21 @@ fun MyScheduleScreen(
                 },
             )
             // Spacer(modifier = Modifier.height(8.dp))
+            TitleTextField(
+                modifier =
+                    Modifier
+                        .padding(top = 5.dp, bottom = 5.dp)
+                        .fillMaxWidth(),
+                title = "진행 중인 이벤트",
+                description = (" (선택)"),
+                hintText = "ex. 기간 한정 균일가!!",
+                selectedText = event,
+                onValueChange = { newText ->
+                    event = newText
+                },
+                keyboardType = KeyboardType.Text,
+                isValid = false,
+            )
             TitleTextField(
                 modifier =
                     Modifier
@@ -163,6 +188,7 @@ fun MyScheduleScreen(
                 keyboardType = KeyboardType.Text,
                 isValid = false,
             )
+
             // Spacer(modifier = Modifier.height(8.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -173,18 +199,22 @@ fun MyScheduleScreen(
                     text = "선택하기",
                     containerColor = Color.Blue,
                     onClick = {
-                        viewModel.updateScheduleData(time, menu, message, event = "")
-                        menu = ""
-                        message = ""
-                        viewModel.moveToNextDate()
-                        val mapContents =
-                            viewModel
-                                .scheduleDataModelMap
-                                .entries
-                                .joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
-                                    "$key=${value.date}, ${value.time}, ${value.menu}, ${value.message}"
-                                }
-                        Log.d("ScheduleDataList", "DataList: $mapContents")
+                        hasAttemptedSubmit = true
+                        if (isTimePickerValid) {
+                            viewModel.updateScheduleData(time, menu, message, event)
+                            menu = ""
+                            message = ""
+                            event = ""
+                            viewModel.moveToNextDate()
+                            val mapContents =
+                                viewModel
+                                    .scheduleDataModelMap
+                                    .entries
+                                    .joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
+                                        "$key=${value.date}, ${value.time}, ${value.menu}, ${value.message}"
+                                    }
+                            Log.d("ScheduleDataList", "DataList: $mapContents")
+                        }
                     },
                 )
             }
@@ -198,16 +228,19 @@ private fun HoursSection(
     title: String,
     timePickerState: TimePickerState?,
     onUpdate: (TimePickerState) -> Unit,
+    showTimePicker: Boolean,
+    onShowTimePickerChange: (Boolean) -> Unit,
+    isTimePickerValid: Boolean,
+    hasAttemptedSubmit: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    var showTimePicker by remember { mutableStateOf(false) }
     val currentTimePickerState = remember { timePickerState ?: TimePickerState(0, 0, false) }
 
     if (showTimePicker) {
         Dialog(
             onDismissRequest = {
                 onUpdate(currentTimePickerState)
-                showTimePicker = false
+                onShowTimePickerChange(false)
             },
         ) {
             TimeInputBox(currentTimePickerState)
@@ -225,11 +258,11 @@ private fun HoursSection(
         )
         TextButton(
             onClick = {
-                showTimePicker = true
+                onShowTimePickerChange(true)
             },
             colors = ButtonDefaults.textButtonColors(contentColor = Color.Gray),
             shape = RoundedCornerShape(10.dp),
-            border = BorderStroke(1.dp, Color.Gray),
+            border = BorderStroke(1.dp, if (!isTimePickerValid && hasAttemptedSubmit) Color.Red else Color.Gray),
         ) {
             Icon(
                 imageVector = Icons.Default.AccessTime,

@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
 import com.erica.gamsung.login.presentation.LoginScreen
 import com.erica.gamsung.menu.presentation.InputMenuScreen
+import com.erica.gamsung.menu.presentation.InputMenuViewModel
 import com.erica.gamsung.post.presentation.PostStatusScreen
 import com.erica.gamsung.post.presentation.PostViewModel
 import com.erica.gamsung.post.presentation.PreviewPost
@@ -65,6 +66,7 @@ fun MainNavHost(
     scheduleViewModel: ScheduleViewModel,
 ) {
     val postViewModel: PostViewModel = hiltViewModel()
+    val inputMenuViewModel: InputMenuViewModel = hiltViewModel()
     NavHost(navController = navController, startDestination = Screen.Main.route) {
         composable(Screen.Main.route) { MainScreen(navController = navController) }
         composable(Screen.Setting.route) { SettingScreen(navController = navController) }
@@ -77,16 +79,16 @@ fun MainNavHost(
             InputStoreScreen(navController = navController, isEditMode = false)
         }
         composable(Screen.InputMenu(isEditMode = true).route) {
-            InputMenuScreen(navController = navController, isEditMode = true)
+            InputMenuScreen(navController = navController, isEditMode = true, inputMenuViewModel = inputMenuViewModel)
         }
         composable(Screen.InputMenu(isEditMode = false).route) {
-            InputMenuScreen(navController = navController, isEditMode = false)
+            InputMenuScreen(navController = navController, isEditMode = false, inputMenuViewModel = inputMenuViewModel)
         }
         composable(Screen.DateSelect.route) {
             MyCalendarScreen(navController = navController, viewModel = scheduleViewModel)
         }
         composable(Screen.TimeSelect.route) {
-            MyScheduleScreen(navController = navController, viewModel = scheduleViewModel)
+            MyScheduleScreen(navController = navController, viewModel = scheduleViewModel, menuViewModel = inputMenuViewModel)
         }
         composable(Screen.DateTimeListCheck.route) {
             ScheduleListScreen(navController = navController, viewModel = scheduleViewModel)
