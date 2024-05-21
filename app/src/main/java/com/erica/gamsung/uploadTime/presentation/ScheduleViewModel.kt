@@ -42,13 +42,13 @@ class ScheduleViewModel
         private var _selectTime = MutableLiveData<TimePickerState>()
         val selectTime: LiveData<TimePickerState> = _selectTime
 
-        private val _textOption = MutableLiveData("")
-        val textOption: LiveData<String> = _textOption
+//        private val _textOption = MutableLiveData("")
+//        val textOption: LiveData<String> = _textOption
 
-        private val _message = MutableLiveData("")
-        val message: LiveData<String> = _message
+//        private val _message = MutableLiveData("")
+//        val message: LiveData<String> = _message
 
-        private val _uploadResult = MutableLiveData<Boolean>()
+        private val _uploadResult = MutableLiveData(false)
         val uploadResult: LiveData<Boolean> = _uploadResult
 
         init {
@@ -57,20 +57,16 @@ class ScheduleViewModel
             _focusedDate.value = LocalDate.now()
         }
 
+        fun resetUploadResult() {
+            _uploadResult.value = false
+        }
+
         fun setFocusedDate(date: LocalDate?) {
             _focusedDate.value = date
         }
 
         fun updateSelectedTime(newTime: TimePickerState) {
             _selectTime.value = newTime
-        }
-
-        fun setTextOption(newValue: String) {
-            _textOption.value = newValue
-        }
-
-        fun setMessage(newValue: String) {
-            _message.value = newValue
         }
 
         fun moveToNextDate() {
@@ -83,6 +79,7 @@ class ScheduleViewModel
             val nextDate = allDateAfterFocused.firstOrNull()
             if (nextDate == null) {
                 _navigateToNextPage.value = Event(Unit)
+                // _navigateTrigger.value = true
             } else {
                 _focusedDate.value = nextDate
             }

@@ -1,6 +1,7 @@
 package com.erica.gamsung.core.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -9,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,7 +70,10 @@ fun MainNavHost(
     val postViewModel: PostViewModel = hiltViewModel()
     val inputMenuViewModel: InputMenuViewModel = hiltViewModel()
     NavHost(navController = navController, startDestination = Screen.Main.route) {
-        composable(Screen.Main.route) { MainScreen(navController = navController) }
+        composable(Screen.Main.route) {
+            MainScreen(navController = navController)
+            LogNavStack(navController = navController)
+        }
         composable(Screen.Setting.route) { SettingScreen(navController = navController) }
         composable(Screen.PublishPosting.route) { PublishPostingScreen() }
         composable(Screen.CheckPosting.route) { CheckPostingScreen() }
@@ -86,6 +91,7 @@ fun MainNavHost(
         }
         composable(Screen.DateSelect.route) {
             MyCalendarScreen(navController = navController, viewModel = scheduleViewModel)
+            LogNavStack(navController = navController)
         }
         composable(Screen.TimeSelect.route) {
             MyScheduleScreen(
@@ -93,22 +99,28 @@ fun MainNavHost(
                 viewModel = scheduleViewModel,
                 menuViewModel = inputMenuViewModel,
             )
+            LogNavStack(navController = navController)
         }
         composable(Screen.DateTimeListCheck.route) {
             ScheduleListScreen(navController = navController, viewModel = scheduleViewModel)
+            LogNavStack(navController = navController)
         }
         composable(Screen.DateTimeFinish.route) {
             UploadTimeConfirmScreen(navController = navController)
+            LogNavStack(navController = navController)
         }
         composable(Screen.Login.route) { LoginScreen(navController = navController) }
         composable(Screen.SelectNewPost.route) {
             SelectPostScreen(navController = navController, postViewModel)
+            LogNavStack(navController = navController)
         }
         composable(Screen.PreviewNewPost.route) {
             PreviewPost(navController = navController, postViewModel)
+            LogNavStack(navController = navController)
         }
         composable(Screen.PostsStatus.route) {
             PostStatusScreen(navController = navController, postViewModel)
+            LogNavStack(navController = navController)
         }
     }
 }
@@ -121,4 +133,16 @@ fun PublishPostingScreen() {
 @Composable
 fun CheckPostingScreen() {
     Text(text = "CheckPostingScreen") // TODO 구현 시작 시 제거 및 코드 이동
+}
+
+@Composable
+fun LogNavStack(navController: NavHostController) {
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntry?.let { entry ->
+            Log.d("NavStack", "Current Destination: ${entry.destination.route}")
+        }
+        navController.previousBackStackEntry?.let { entry ->
+            Log.d("NavStack", "Previous Destination: ${entry.destination.route}")
+        }
+    }
 }

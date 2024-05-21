@@ -13,21 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 
 @Suppress("magicnumber")
-@Preview
 @Composable
 fun MyCalendarScreen(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     viewModel: ScheduleViewModel = viewModel(),
 ) {
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵

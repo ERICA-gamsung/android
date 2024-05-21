@@ -49,13 +49,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.exifinterface.media.ExifInterface
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.post.data.mock.beforeConnectPost
@@ -68,10 +66,9 @@ import kotlin.math.absoluteValue
     ExperimentalFoundationApi::class,
 )
 @Suppress("MagicNumber", "LongMethod")
-@Preview
 @Composable
 fun SelectPostScreen(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     postViewModel: PostViewModel = hiltViewModel(),
     // postViewModel: PostViewModel = viewModel(),
 ) {

@@ -34,11 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.post.domain.ScheduleState
@@ -48,10 +46,9 @@ import com.erica.gamsung.uploadTime.presentation.TitleTextSection
 
 // PostStatusScreen은 어쩔 수 없음. 뺄게 없음 65/60
 @Suppress("LongMethod")
-@Preview
 @Composable
 fun PostStatusScreen(
-    navController: NavController = rememberNavController(),
+    navController: NavController,
     postViewModel: PostViewModel = hiltViewModel(),
 ) {
     val scheduleList by postViewModel.postListData.observeAsState()

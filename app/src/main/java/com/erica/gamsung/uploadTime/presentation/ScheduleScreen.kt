@@ -39,12 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.component.DropdownInputTextBox
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsOutlinedButton
@@ -58,10 +56,9 @@ import java.time.YearMonth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod")
-@Preview
 @Composable
 fun MyScheduleScreen(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     viewModel: ScheduleViewModel = viewModel(),
     menuViewModel: InputMenuViewModel = viewModel(),
 ) {
@@ -73,6 +70,8 @@ fun MyScheduleScreen(
 
     val focusedDate by viewModel.focusedDate.observeAsState()
     val navigateEvent by viewModel.navigateToNextPage.observeAsState()
+
+    // val navTrigger by viewModel.navigateTrigger.observeAsState()
 
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
     var selectedDatesMap = remember { mutableStateMapOf<YearMonth, MutableList<LocalDate>>() }
@@ -106,7 +105,12 @@ fun MyScheduleScreen(
     LaunchedEffect(navigateEvent) {
         navigateEvent?.getContentIfNotHandled()?.let {
             navController.navigate("dateTimeListCheck")
+//            viewModel.resetNavEvent()
         }
+//        if(navTrigger == true){
+//            navController.navigate(Screen.DateTimeListCheck.route)
+//            viewModel.resetNavEvent()
+//        }
     }
 
     Scaffold {

@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -33,23 +34,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import java.time.format.DateTimeFormatter
 
-@Preview
 @Composable
 fun ScheduleListScreen(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     viewModel: ScheduleViewModel = viewModel(),
 ) {
     BackHandler(enabled = true) {
 //
     }
+
     // 여기서 remember를 사용하여 상태를 저장합니다.
     var selectedTimeSlot by remember { mutableStateOf("") }
 
@@ -70,7 +69,10 @@ fun ScheduleListScreen(
             )
             TitleTextSection(text = "선택한 시간이 맞습니까?")
             Column(
-                modifier = Modifier.fillMaxHeight().verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 TimeSlotListSection(calendarViewModel = viewModel, selectedTimeSlot = selectedTimeSlot) {
@@ -103,6 +105,7 @@ private fun ButtonSection(
     onSuccess: () -> Unit = {},
 ) {
     val uploadResult by viewModel.uploadResult.observeAsState()
+
     Column {
         Divider(modifier = Modifier.padding(bottom = 16.dp))
         Row(
@@ -123,14 +126,16 @@ private fun ButtonSection(
                 onClick = {
                     // 선택 확인 액션
                     viewModel.uploadSchedulesToServer()
-                    onSuccess()
                 },
             ) {
                 Text("Confirm")
             }
             uploadResult?.let {
                 if (it) {
-                    onSuccess()
+                    LaunchedEffect(Unit) {
+                        onSuccess()
+                        viewModel.resetUploadResult()
+                    }
                 } else {
                     Log.d("ScheduledListScreenLogic", "업로드 실패")
                 }
