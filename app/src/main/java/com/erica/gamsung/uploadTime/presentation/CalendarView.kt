@@ -59,6 +59,7 @@ fun CalendarView(
 //        remember {
 //            mutableStateMapOf<YearMonth, List<LocalDate>>()
 //        }
+
     var moveDirection by remember {
         mutableStateOf(CalendarMoveType.START)
     }
@@ -288,12 +289,16 @@ fun DateView(
                 .background(color = backGroundColor, shape = CircleShape)
                 .then(
                     // page2 확장성을 위해 유지
-                    Modifier.toggleable(
-                        value = isSelected,
-                        onValueChange = { newIsSelected ->
-                            onDateSelected?.invoke(date, newIsSelected)
-                        },
-                    ),
+                    if (date >= LocalDate.now()) {
+                        Modifier.toggleable(
+                            value = isSelected,
+                            onValueChange = { newIsSelected ->
+                                onDateSelected?.invoke(date, newIsSelected)
+                            },
+                        )
+                    } else {
+                        Modifier
+                    },
                 ),
     ) {
         Text(
