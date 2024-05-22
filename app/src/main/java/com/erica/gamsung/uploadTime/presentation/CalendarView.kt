@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.erica.gamsung.core.presentation.theme.Blue
 import com.erica.gamsung.uploadTime.domain.CalendarMoveType
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -276,7 +277,7 @@ fun DateView(
     val backGroundColor =
         when {
             isFocused -> Color.Blue
-            isSelected -> MaterialTheme.colorScheme.primary
+            isSelected -> Blue
             else -> Color.Transparent
         }
     val textColor = if (isSelected || isFocused) Color.White else MaterialTheme.colorScheme.onSurface

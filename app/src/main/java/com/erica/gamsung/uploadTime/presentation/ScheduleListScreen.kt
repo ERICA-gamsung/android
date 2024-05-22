@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -53,7 +54,24 @@ fun ScheduleListScreen(
 
     // 여기서 remember를 사용하여 상태를 저장합니다.
     var selectedTimeSlot by remember { mutableStateOf("") }
+    val showLastItemRemovalWarning by viewModel.showLastItemRemovalWarning.observeAsState()
 
+    if (showLastItemRemovalWarning?.peekContent() == true) {
+        AlertDialog(
+            onDismissRequest = { viewModel.hideLastItemRemovalWarning() },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.hideLastItemRemovalWarning()
+                    },
+                ) {
+                    Text("확인")
+                }
+            },
+            title = { Text("경고") },
+            text = { Text("마지막 시간 슬롯을 제거할 수 없습니다.") },
+        )
+    }
     Scaffold {
         Column(
             modifier =
@@ -169,6 +187,7 @@ private fun TimeSlotListSection(
                 dateSlot = dateText,
                 timeSlot = timeText,
                 onTimeSlotSelected = onTimeSlotSelected,
+                onCancel = { calendarViewModel.removeSchedule(scheduleData.date) },
                 stateOption = null,
             )
             Spacer(modifier = Modifier.height(8.dp)) // 버튼 사이의 간격
@@ -182,12 +201,9 @@ fun TimeSlotButton(
     dateSlot: String,
     timeSlot: String,
     onTimeSlotSelected: (String) -> Unit,
+    onCancel: () -> Unit,
     stateOption: String?,
 ) {
-    fun onCancel() {
-        // TODO
-    }
-
     val borderColor = Color.Gray // Blue border when selected
     val backgroundColor = Color.Transparent
     OutlinedButton(

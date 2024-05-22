@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.DropdownInputTextBox
 import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsOutlinedButton
@@ -197,7 +198,17 @@ fun MyScheduleScreen(
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                GsOutlinedButton(text = "취소하기")
+                GsOutlinedButton(
+                    text = "취소하기",
+                    onClick = {
+                        navController.navigate(Screen.DateSelect.route) {
+                            launchSingleTop = true
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                )
                 Spacer(modifier = Modifier.width(32.dp))
                 GsButton(
                     text = "선택하기",

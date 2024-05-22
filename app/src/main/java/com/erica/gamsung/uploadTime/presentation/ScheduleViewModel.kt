@@ -42,6 +42,9 @@ class ScheduleViewModel
         private var _selectTime = MutableLiveData<TimePickerState>()
         val selectTime: LiveData<TimePickerState> = _selectTime
 
+        private val _showLastItemRemovalWarning = MutableLiveData<Event<Boolean>>()
+        val showLastItemRemovalWarning: LiveData<Event<Boolean>> = _showLastItemRemovalWarning
+
 //        private val _textOption = MutableLiveData("")
 //        val textOption: LiveData<String> = _textOption
 
@@ -133,6 +136,18 @@ class ScheduleViewModel
                     )
                 scheduleDataModelMap[date] = updatedScheduleDataModel
             }
+        }
+
+        fun removeSchedule(date: LocalDate?) {
+            if (scheduleDataModelMap.size == 1) {
+                _showLastItemRemovalWarning.value = Event(true)
+            } else {
+                scheduleDataModelMap.remove(date)
+            }
+        }
+
+        fun hideLastItemRemovalWarning() {
+            _showLastItemRemovalWarning.value = Event(false)
         }
 
         fun uploadSchedulesToServer() {
