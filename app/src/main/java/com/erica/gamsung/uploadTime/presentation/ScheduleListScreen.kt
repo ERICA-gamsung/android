@@ -200,7 +200,7 @@ fun TimeSlotButton(
         colors =
             ButtonDefaults.outlinedButtonColors(
                 containerColor = backgroundColor,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
+                contentColor = MaterialTheme.colorScheme.onSurface,
             ),
         border = BorderStroke(1.dp, borderColor),
     ) {
