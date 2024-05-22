@@ -2,7 +2,6 @@ package com.erica.gamsung.post.presentation
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,6 +38,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
+import com.erica.gamsung.core.presentation.theme.Blue
+import com.erica.gamsung.core.presentation.theme.Blue40
+import com.erica.gamsung.core.presentation.theme.Blue80
 import com.erica.gamsung.post.domain.ScheduleState
 import com.erica.gamsung.post.presentation.utils.formatDate
 import com.erica.gamsung.post.presentation.utils.formatTime
@@ -153,9 +155,9 @@ fun StatusFilterButtons(
     ) {
         val statuses = listOf("All", "Ready", "Done")
         statuses.forEach { status ->
-            val backgroundColor = if (selectedStatus == status) Color(0x403399FF) else Color.Transparent
-            val contentColor = if (selectedStatus == status) Color(0xFF3399FF) else Color.Black
-            val borderColor = if (selectedStatus == status) Color(0xFF3399FF) else Color.Gray
+            val backgroundColor = if (selectedStatus == status) Blue40 else Color.Transparent
+            val contentColor = if (selectedStatus == status) Blue else Color.Black
+            val borderColor = if (selectedStatus == status) Blue else Color.Gray
 
             OutlinedButton(
                 onClick = { onStatusSelected(status) },
@@ -222,12 +224,10 @@ fun EnhancedTimeSlotButton(
     onTimeSlotSelected: () -> Unit,
     stateOption: String?,
 ) {
-    val borderColor = if (isSelected) Color(0xFF3399FF) else Color.Gray // Blue border when selected
+    val borderColor = if (isSelected) Blue else Color.Gray // Blue border when selected
     val backgroundColor =
         if (isSelected) {
-            Color(
-                0xC03399FF,
-            )
+            Blue80
         } else {
             Color.Transparent // Transparent blue background with 50% opacity when selected
         }
@@ -258,11 +258,7 @@ fun EnhancedTimeSlotButton(
         ) {
             Text(dateSlot, style = MaterialTheme.typography.bodyMedium)
             Text(timeSlot, style = MaterialTheme.typography.bodySmall)
-            if (stateOption == null) {
-                Text("Cancel", modifier = Modifier.clickable { /* onCancel logic */ })
-            } else {
-                Text(stateOption)
-            }
+            stateOption?.let { Text(it) }
         }
     }
 }

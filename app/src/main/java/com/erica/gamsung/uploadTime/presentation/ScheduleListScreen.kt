@@ -2,6 +2,7 @@ package com.erica.gamsung.uploadTime.presentation
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,7 +77,7 @@ fun ScheduleListScreen(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                TimeSlotListSection(calendarViewModel = viewModel, selectedTimeSlot = selectedTimeSlot) {
+                TimeSlotListSection(calendarViewModel = viewModel) {
                     selectedTimeSlot = it
                 }
                 ButtonSection(viewModel) { navController.navigate(Screen.DateTimeFinish.route) }
@@ -153,7 +155,7 @@ private fun ButtonSection(
 @Composable
 private fun TimeSlotListSection(
     calendarViewModel: ScheduleViewModel,
-    selectedTimeSlot: String?,
+    // selectedTimeSlot: String?,
     onTimeSlotSelected: (String) -> Unit,
 ) {
     // 시간 슬롯 목록, ViewModel에서 가져올 수 있습니다.
@@ -166,7 +168,6 @@ private fun TimeSlotListSection(
             TimeSlotButton(
                 dateSlot = dateText,
                 timeSlot = timeText,
-                isSelected = "$dateText $timeText" == selectedTimeSlot,
                 onTimeSlotSelected = onTimeSlotSelected,
                 stateOption = null,
             )
@@ -180,15 +181,16 @@ private fun TimeSlotListSection(
 fun TimeSlotButton(
     dateSlot: String,
     timeSlot: String,
-    // selectedTimeSlot: String,
-    isSelected: Boolean,
     onTimeSlotSelected: (String) -> Unit,
     stateOption: String?,
 ) {
     fun onCancel() {
         // TODO
     }
-    Button(
+
+    val borderColor = Color.Gray // Blue border when selected
+    val backgroundColor = Color.Transparent
+    OutlinedButton(
         onClick = { onTimeSlotSelected("$dateSlot $timeSlot") },
         modifier =
             Modifier
@@ -196,23 +198,21 @@ fun TimeSlotButton(
                 .height(48.dp),
         shape = RoundedCornerShape(12.dp),
         colors =
-            ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+            ButtonDefaults.outlinedButtonColors(
+                containerColor = backgroundColor,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
             ),
-        // enabled = timeSlot != selectedTimeSlot
+        border = BorderStroke(1.dp, borderColor),
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(dateSlot, color = Color.Companion.White)
-            Text(timeSlot, color = Color.Companion.White)
+            Text(dateSlot, style = MaterialTheme.typography.bodyMedium)
+            Text(timeSlot, style = MaterialTheme.typography.bodySmall)
             if (stateOption == null) {
-                Text("Cancel", color = Color.Companion.White, modifier = Modifier.clickable { onCancel() })
-            } else {
-                Text(stateOption, color = Color.Companion.White)
+                Text("Cancel", modifier = Modifier.clickable { onCancel() })
             }
         }
     }
