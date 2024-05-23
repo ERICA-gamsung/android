@@ -2,7 +2,6 @@ package com.erica.gamsung.post.presentation
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -34,13 +34,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
+import com.erica.gamsung.core.presentation.theme.Blue
+import com.erica.gamsung.core.presentation.theme.Blue40
+import com.erica.gamsung.core.presentation.theme.Blue80
 import com.erica.gamsung.post.domain.ScheduleState
 import com.erica.gamsung.post.presentation.utils.formatDate
 import com.erica.gamsung.post.presentation.utils.formatTime
@@ -48,10 +50,9 @@ import com.erica.gamsung.uploadTime.presentation.TitleTextSection
 
 // PostStatusScreen은 어쩔 수 없음. 뺄게 없음 65/60
 @Suppress("LongMethod")
-@Preview
 @Composable
 fun PostStatusScreen(
-    navController: NavController = rememberNavController(),
+    navController: NavController,
     postViewModel: PostViewModel = hiltViewModel(),
 ) {
     val scheduleList by postViewModel.postListData.observeAsState()
@@ -82,6 +83,7 @@ fun PostStatusScreen(
                 "All" -> true
                 "Ready" -> it.state == "ready"
                 "Done" -> it.state == "done"
+                "Yet" -> it.state == "yet"
                 else -> true
             }
         } ?: listOf()
@@ -105,7 +107,6 @@ fun PostStatusScreen(
             modifier =
                 Modifier
                     .padding(it)
-                    .padding(16.dp)
                     .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -116,6 +117,7 @@ fun PostStatusScreen(
             Column(
                 modifier =
                     Modifier
+                        .padding(16.dp)
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState()),
                 // verticalArrangement = Arrangement.SpaceBetween
@@ -147,18 +149,19 @@ fun StatusFilterButtons(
     selectedStatus: String,
     onStatusSelected: (String) -> Unit,
 ) {
-    Row(
+    LazyRow(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val statuses = listOf("All", "Ready", "Done")
-        statuses.forEach { status ->
-            val backgroundColor = if (selectedStatus == status) Color(0x403399FF) else Color.Transparent
-            val contentColor = if (selectedStatus == status) Color(0xFF3399FF) else Color.Black
-            val borderColor = if (selectedStatus == status) Color(0xFF3399FF) else Color.Gray
+        val statuses = listOf("All", "Yet", "Ready", "Done")
+        items(statuses.size) { index ->
+            val status = statuses[index]
+            val backgroundColor = if (selectedStatus == status) Blue40 else Color.Transparent
+            val contentColor = if (selectedStatus == status) Blue else Color.Black
+            val borderColor = if (selectedStatus == status) Blue else Color.Gray
 
             OutlinedButton(
                 onClick = { onStatusSelected(status) },
@@ -175,7 +178,7 @@ fun StatusFilterButtons(
                     Icon(imageVector = Icons.Default.FilterList, contentDescription = null)
                     Spacer(modifier = Modifier.width(4.dp))
                 }
-                Text(text = status)
+                Text(text = status, fontSize = 14.sp)
             }
         }
     }
@@ -225,12 +228,10 @@ fun EnhancedTimeSlotButton(
     onTimeSlotSelected: () -> Unit,
     stateOption: String?,
 ) {
-    val borderColor = if (isSelected) Color(0xFF3399FF) else Color.Gray // Blue border when selected
+    val borderColor = if (isSelected) Blue else Color.Gray // Blue border when selected
     val backgroundColor =
         if (isSelected) {
-            Color(
-                0xC03399FF,
-            )
+            Blue80
         } else {
             Color.Transparent // Transparent blue background with 50% opacity when selected
         }
@@ -261,11 +262,7 @@ fun EnhancedTimeSlotButton(
         ) {
             Text(dateSlot, style = MaterialTheme.typography.bodyMedium)
             Text(timeSlot, style = MaterialTheme.typography.bodySmall)
-            if (stateOption == null) {
-                Text("Cancel", modifier = Modifier.clickable { /* onCancel logic */ })
-            } else {
-                Text(stateOption)
-            }
+            stateOption?.let { Text(it) }
         }
     }
 }

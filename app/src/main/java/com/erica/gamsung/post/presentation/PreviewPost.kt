@@ -34,20 +34,17 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 
 @Suppress("MagicNumber")
-@Preview
 @Composable
 fun PreviewPost(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     postViewModel: PostViewModel = hiltViewModel(),
 ) {
     val profileImage: Painter = painterResource(id = android.R.drawable.ic_menu_gallery)

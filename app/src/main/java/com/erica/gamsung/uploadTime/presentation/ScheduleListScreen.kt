@@ -2,6 +2,7 @@ package com.erica.gamsung.uploadTime.presentation
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,14 +15,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -31,26 +37,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
+import com.erica.gamsung.core.presentation.theme.Blue
 import java.time.format.DateTimeFormatter
 
-@Preview
 @Composable
 fun ScheduleListScreen(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     viewModel: ScheduleViewModel = viewModel(),
 ) {
     BackHandler(enabled = true) {
 //
     }
+
     // 여기서 remember를 사용하여 상태를 저장합니다.
     var selectedTimeSlot by remember { mutableStateOf("") }
+    val showLastItemRemovalWarning by viewModel.showLastItemRemovalWarning.observeAsState()
 
+    if (showLastItemRemovalWarning?.peekContent() == true) {
+        AlertDialog(
+            onDismissRequest = { viewModel.hideLastItemRemovalWarning() },
+            confirmButton = {
+                Button(
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = Blue,
+                        ),
+                    onClick = {
+                        viewModel.hideLastItemRemovalWarning()
+                    },
+                ) {
+                    Text("확인")
+                }
+            },
+            title = { Text("Warning!!") },
+            text = { Text("마지막 시간 슬롯을 제거할 수 없습니다.") },
+        )
+    }
     Scaffold {
         Column(
             modifier =
@@ -68,13 +94,16 @@ fun ScheduleListScreen(
             )
             TitleTextSection(text = "선택한 시간이 맞습니까?")
             Column(
-                modifier = Modifier.fillMaxHeight(),
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                TimeSlotListSection(calendarViewModel = viewModel, selectedTimeSlot = selectedTimeSlot) {
+                TimeSlotListSection(calendarViewModel = viewModel) {
                     selectedTimeSlot = it
                 }
-                ButtonSection(viewModel) { navController.navigate(Screen.DateTimeFinish.route) }
+                ButtonSection(viewModel, navController) { navController.navigate(Screen.DateTimeFinish.route) }
             }
         }
     }
@@ -91,44 +120,55 @@ fun TitleTextSection(text: String) {
             fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        Divider(modifier = Modifier.padding(bottom = 16.dp))
+        Divider(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp))
     }
 }
 
 @Composable
 private fun ButtonSection(
     viewModel: ScheduleViewModel,
+    navController: NavHostController,
     onSuccess: () -> Unit = {},
 ) {
     val uploadResult by viewModel.uploadResult.observeAsState()
+
     Column {
         Divider(modifier = Modifier.padding(bottom = 16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
         ) {
-            Button(
+            OutlinedButton(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(7.dp),
-                onClick = { /* 선택 확인 액션 */ },
+                onClick = {
+                    navController.navigate(Screen.DateSelect.route) {
+                        launchSingleTop = true
+                        popUpTo(Screen.DateSelect.route) {
+                            inclusive = false
+                        }
+                    }
+                },
             ) {
-                Text("Cancel")
+                Text("Cancel", color = Color.Black)
             }
             Spacer(modifier = Modifier.padding(4.dp))
-            Button(
+            OutlinedButton(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(7.dp),
                 onClick = {
                     // 선택 확인 액션
                     viewModel.uploadSchedulesToServer()
-                    onSuccess()
                 },
             ) {
-                Text("Confirm")
+                Text("Confirm", color = Color.Black)
             }
             uploadResult?.let {
                 if (it) {
-                    onSuccess()
+                    LaunchedEffect(Unit) {
+                        onSuccess()
+                        viewModel.resetUploadResult()
+                    }
                 } else {
                     Log.d("ScheduledListScreenLogic", "업로드 실패")
                 }
@@ -146,7 +186,7 @@ private fun ButtonSection(
 @Composable
 private fun TimeSlotListSection(
     calendarViewModel: ScheduleViewModel,
-    selectedTimeSlot: String?,
+    // selectedTimeSlot: String?,
     onTimeSlotSelected: (String) -> Unit,
 ) {
     // 시간 슬롯 목록, ViewModel에서 가져올 수 있습니다.
@@ -159,8 +199,8 @@ private fun TimeSlotListSection(
             TimeSlotButton(
                 dateSlot = dateText,
                 timeSlot = timeText,
-                isSelected = "$dateText $timeText" == selectedTimeSlot,
                 onTimeSlotSelected = onTimeSlotSelected,
+                onCancel = { calendarViewModel.removeSchedule(scheduleData.date) },
                 stateOption = null,
             )
             Spacer(modifier = Modifier.height(8.dp)) // 버튼 사이의 간격
@@ -173,15 +213,13 @@ private fun TimeSlotListSection(
 fun TimeSlotButton(
     dateSlot: String,
     timeSlot: String,
-    // selectedTimeSlot: String,
-    isSelected: Boolean,
     onTimeSlotSelected: (String) -> Unit,
+    onCancel: () -> Unit,
     stateOption: String?,
 ) {
-    fun onCancel() {
-        // TODO
-    }
-    Button(
+    val borderColor = Color.Gray // Blue border when selected
+    val backgroundColor = Color.Transparent
+    OutlinedButton(
         onClick = { onTimeSlotSelected("$dateSlot $timeSlot") },
         modifier =
             Modifier
@@ -189,23 +227,21 @@ fun TimeSlotButton(
                 .height(48.dp),
         shape = RoundedCornerShape(12.dp),
         colors =
-            ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+            ButtonDefaults.outlinedButtonColors(
+                containerColor = backgroundColor,
+                contentColor = MaterialTheme.colorScheme.onSurface,
             ),
-        // enabled = timeSlot != selectedTimeSlot
+        border = BorderStroke(1.dp, borderColor),
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(dateSlot, color = Color.Companion.White)
-            Text(timeSlot, color = Color.Companion.White)
+            Text(dateSlot, style = MaterialTheme.typography.bodyMedium)
+            Text(timeSlot, style = MaterialTheme.typography.bodySmall)
             if (stateOption == null) {
-                Text("Cancel", color = Color.Companion.White, modifier = Modifier.clickable { onCancel() })
-            } else {
-                Text(stateOption, color = Color.Companion.White)
+                Text("Cancel", modifier = Modifier.clickable { onCancel() })
             }
         }
     }

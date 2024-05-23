@@ -1,5 +1,6 @@
 package com.erica.gamsung.uploadTime.presentation
 
+import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.mutableStateMapOf
@@ -28,7 +29,7 @@ class ScheduleViewModel
         // private val scheduleApi: ScheduleApi,
         private val repository: ScheduleRepository,
     ) : ViewModel() {
-        val selectedDatesMap = mutableStateMapOf<YearMonth, List<LocalDate>>()
+        val selectedDatesMap = mutableStateMapOf<YearMonth, MutableList<LocalDate>>()
 
         val scheduleDataModelMap = mutableStateMapOf<LocalDate, ScheduleDataModel>()
 
@@ -41,19 +42,26 @@ class ScheduleViewModel
         private var _selectTime = MutableLiveData<TimePickerState>()
         val selectTime: LiveData<TimePickerState> = _selectTime
 
-        private val _textOption = MutableLiveData("")
-        val textOption: LiveData<String> = _textOption
+        private val _showLastItemRemovalWarning = MutableLiveData<Event<Boolean>>()
+        val showLastItemRemovalWarning: LiveData<Event<Boolean>> = _showLastItemRemovalWarning
 
-        private val _message = MutableLiveData("")
-        val message: LiveData<String> = _message
+//        private val _textOption = MutableLiveData("")
+//        val textOption: LiveData<String> = _textOption
 
-        private val _uploadResult = MutableLiveData<Boolean>()
+//        private val _message = MutableLiveData("")
+//        val message: LiveData<String> = _message
+
+        private val _uploadResult = MutableLiveData(false)
         val uploadResult: LiveData<Boolean> = _uploadResult
 
         init {
             val currentMonth = YearMonth.now()
-            selectedDatesMap[currentMonth] = listOf(LocalDate.now())
+            selectedDatesMap[currentMonth] = mutableListOf(LocalDate.now())
             _focusedDate.value = LocalDate.now()
+        }
+
+        fun resetUploadResult() {
+            _uploadResult.value = false
         }
 
         fun setFocusedDate(date: LocalDate?) {
@@ -62,14 +70,6 @@ class ScheduleViewModel
 
         fun updateSelectedTime(newTime: TimePickerState) {
             _selectTime.value = newTime
-        }
-
-        fun setTextOption(newValue: String) {
-            _textOption.value = newValue
-        }
-
-        fun setMessage(newValue: String) {
-            _message.value = newValue
         }
 
         fun moveToNextDate() {
@@ -82,11 +82,18 @@ class ScheduleViewModel
             val nextDate = allDateAfterFocused.firstOrNull()
             if (nextDate == null) {
                 _navigateToNextPage.value = Event(Unit)
+                // _navigateTrigger.value = true
             } else {
                 _focusedDate.value = nextDate
             }
             // MutableLiveData의 값을 업데이트하기 위해 setValue() 사용. 메인 스레드에서 호출
             // 혹은 postValue를 사용할 수 도 있음.(백그라운드 스레드에서 호출 가능)
+        }
+
+        fun moveToNextPage() {
+            val dateList = selectedDatesMap.flatMap { it.value }.sorted()
+            val nextDate = dateList.firstOrNull()
+            _focusedDate.value = nextDate
         }
 
         fun toggleDateSelection(
@@ -100,7 +107,13 @@ class ScheduleViewModel
             } else {
                 updatedDates.add(date)
             }
-            selectedDatesMap[month] = updatedDates
+            if (updatedDates.isEmpty()) {
+                selectedDatesMap.remove(month)
+            } else {
+                selectedDatesMap[month] = updatedDates
+            }
+            Log.d("내용 확인", "${selectedDatesMap[month]}")
+            Log.d("내용 확인", "$selectedDatesMap")
         }
 
         // focusedDate.value(날짜) 를 date로 받는다.
@@ -123,6 +136,18 @@ class ScheduleViewModel
                     )
                 scheduleDataModelMap[date] = updatedScheduleDataModel
             }
+        }
+
+        fun removeSchedule(date: LocalDate?) {
+            if (scheduleDataModelMap.size == 1) {
+                _showLastItemRemovalWarning.value = Event(true)
+            } else {
+                scheduleDataModelMap.remove(date)
+            }
+        }
+
+        fun hideLastItemRemovalWarning() {
+            _showLastItemRemovalWarning.value = Event(false)
         }
 
         fun uploadSchedulesToServer() {
