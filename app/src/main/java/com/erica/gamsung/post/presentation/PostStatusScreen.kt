@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.erica.gamsung.core.presentation.Screen
@@ -81,6 +83,7 @@ fun PostStatusScreen(
                 "All" -> true
                 "Ready" -> it.state == "ready"
                 "Done" -> it.state == "done"
+                "Yet" -> it.state == "yet"
                 else -> true
             }
         } ?: listOf()
@@ -104,7 +107,6 @@ fun PostStatusScreen(
             modifier =
                 Modifier
                     .padding(it)
-                    .padding(16.dp)
                     .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -115,6 +117,7 @@ fun PostStatusScreen(
             Column(
                 modifier =
                     Modifier
+                        .padding(16.dp)
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState()),
                 // verticalArrangement = Arrangement.SpaceBetween
@@ -146,15 +149,16 @@ fun StatusFilterButtons(
     selectedStatus: String,
     onStatusSelected: (String) -> Unit,
 ) {
-    Row(
+    LazyRow(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val statuses = listOf("All", "Ready", "Done")
-        statuses.forEach { status ->
+        val statuses = listOf("All", "Yet", "Ready", "Done")
+        items(statuses.size) { index ->
+            val status = statuses[index]
             val backgroundColor = if (selectedStatus == status) Blue40 else Color.Transparent
             val contentColor = if (selectedStatus == status) Blue else Color.Black
             val borderColor = if (selectedStatus == status) Blue else Color.Gray
@@ -174,7 +178,7 @@ fun StatusFilterButtons(
                     Icon(imageVector = Icons.Default.FilterList, contentDescription = null)
                     Spacer(modifier = Modifier.width(4.dp))
                 }
-                Text(text = status)
+                Text(text = status, fontSize = 14.sp)
             }
         }
     }

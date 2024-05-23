@@ -303,7 +303,7 @@ private fun loadBitmapFromUri(
     }
 
 @Composable
-fun ButtonSection(
+private fun ButtonSection(
     modifier: Modifier,
     onRightClick: () -> Unit,
     onLeftClick: () -> Unit,
@@ -322,7 +322,7 @@ fun ButtonSection(
             shape = RoundedCornerShape(8.dp),
             // border = BorderStroke(1.dp, Color.LightGray),
         ) {
-            Text(text = "미리보기") // color = Color.Black)
+            Text(text = "미리보기", color = Color.Black) // color = Color.Black)
         }
         Spacer(modifier = Modifier.width(8.dp))
         OutlinedButton(
@@ -333,7 +333,7 @@ fun ButtonSection(
             shape = RoundedCornerShape(8.dp),
             // border = BorderStroke(1.dp, Color.LightGray),
         ) {
-            Text(text = "확정하기") // color = Color.Black)
+            Text(text = "확정하기", color = Color.Black) // color = Color.Black)
         }
     }
 }

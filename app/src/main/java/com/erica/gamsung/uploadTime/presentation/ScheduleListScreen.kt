@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.erica.gamsung.core.presentation.Screen
+import com.erica.gamsung.core.presentation.theme.Blue
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -61,6 +62,10 @@ fun ScheduleListScreen(
             onDismissRequest = { viewModel.hideLastItemRemovalWarning() },
             confirmButton = {
                 Button(
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = Blue,
+                        ),
                     onClick = {
                         viewModel.hideLastItemRemovalWarning()
                     },
@@ -68,7 +73,7 @@ fun ScheduleListScreen(
                     Text("확인")
                 }
             },
-            title = { Text("경고") },
+            title = { Text("Warning!!") },
             text = { Text("마지막 시간 슬롯을 제거할 수 없습니다.") },
         )
     }
@@ -98,7 +103,7 @@ fun ScheduleListScreen(
                 TimeSlotListSection(calendarViewModel = viewModel) {
                     selectedTimeSlot = it
                 }
-                ButtonSection(viewModel) { navController.navigate(Screen.DateTimeFinish.route) }
+                ButtonSection(viewModel, navController) { navController.navigate(Screen.DateTimeFinish.route) }
             }
         }
     }
@@ -115,13 +120,14 @@ fun TitleTextSection(text: String) {
             fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        Divider(modifier = Modifier.padding(bottom = 16.dp))
+        Divider(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp))
     }
 }
 
 @Composable
 private fun ButtonSection(
     viewModel: ScheduleViewModel,
+    navController: NavHostController,
     onSuccess: () -> Unit = {},
 ) {
     val uploadResult by viewModel.uploadResult.observeAsState()
@@ -132,15 +138,22 @@ private fun ButtonSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
         ) {
-            Button(
+            OutlinedButton(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(7.dp),
-                onClick = { /* 선택 확인 액션 */ },
+                onClick = {
+                    navController.navigate(Screen.DateSelect.route) {
+                        launchSingleTop = true
+                        popUpTo(Screen.DateSelect.route) {
+                            inclusive = false
+                        }
+                    }
+                },
             ) {
-                Text("Cancel")
+                Text("Cancel", color = Color.Black)
             }
             Spacer(modifier = Modifier.padding(4.dp))
-            Button(
+            OutlinedButton(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(7.dp),
                 onClick = {
@@ -148,7 +161,7 @@ private fun ButtonSection(
                     viewModel.uploadSchedulesToServer()
                 },
             ) {
-                Text("Confirm")
+                Text("Confirm", color = Color.Black)
             }
             uploadResult?.let {
                 if (it) {

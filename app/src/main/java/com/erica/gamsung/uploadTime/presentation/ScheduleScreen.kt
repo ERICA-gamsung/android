@@ -31,7 +31,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,8 +51,6 @@ import com.erica.gamsung.core.presentation.component.TimeInputBox
 import com.erica.gamsung.menu.presentation.InputMenuViewModel
 import com.erica.gamsung.store.presentation.utils.toDisplayString
 import com.erica.gamsung.uploadTime.presentation.component.CustomInputTextBox
-import java.time.LocalDate
-import java.time.YearMonth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod")
@@ -75,7 +72,7 @@ fun MyScheduleScreen(
     // val navTrigger by viewModel.navigateTrigger.observeAsState()
 
     // 각 달별로 선택된 날짜들을 관리하기 위한 상태 맵
-    var selectedDatesMap = remember { mutableStateMapOf<YearMonth, MutableList<LocalDate>>() }
+    // var selectedDatesMap = remember { mutableStateMapOf<YearMonth, MutableList<LocalDate>>() }
 //    // 현재 달을 기준으로 초기화
 //    val currentMonth = YearMonth.now()
 //    // 현재 달에 대한 초기 선택된 날짜 리스트 (예: 오늘    )
@@ -203,8 +200,8 @@ fun MyScheduleScreen(
                     onClick = {
                         navController.navigate(Screen.DateSelect.route) {
                             launchSingleTop = true
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
+                            popUpTo(Screen.DateSelect.route) {
+                                inclusive = false
                             }
                         }
                     },
