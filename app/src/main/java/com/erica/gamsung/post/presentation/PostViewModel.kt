@@ -48,6 +48,14 @@ class PostViewModel
         private val _imgBitMap = MutableLiveData<Bitmap>()
         val imgBitMap: LiveData<Bitmap> = _imgBitMap
 
+        fun getPostListSize(): Int {
+            return _postListData.value?.size ?: 0
+        }
+
+        fun getFilteredPostListSize(filterState: String): Int {
+            return _postListData.value?.filter { it.state == filterState }?.size ?: 0
+        }
+
         fun setImg(bitmap: Bitmap?) {
             _imgBitMap.value = bitmap
             Log.d("ViewModel", "Setting image URI: $bitmap")

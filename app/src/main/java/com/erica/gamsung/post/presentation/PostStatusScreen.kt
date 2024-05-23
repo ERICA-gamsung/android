@@ -94,9 +94,9 @@ fun PostStatusScreen(
                 hasLeftIcon = true,
                 onNavigationClick = {
                     navController.navigate(Screen.Main.route) {
-                        launchSingleTop = true
+                        // launchSingleTop = true
                         popUpTo(navController.graph.startDestinationId) {
-                            inclusive = false
+                            inclusive = true
                         }
                     }
                 },

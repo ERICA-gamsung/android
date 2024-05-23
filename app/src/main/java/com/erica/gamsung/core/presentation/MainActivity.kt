@@ -71,7 +71,7 @@ fun MainNavHost(
     val inputMenuViewModel: InputMenuViewModel = hiltViewModel()
     NavHost(navController = navController, startDestination = Screen.Main.route) {
         composable(Screen.Main.route) {
-            MainScreen(navController = navController)
+            MainScreen(navController = navController, postViewModel)
             LogNavStack(navController = navController)
         }
         composable(Screen.Setting.route) { SettingScreen(navController = navController) }
