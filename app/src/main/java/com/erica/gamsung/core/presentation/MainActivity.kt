@@ -59,6 +59,7 @@ class MainActivity : ComponentActivity() {
                     MainNavHost(
                         navController = navController,
                         scheduleViewModel = scheduleViewModel,
+                        startScreen = if (loginViewModel.isLogin()) Screen.Main else Screen.Login,
                     )
                 }
             }
@@ -78,9 +79,13 @@ class MainActivity : ComponentActivity() {
             if (uri.toString().startsWith("https://gamsung.shop/android")) {
                 loginViewModel.fetchAccessToken { hasAccount ->
                     if (hasAccount) {
-                        navController.navigate(Screen.Main.route)
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
                     } else {
-                        navController.navigate(Screen.InputStore(isEditMode = false).route)
+                        navController.navigate(Screen.InputStore(isEditMode = false).route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
                     }
                 }
             }
@@ -92,10 +97,11 @@ class MainActivity : ComponentActivity() {
 fun MainNavHost(
     navController: NavHostController,
     scheduleViewModel: ScheduleViewModel,
+    startScreen: Screen,
 ) {
     val postViewModel: PostViewModel = hiltViewModel()
     val inputMenuViewModel: InputMenuViewModel = hiltViewModel()
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = startScreen.route) {
         composable(Screen.Main.route) {
             MainScreen(navController = navController)
             LogNavStack(navController = navController)

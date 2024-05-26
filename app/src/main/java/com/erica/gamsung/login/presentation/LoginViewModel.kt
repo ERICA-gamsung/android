@@ -30,4 +30,6 @@ class LoginViewModel
                 }
             }
         }
+
+        fun isLogin(): Boolean = loginRepository.getSavedAccessToken() != null
     }
