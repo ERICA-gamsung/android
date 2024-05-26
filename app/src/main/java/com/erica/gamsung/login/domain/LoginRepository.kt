@@ -8,4 +8,6 @@ interface LoginRepository {
     fun saveUUID(uuid: String)
 
     fun getSavedUUID(): String?
+
+    suspend fun hasAccount(): Boolean
 }

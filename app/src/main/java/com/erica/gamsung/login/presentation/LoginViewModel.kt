@@ -25,15 +25,9 @@ class LoginViewModel
                 val uuid = loginRepository.getSavedUUID()
                 uuid?.let {
                     loginRepository.fetchAccessToken(it)
-//                    val hasAccount = checkIfUserHasAccount(accessToken)
-                    val hasAccount = true
+                    val hasAccount = loginRepository.hasAccount()
                     onTokenReceived(hasAccount)
                 }
             }
         }
-
-//        private fun checkIfUserHasAccount(accessToken: String): Boolean {
-//            // TODO
-//            return true
-//        }
     }

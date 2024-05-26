@@ -40,6 +40,14 @@ object RepositoryModule {
     @Provides
     fun provideLoginRepository(
         loginApi: LoginApi,
+        menuApi: MenuApi,
+        storeApi: StoreApi,
         @ApplicationContext context: Context,
-    ): LoginRepository = LoginRepositoryImpl(loginApi = loginApi, context = context)
+    ): LoginRepository =
+        LoginRepositoryImpl(
+            loginApi = loginApi,
+            menuApi = menuApi,
+            storeApi = storeApi,
+            context = context,
+        )
 }

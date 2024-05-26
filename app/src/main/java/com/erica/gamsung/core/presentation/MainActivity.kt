@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                     if (hasAccount) {
                         navController.navigate(Screen.Main.route)
                     } else {
-                        navController.navigate(Screen.InputMenu(isEditMode = false).route)
+                        navController.navigate(Screen.InputStore(isEditMode = false).route)
                     }
                 }
             }
