@@ -1,5 +1,6 @@
 package com.erica.gamsung.core.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -14,13 +15,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.theme.GamsungTheme
 import com.erica.gamsung.login.presentation.LoginScreen
+import com.erica.gamsung.login.presentation.LoginViewModel
 import com.erica.gamsung.menu.presentation.InputMenuScreen
 import com.erica.gamsung.menu.presentation.InputMenuViewModel
 import com.erica.gamsung.post.presentation.PostStatusScreen
@@ -40,6 +41,9 @@ import dagger.hilt.android.AndroidEntryPoint
 // 일단은 상위 컴포넌트에서 생성해서 사용.
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val loginViewModel: LoginViewModel by viewModels()
+    private lateinit var navController: NavHostController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
@@ -51,11 +55,33 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    val navController = rememberNavController()
+                    navController = rememberNavController()
                     MainNavHost(
                         navController = navController,
                         scheduleViewModel = scheduleViewModel,
                     )
+                }
+            }
+        }
+
+        handleDeepLink(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleDeepLink(intent)
+    }
+
+    private fun handleDeepLink(intent: Intent?) {
+        intent?.data?.let { uri ->
+            if (uri.toString().startsWith("https://gamsung.shop/android")) {
+                loginViewModel.fetchAccessToken { hasAccount ->
+                    if (hasAccount) {
+                        navController.navigate(Screen.Main.route)
+                    } else {
+                        navController.navigate(Screen.InputMenu(isEditMode = false).route)
+                    }
                 }
             }
         }
@@ -69,7 +95,7 @@ fun MainNavHost(
 ) {
     val postViewModel: PostViewModel = hiltViewModel()
     val inputMenuViewModel: InputMenuViewModel = hiltViewModel()
-    NavHost(navController = navController, startDestination = Screen.Main.route) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(Screen.Main.route) {
             MainScreen(navController = navController)
             LogNavStack(navController = navController)
@@ -109,7 +135,7 @@ fun MainNavHost(
             UploadTimeConfirmScreen(navController = navController)
             LogNavStack(navController = navController)
         }
-        composable(Screen.Login.route) { LoginScreen(navController = navController) }
+        composable(Screen.Login.route) { LoginScreen() }
         composable(Screen.SelectNewPost.route) {
             SelectPostScreen(navController = navController, postViewModel)
             LogNavStack(navController = navController)
