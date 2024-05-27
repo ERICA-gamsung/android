@@ -38,6 +38,7 @@ class MainScreenKtTest {
             MainNavHost(
                 navController = navController,
                 scheduleViewModel = viewModel,
+                startScreen = Screen.Main,
             )
         }
     }

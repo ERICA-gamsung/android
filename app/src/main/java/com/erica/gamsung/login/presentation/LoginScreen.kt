@@ -1,5 +1,7 @@
 package com.erica.gamsung.login.presentation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -29,15 +32,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.erica.gamsung.R
-import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.theme.LIGHT_PINK
 import com.erica.gamsung.core.presentation.theme.VividBlue
 
 @Composable
-fun LoginScreen(navController: NavHostController = rememberNavController()) {
+fun LoginScreen(loginViewModel: LoginViewModel = hiltViewModel()) {
     Box(
         modifier =
             Modifier
@@ -56,10 +57,7 @@ fun LoginScreen(navController: NavHostController = rememberNavController()) {
             TitleSection(modifier = Modifier.weight(1f))
             LoginButtonSection(
                 modifier = Modifier.weight(1f),
-                onNavigate = { screen ->
-                    navController.navigate(screen.route)
-                },
-                hasAccount = { true },
+                loginViewModel = loginViewModel,
             )
         }
     }
@@ -94,8 +92,7 @@ private fun TitleSection(modifier: Modifier = Modifier) {
 @Composable
 private fun LoginButtonSection(
     modifier: Modifier = Modifier,
-    onNavigate: (Screen) -> Unit = {},
-    hasAccount: () -> Boolean = { true },
+    loginViewModel: LoginViewModel,
 ) {
     Column(
         modifier = modifier,
@@ -104,23 +101,22 @@ private fun LoginButtonSection(
     ) {
         Text(text = "3초만에 시작하기", style = MaterialTheme.typography.labelMedium)
         Divider(modifier = Modifier.padding(vertical = 8.dp))
-        InstagramButton(onNavigate = onNavigate, hasAccount = hasAccount)
+        InstagramButton(loginViewModel = loginViewModel)
     }
 }
 
 @Composable
-private fun InstagramButton(
-    onNavigate: (Screen) -> Unit = {},
-    hasAccount: () -> Boolean = { true },
-) {
+private fun InstagramButton(loginViewModel: LoginViewModel) {
+    val ctx = LocalContext.current
     Button(
         onClick = {
-            // TODO 인스타 소셜로그인 연결
-            if (hasAccount()) {
-                onNavigate(Screen.Main)
-            } else {
-                onNavigate(Screen.InputStore(isEditMode = false))
-            }
+            val oAuthUrl = loginViewModel.getLoginUrl()
+            val urlIntent =
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(oAuthUrl),
+                )
+            ctx.startActivity(urlIntent)
         },
         shape = RoundedCornerShape(50.dp),
         colors =

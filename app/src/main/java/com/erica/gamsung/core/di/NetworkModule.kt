@@ -1,6 +1,7 @@
 package com.erica.gamsung.core.di
 
 import com.erica.gamsung.BuildConfig
+import com.erica.gamsung.login.data.remote.LoginApi
 import com.erica.gamsung.menu.data.remote.MenuApi
 import com.erica.gamsung.post.data.remote.PostApi
 import com.erica.gamsung.store.data.remote.StoreApi
@@ -96,4 +97,8 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideScheduleService(retrofit: Retrofit): ScheduleApi = retrofit.create(ScheduleApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideLoginApi(retrofit: Retrofit): LoginApi = retrofit.create(LoginApi::class.java)
 }
