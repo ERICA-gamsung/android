@@ -62,7 +62,7 @@ fun InputStoreScreen(
         topBar = {
             GsTopAppBar(
                 title = if (isEditMode) "식당 정보 수정" else "식당 정보 입력 (1/2)",
-                hasLeftIcon = true,
+                hasLeftIcon = isEditMode,
                 onNavigationClick = {
                     navController.navigate(Screen.Setting.route) {
                         launchSingleTop = true
