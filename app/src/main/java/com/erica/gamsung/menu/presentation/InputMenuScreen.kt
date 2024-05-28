@@ -42,6 +42,7 @@ import com.erica.gamsung.core.presentation.component.InputTextBox
 import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.menu.domain.Menu
 
+@Suppress("LongMethod")
 @Composable
 fun InputMenuScreen(
     navController: NavHostController = rememberNavController(),
