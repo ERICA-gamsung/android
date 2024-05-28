@@ -58,9 +58,10 @@ fun InputMenuScreen(
                 title = if (isEditMode) "메뉴 수정" else "메뉴 입력 (2/2)",
                 hasLeftIcon = true,
                 onNavigationClick = {
-                    navController.navigate(Screen.Setting.route) {
+                    val toNavigate = if (isEditMode) Screen.Setting else Screen.InputStore(isEditMode = false)
+                    navController.navigate(toNavigate.route) {
                         launchSingleTop = true
-                        popUpTo(Screen.Setting.route) {
+                        popUpTo(toNavigate.route) {
                             inclusive = false
                         }
                     }
