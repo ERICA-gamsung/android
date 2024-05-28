@@ -48,7 +48,7 @@ import com.erica.gamsung.core.presentation.component.GsButton
 import com.erica.gamsung.core.presentation.component.GsOutlinedButton
 import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.core.presentation.component.TimeInputBox
-import com.erica.gamsung.menu.presentation.InputMenuViewModel
+import com.erica.gamsung.menu.presentation.MenuViewModel
 import com.erica.gamsung.store.presentation.utils.toDisplayString
 import com.erica.gamsung.uploadTime.presentation.component.CustomInputTextBox
 
@@ -58,7 +58,7 @@ import com.erica.gamsung.uploadTime.presentation.component.CustomInputTextBox
 fun MyScheduleScreen(
     navController: NavHostController,
     viewModel: ScheduleViewModel = viewModel(),
-    menuViewModel: InputMenuViewModel = viewModel(),
+    menuViewModel: MenuViewModel = viewModel(),
 ) {
     BackHandler(enabled = true) {
 //
