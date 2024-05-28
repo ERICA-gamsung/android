@@ -42,15 +42,16 @@ import com.erica.gamsung.core.presentation.component.InputTextBox
 import com.erica.gamsung.core.presentation.component.TextTitle
 import com.erica.gamsung.menu.domain.Menu
 
+@Suppress("LongMethod")
 @Composable
 fun InputMenuScreen(
     navController: NavHostController = rememberNavController(),
-    inputMenuViewModel: InputMenuViewModel = hiltViewModel(),
+    menuViewModel: MenuViewModel = hiltViewModel(),
     isEditMode: Boolean = false,
 ) {
-    val menus by inputMenuViewModel.menusState.collectAsState()
-    val inputMenuState by inputMenuViewModel.inputMenuState.collectAsState()
-    val shouldNavigate by inputMenuViewModel.shouldNavigateState.collectAsState()
+    val menus by menuViewModel.menusState.collectAsState()
+    val inputMenuState by menuViewModel.inputMenuState.collectAsState()
+    val shouldNavigate by menuViewModel.shouldNavigateState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -58,9 +59,10 @@ fun InputMenuScreen(
                 title = if (isEditMode) "메뉴 수정" else "메뉴 입력 (2/2)",
                 hasLeftIcon = true,
                 onNavigationClick = {
-                    navController.navigate(Screen.Setting.route) {
+                    val toNavigate = if (isEditMode) Screen.Setting else Screen.InputStore(isEditMode = false)
+                    navController.navigate(toNavigate.route) {
                         launchSingleTop = true
-                        popUpTo(Screen.Setting.route) {
+                        popUpTo(toNavigate.route) {
                             inclusive = false
                         }
                     }
@@ -81,7 +83,7 @@ fun InputMenuScreen(
                         .fillMaxWidth()
                         .weight(1f),
             ) {
-                InputMenuSection(menus, inputMenuState, inputMenuViewModel)
+                InputMenuSection(menus, inputMenuState, menuViewModel)
             }
             Divider()
             GsButton(
@@ -92,7 +94,7 @@ fun InputMenuScreen(
                         .padding(horizontal = 8.dp, vertical = 12.dp),
                 text = if (isEditMode) "메뉴 수정하기" else "메뉴 등록하기",
                 onClick = {
-                    inputMenuViewModel.onEvent(InputMenuUiEvent.SendMenus)
+                    menuViewModel.onEvent(InputMenuUiEvent.SendMenus)
                     if (shouldNavigate) {
                         val toNavigate = if (isEditMode) Screen.Setting else Screen.Main
                         navController.navigate(toNavigate.route) {
@@ -112,7 +114,7 @@ fun InputMenuScreen(
 private fun InputMenuSection(
     menus: List<Menu>,
     inputMenuState: InputMenuState,
-    inputMenuViewModel: InputMenuViewModel,
+    menuViewModel: MenuViewModel,
 ) {
     LazyColumn(
         modifier =
@@ -124,7 +126,7 @@ private fun InputMenuSection(
         verticalArrangement = Arrangement.Top,
     ) {
         itemsIndexed(menus) { index, menu ->
-            CompletedMenuItem(menu) { inputMenuViewModel.onEvent(InputMenuUiEvent.RemoveMenu(index)) }
+            CompletedMenuItem(menu) { menuViewModel.onEvent(InputMenuUiEvent.RemoveMenu(index)) }
         }
 
         item {
@@ -132,10 +134,10 @@ private fun InputMenuSection(
                 name = inputMenuState.name,
                 price = inputMenuState.price,
                 nameChanged = {
-                    inputMenuViewModel.onEvent(InputMenuUiEvent.NameChanged(it))
+                    menuViewModel.onEvent(InputMenuUiEvent.NameChanged(it))
                 },
                 priceChanged = {
-                    inputMenuViewModel.onEvent(InputMenuUiEvent.PriceChanged(it))
+                    menuViewModel.onEvent(InputMenuUiEvent.PriceChanged(it))
                 },
                 isNameValid = inputMenuState.isNameValid,
                 isPriceValid = inputMenuState.isPriceValid,
@@ -144,7 +146,7 @@ private fun InputMenuSection(
 
         item {
             IconButton(onClick = {
-                inputMenuViewModel.onEvent(InputMenuUiEvent.AddMenu)
+                menuViewModel.onEvent(InputMenuUiEvent.AddMenu)
             }) {
                 Icon(
                     imageVector = Icons.Default.AddCircleOutline,

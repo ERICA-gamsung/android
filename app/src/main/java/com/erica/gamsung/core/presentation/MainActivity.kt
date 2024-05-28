@@ -23,7 +23,7 @@ import com.erica.gamsung.core.presentation.theme.GamsungTheme
 import com.erica.gamsung.login.presentation.LoginScreen
 import com.erica.gamsung.login.presentation.LoginViewModel
 import com.erica.gamsung.menu.presentation.InputMenuScreen
-import com.erica.gamsung.menu.presentation.InputMenuViewModel
+import com.erica.gamsung.menu.presentation.MenuViewModel
 import com.erica.gamsung.post.presentation.PostStatusScreen
 import com.erica.gamsung.post.presentation.PostViewModel
 import com.erica.gamsung.post.presentation.PreviewPost
@@ -100,7 +100,7 @@ fun MainNavHost(
     startScreen: Screen,
 ) {
     val postViewModel: PostViewModel = hiltViewModel()
-    val inputMenuViewModel: InputMenuViewModel = hiltViewModel()
+    val menuViewModel: MenuViewModel = hiltViewModel()
     NavHost(navController = navController, startDestination = startScreen.route) {
         composable(Screen.Main.route) {
             MainScreen(navController = navController, postViewModel)
@@ -116,10 +116,10 @@ fun MainNavHost(
             InputStoreScreen(navController = navController, isEditMode = false)
         }
         composable(Screen.InputMenu(isEditMode = true).route) {
-            InputMenuScreen(navController = navController, isEditMode = true, inputMenuViewModel = inputMenuViewModel)
+            InputMenuScreen(navController = navController, isEditMode = true, menuViewModel = menuViewModel)
         }
         composable(Screen.InputMenu(isEditMode = false).route) {
-            InputMenuScreen(navController = navController, isEditMode = false, inputMenuViewModel = inputMenuViewModel)
+            InputMenuScreen(navController = navController, isEditMode = false, menuViewModel = menuViewModel)
         }
         composable(Screen.DateSelect.route) {
             MyCalendarScreen(navController = navController, viewModel = scheduleViewModel)
@@ -129,7 +129,7 @@ fun MainNavHost(
             MyScheduleScreen(
                 navController = navController,
                 viewModel = scheduleViewModel,
-                menuViewModel = inputMenuViewModel,
+                menuViewModel = menuViewModel,
             )
             LogNavStack(navController = navController)
         }
