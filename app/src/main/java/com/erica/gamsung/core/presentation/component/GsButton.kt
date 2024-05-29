@@ -1,6 +1,5 @@
 package com.erica.gamsung.core.presentation.component
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.erica.gamsung.core.presentation.theme.Blue
+import com.erica.gamsung.core.presentation.theme.DeepBlue
 import com.erica.gamsung.core.presentation.theme.VividBlue
 
 @Composable
@@ -26,7 +27,7 @@ fun GsButton(
     modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit = {},
-    containerColor: Color = VividBlue,
+    containerColor: Color = Blue,
     enabled: Boolean = true,
 ) {
     Button(
@@ -43,6 +44,78 @@ fun GsButton(
         enabled = enabled,
     )
 }
+
+@Composable
+fun GsMainButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit = {},
+    containerColor: Color = DeepBlue,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    enabled: Boolean = true,
+) {
+    Button(
+        shape = RoundedCornerShape(10.dp),
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor),
+        content = {
+            Text(
+                text = text,
+                fontWeight = FontWeight.Normal,
+                fontSize = fontSize,
+            )
+        },
+        modifier = modifier,
+        enabled = enabled,
+    )
+}
+//
+// @Composable
+// fun GsOutlinedButton2(
+//    modifier: Modifier = Modifier,
+//    text: String,
+//    fontSize: Int,
+//    onClick: () -> Unit = {},
+// ) {
+//    Button(
+//        onClick = onClick,
+//        colors =
+//            ButtonDefaults.buttonColors(
+//                containerColor = Color.Transparent,
+//            ),
+//        modifier =
+//            modifier
+//                .shadow(10.dp, RoundedCornerShape(10.dp))
+//                .background(
+//                    brush =
+//                        Brush.linearGradient(
+//                            colors =
+//                                listOf(
+//                                    Color(0x4DFFFFFF),
+//                                    Color(0x33FFFFFF),
+//                                ),
+//                        ),
+//                    shape = RoundedCornerShape(10.dp),
+//                ).border(
+//                    width = 1.dp,
+//                    brush =
+//                        Brush.linearGradient(
+//                            colors =
+//                                listOf(
+//                                    Color(0x33FFFFFF),
+//                                    Color(0x80FFFFFF),
+//                                ),
+//                        ),
+//                    shape = RoundedCornerShape(10.dp),
+//                ),
+//    ) {
+//        Text(
+//            text = text,
+//            fontSize = fontSize.sp,
+//            color = Color.Black,
+//        )
+//    }
+// }
 
 @Composable
 fun GsOutlinedButton(
@@ -63,7 +136,6 @@ fun GsOutlinedButton(
             )
         },
         modifier = modifier,
-        border = BorderStroke(width = 1.dp, color = Color.Black),
     )
 }
 
@@ -105,5 +177,14 @@ private fun GsButtonPreview() {
         GsTextButtonWithIcon(
             text = "가게 정보 관리하기",
         )
+//        GsOutlinedButton2(
+//            modifier =
+//                Modifier
+//                    .fillMaxWidth()
+//                    .height(60.dp)
+//                    .padding(horizontal = 20.dp),
+//            text = "text",
+//            fontSize = 20,
+//        )
     }
 }

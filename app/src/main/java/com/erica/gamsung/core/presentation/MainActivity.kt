@@ -60,11 +60,11 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         scheduleViewModel = scheduleViewModel,
                         startScreen = loginViewModel.getStartScreen(),
+                        // startScreen = Screen.Main
                     )
                 }
             }
         }
-
         handleDeepLink(intent)
     }
 
