@@ -2,9 +2,12 @@ package com.erica.gamsung.login.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.login.domain.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.UUID
 import javax.inject.Inject
 
@@ -31,5 +34,16 @@ class LoginViewModel
             }
         }
 
-        fun isLogin(): Boolean = loginRepository.getSavedAccessToken() != null
+        fun getStartScreen(): Screen {
+            if (loginRepository.getSavedAccessToken() != null) {
+                return runBlocking(Dispatchers.IO) {
+                    if (loginRepository.hasAccount()) {
+                        Screen.Main
+                    } else {
+                        Screen.InputStore(isEditMode = false)
+                    }
+                }
+            }
+            return Screen.Login
+        }
     }
