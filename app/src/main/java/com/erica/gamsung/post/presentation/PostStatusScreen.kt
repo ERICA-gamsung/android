@@ -17,7 +17,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Pending
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -162,7 +165,6 @@ fun StatusFilterButtons(
             val backgroundColor = if (selectedStatus == status) Blue40 else Color.Transparent
             val contentColor = if (selectedStatus == status) Blue else Color.Black
             val borderColor = if (selectedStatus == status) Blue else Color.Gray
-
             OutlinedButton(
                 onClick = { onStatusSelected(status) },
                 colors =
@@ -172,12 +174,23 @@ fun StatusFilterButtons(
                     ),
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(1.dp, borderColor),
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = if (status == "All") Modifier.padding(start = 30.dp) else Modifier.padding(start = 4.dp),
             ) {
-                if (status == "All") {
-                    Icon(imageVector = Icons.Default.FilterList, contentDescription = null)
-                    Spacer(modifier = Modifier.width(4.dp))
+                when (status) {
+                    "All" -> {
+                        Icon(imageVector = Icons.Default.FilterList, contentDescription = null)
+                    }
+                    "Yet" -> {
+                        Icon(imageVector = Icons.Default.Pending, contentDescription = null)
+                    }
+                    "Ready" -> {
+                        Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null)
+                    }
+                    "Done" -> {
+                        Icon(imageVector = Icons.Default.Upload, contentDescription = null)
+                    }
                 }
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(text = status, fontSize = 14.sp)
             }
         }
@@ -260,9 +273,20 @@ fun EnhancedTimeSlotButton(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            stateOption?.let {
+                val icon =
+                    when (it) {
+                        "yet" -> Icons.Default.Pending
+                        "ready" -> Icons.Default.CheckCircle
+                        "done" -> Icons.Default.Upload
+                        else -> null
+                    }
+                icon?.let {
+                    Icon(imageVector = it, contentDescription = null)
+                }
+            }
             Text(dateSlot, style = MaterialTheme.typography.bodyMedium)
-            Text(timeSlot, style = MaterialTheme.typography.bodySmall)
-            stateOption?.let { Text(it) }
+            Text(timeSlot, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

@@ -33,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.erica.gamsung.core.presentation.component.GsOutlinedButton
+import com.erica.gamsung.core.presentation.component.GsMainButton
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.post.presentation.PostViewModel
 import java.time.LocalDate
@@ -86,7 +86,9 @@ fun MainScreen(
         ) {
             CircleTitleSection(currentDate = currentDate)
             TaskProgressCircle(completedTasks = completedTasks, totalTasks = totalTasks)
+            Spacer(modifier = Modifier.height(20.dp))
             Column(
+                modifier = Modifier.padding(top = 40.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 MainButton("글 발행하러 가기") { navController.navigate(Screen.DateSelect.route) }
@@ -199,7 +201,7 @@ private fun MainButton(
     text: String,
     onClick: () -> Unit = {},
 ) {
-    GsOutlinedButton(
+    GsMainButton(
         modifier =
             Modifier
                 .fillMaxWidth()

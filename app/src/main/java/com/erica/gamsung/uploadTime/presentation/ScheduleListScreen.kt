@@ -52,7 +52,6 @@ fun ScheduleListScreen(
     BackHandler(enabled = true) {
 //
     }
-
     // 여기서 remember를 사용하여 상태를 저장합니다.
     var selectedTimeSlot by remember { mutableStateOf("") }
     val showLastItemRemovalWarning by viewModel.showLastItemRemovalWarning.observeAsState()
@@ -239,7 +238,7 @@ fun TimeSlotButton(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(dateSlot, style = MaterialTheme.typography.bodyMedium)
-            Text(timeSlot, style = MaterialTheme.typography.bodySmall)
+            Text(timeSlot, style = MaterialTheme.typography.bodyMedium)
             if (stateOption == null) {
                 Text("Cancel", modifier = Modifier.clickable { onCancel() })
             }
