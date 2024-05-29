@@ -28,8 +28,7 @@ class MenuViewModel
         private var _inputMenuState = MutableStateFlow(state.get<InputMenuState>(INPUT_MENU) ?: InputMenuState())
         val inputMenuState = _inputMenuState.asStateFlow()
 
-        private var _shouldNavigateState = MutableStateFlow(false)
-        val shouldNavigateState = _shouldNavigateState.asStateFlow()
+        val isValid: Boolean get() = _menusState.value.isNotEmpty()
 
         init {
             loadMenus()
@@ -114,11 +113,7 @@ class MenuViewModel
                 }
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
-                    runCatching {
-                        menuRepository.updateMenus(menus)
-                    }.onSuccess {
-                        _shouldNavigateState.value = true
-                    }
+                    menuRepository.updateMenus(menus)
                 }
             }
         }
