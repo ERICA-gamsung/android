@@ -51,7 +51,6 @@ fun InputMenuScreen(
 ) {
     val menus by menuViewModel.menusState.collectAsState()
     val inputMenuState by menuViewModel.inputMenuState.collectAsState()
-    val shouldNavigate by menuViewModel.shouldNavigateState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -95,16 +94,15 @@ fun InputMenuScreen(
                 text = if (isEditMode) "메뉴 수정하기" else "메뉴 등록하기",
                 onClick = {
                     menuViewModel.onEvent(InputMenuUiEvent.SendMenus)
-                    if (shouldNavigate) {
-                        val toNavigate = if (isEditMode) Screen.Setting else Screen.Main
-                        navController.navigate(toNavigate.route) {
-                            launchSingleTop = true
-                            popUpTo(toNavigate.route) {
-                                inclusive = false
-                            }
+                    val toNavigate = if (isEditMode) Screen.Setting else Screen.Main
+                    navController.navigate(toNavigate.route) {
+                        launchSingleTop = true
+                        popUpTo(toNavigate.route) {
+                            inclusive = false
                         }
                     }
                 },
+                enabled = menuViewModel.isValid,
             )
         }
     }

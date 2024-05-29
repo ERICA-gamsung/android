@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     MainNavHost(
                         navController = navController,
                         scheduleViewModel = scheduleViewModel,
-                        startScreen = if (loginViewModel.isLogin()) Screen.Main else Screen.Login,
+                        startScreen = loginViewModel.getStartScreen(),
                     )
                 }
             }
