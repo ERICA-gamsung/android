@@ -121,7 +121,10 @@ private fun AccountSection(
             loginViewModel.logout()
             onNavigate(Screen.Login)
         })
-        AccountButton(text = "회원탈퇴", onClick = { /* TODO */ })
+        AccountButton(text = "회원탈퇴", onClick = {
+            loginViewModel.withdraw()
+            onNavigate(Screen.Login)
+        })
     }
 }
 

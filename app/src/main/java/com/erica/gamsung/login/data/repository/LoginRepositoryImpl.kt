@@ -47,4 +47,11 @@ class LoginRepositoryImpl(
     override fun clearSession() {
         sharedPreferences.edit().clear().apply()
     }
+
+    override suspend fun withDraw() {
+        getSavedAccessToken()?.let { token ->
+            val bearerToken = "Bearer $token"
+            loginApi.deleteMember(bearerToken)
+        }
+    }
 }

@@ -50,4 +50,11 @@ class LoginViewModel
         fun logout() {
             loginRepository.clearSession()
         }
+
+        fun withdraw() {
+            viewModelScope.launch {
+                loginRepository.withDraw()
+            }
+            loginRepository.clearSession()
+        }
     }

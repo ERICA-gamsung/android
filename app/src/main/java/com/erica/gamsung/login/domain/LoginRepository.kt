@@ -12,4 +12,6 @@ interface LoginRepository {
     suspend fun hasAccount(): Boolean
 
     fun clearSession()
+
+    suspend fun withDraw()
 }
