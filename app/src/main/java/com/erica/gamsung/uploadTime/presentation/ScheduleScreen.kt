@@ -282,7 +282,7 @@ private fun HoursSection(
                 modifier = Modifier.padding(end = 10.dp),
             )
             Text(
-                text = timePickerState?.toDisplayString() ?: "선택 안함",
+                text = currentTimePickerState.toDisplayString() ?: "선택 안함",
                 style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(modifier = Modifier.weight(1f))
