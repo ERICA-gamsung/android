@@ -46,4 +46,8 @@ class LoginViewModel
             }
             return Screen.Login
         }
+
+        fun logout() {
+            loginRepository.clearSession()
+        }
     }

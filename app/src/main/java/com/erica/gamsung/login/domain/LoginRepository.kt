@@ -10,4 +10,6 @@ interface LoginRepository {
     fun getSavedUUID(): String?
 
     suspend fun hasAccount(): Boolean
+
+    fun clearSession()
 }
