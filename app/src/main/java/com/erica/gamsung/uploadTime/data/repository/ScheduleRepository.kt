@@ -1,5 +1,6 @@
 package com.erica.gamsung.uploadTime.data.repository
 
+import com.erica.gamsung.login.domain.LoginRepository
 import com.erica.gamsung.uploadTime.data.remote.PostScheduleDataResponseModel
 import com.erica.gamsung.uploadTime.data.remote.ScheduleApi
 import com.erica.gamsung.uploadTime.domain.ScheduleDataModel
@@ -13,11 +14,14 @@ class ScheduleRepository
     @Inject
     constructor(
         private val scheduleApi: ScheduleApi,
+        private val loginRepository: LoginRepository,
     ) {
         suspend fun uploadSchedules(scheduleDataModelMap: Map<LocalDate, ScheduleDataModel>): Result<Boolean> =
             try {
                 val scheduleDataList = prepareDataList(scheduleDataModelMap)
-                val response = scheduleApi.uploadSchedules(scheduleDataList)
+                val token = loginRepository.getSavedAccessToken()
+                val bearerToken = "Bearer $token"
+                val response = scheduleApi.uploadSchedules(scheduleDataList, bearerToken)
                 handleResponse(response)
             } catch (e: IOException) {
                 Result.failure(Exception("Network error: ${e.message}"))

@@ -24,16 +24,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.erica.gamsung.core.presentation.Screen
 import com.erica.gamsung.core.presentation.component.GsTextButtonWithIcon
 import com.erica.gamsung.core.presentation.component.GsTopAppBar
+import com.erica.gamsung.login.presentation.LoginViewModel
 
 private val ButtonHeight = 70.dp
 
 @Composable
-fun SettingScreen(navController: NavHostController = rememberNavController()) {
+fun SettingScreen(
+    navController: NavHostController = rememberNavController(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
+) {
     Scaffold(
         topBar = { GsTopAppBar(title = "마이페이지") },
     ) { paddingValues ->
@@ -54,7 +59,15 @@ fun SettingScreen(navController: NavHostController = rememberNavController()) {
                     },
                 )
                 Divider()
-                AccountSection(modifier = Modifier.weight(2f))
+                AccountSection(
+                    modifier = Modifier.weight(2f),
+                    loginViewModel = loginViewModel,
+                    onNavigate = { screen ->
+                        navController.navigate(screen.route) {
+                            popUpTo(Screen.Main.route) { inclusive = true }
+                        }
+                    },
+                )
                 Spacer(modifier = Modifier.weight(1f))
             }
         }
@@ -89,7 +102,11 @@ private fun StoreSection(
 }
 
 @Composable
-private fun AccountSection(modifier: Modifier = Modifier) {
+private fun AccountSection(
+    modifier: Modifier = Modifier,
+    loginViewModel: LoginViewModel,
+    onNavigate: (Screen) -> Unit,
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -100,8 +117,14 @@ private fun AccountSection(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Bold,
         )
 
-        AccountButton(text = "로그아웃", onClick = { /* TODO */ })
-        AccountButton(text = "회원탈퇴", onClick = { /* TODO */ })
+        AccountButton(text = "로그아웃", onClick = {
+            loginViewModel.logout()
+            onNavigate(Screen.Login)
+        })
+        AccountButton(text = "회원탈퇴", onClick = {
+            loginViewModel.withdraw()
+            onNavigate(Screen.Login)
+        })
     }
 }
 

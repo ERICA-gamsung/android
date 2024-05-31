@@ -46,4 +46,15 @@ class LoginViewModel
             }
             return Screen.Login
         }
+
+        fun logout() {
+            loginRepository.clearSession()
+        }
+
+        fun withdraw() {
+            viewModelScope.launch {
+                loginRepository.withDraw()
+            }
+            loginRepository.clearSession()
+        }
     }
