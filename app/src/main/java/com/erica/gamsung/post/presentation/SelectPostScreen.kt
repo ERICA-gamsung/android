@@ -152,7 +152,11 @@ fun SelectPostScreen(
                 ButtonSection(
                     modifier = Modifier.weight(1f),
                     onLeftClick = { navController.navigate(Screen.PreviewNewPost.route) },
-                    onRightClick = confirmAndNavigate,
+                    onRightClick = {
+                        if (imgBitmap != null) {
+                            confirmAndNavigate
+                        }
+                    },
                 )
             }
         },

@@ -18,3 +18,5 @@ val Blue80 = Color(0x803399FF)
 val Blue40 = Color(0x403399FF)
 
 val DeepBlue = Color(0xFF2c95ff)
+
+val Orange = Color(0xFFFFA500)
