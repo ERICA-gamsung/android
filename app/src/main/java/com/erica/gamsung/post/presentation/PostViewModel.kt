@@ -124,7 +124,6 @@ class PostViewModel
             viewModelScope.launch {
                 try {
                     reservationId?.let { resId ->
-                        postApi.confirmPostData(resId, Post(content))
                         imgBitmap?.let {
                             val imgByte = bitmapToByteArray(it)
                             if (imgByte.isNotEmpty()) {
@@ -135,6 +134,7 @@ class PostViewModel
                                 if (response.isSuccessful) {
                                     val responseBody = response.body()
                                     Log.d("ViewModel", "Image upload successful: $responseBody")
+                                    postApi.confirmPostData(resId, Post(content))
                                 } else {
                                     Log.e("ViewModel", "Error in image upload: ${response.errorBody()?.string()}")
                                 }
