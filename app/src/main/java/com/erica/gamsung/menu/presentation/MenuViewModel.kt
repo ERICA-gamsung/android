@@ -3,6 +3,7 @@ package com.erica.gamsung.menu.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.erica.gamsung.login.domain.LoginRepository
 import com.erica.gamsung.menu.data.repository.FakeMenuRepositoryImpl
 import com.erica.gamsung.menu.domain.Menu
 import com.erica.gamsung.menu.domain.MenuRepository
@@ -21,6 +22,7 @@ class MenuViewModel
     constructor(
         state: SavedStateHandle,
         private val menuRepository: MenuRepository = FakeMenuRepositoryImpl(),
+        private val loginRepository: LoginRepository,
     ) : ViewModel() {
         private var _menusState = MutableStateFlow(state.get<List<Menu>>(MENUS) ?: emptyList())
         val menusState = _menusState.asStateFlow()
@@ -36,7 +38,7 @@ class MenuViewModel
 
         private fun loadMenus() {
             viewModelScope.launch(Dispatchers.IO) {
-                menuRepository.getMenus().collect { menus ->
+                menuRepository.getMenus(loginRepository.getMemberId()).collect { menus ->
                     _menusState.update { menus }
                 }
             }
@@ -113,7 +115,7 @@ class MenuViewModel
                 }
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
-                    menuRepository.updateMenus(menus)
+                    menuRepository.updateMenus(menus, loginRepository.getMemberId())
                 }
             }
         }

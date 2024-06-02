@@ -13,7 +13,10 @@ class MenuRepositoryImpl(
     private val menuDao: MenuDao,
     private val menuApi: MenuApi,
 ) : MenuRepository {
-    override suspend fun updateMenus(menus: List<Menu>) {
+    override suspend fun updateMenus(
+        menus: List<Menu>,
+        userId: Long,
+    ) {
         // 1. 서버에 메뉴 수정 요청
         val updatedMenus =
             menuApi.updateMenus(
@@ -31,7 +34,7 @@ class MenuRepositoryImpl(
         )
     }
 
-    override suspend fun getMenus(): Flow<List<Menu>> =
+    override suspend fun getMenus(userId: Long): Flow<List<Menu>> =
         flow {
             // 1. 로컬 DB에 있는 데이터 반환
             val localData = menuDao.getAll().map { it.toDomainModel() }
@@ -39,7 +42,7 @@ class MenuRepositoryImpl(
 
             // 2. 서버에서 받은 데이터 동기화 및 반환
             runCatching {
-                menuApi.getMenus()
+                menuApi.getMenus(userId)
             }.onSuccess { remoteData ->
                 menuDao.updateAll(remoteData.map { it.toMenuEntity() })
                 emit(remoteData.map { it.toDomainModel() })

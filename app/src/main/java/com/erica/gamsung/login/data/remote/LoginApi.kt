@@ -17,6 +17,6 @@ interface LoginApi {
 }
 
 data class TokenResponse(
-    val providerId: Long,
+    val id: Long,
     val accessToken: String,
 )

@@ -18,8 +18,10 @@ interface PostApi {
         @Path("reservationId") reservationId: Int,
     ): Response<Schedule>
 
-    @GET("postings/state")
-    suspend fun fetchPostListData(): Response<List<ScheduleState>>
+    @GET("postings/{id}/state")
+    suspend fun fetchPostListData(
+        @Path("id") memberId: Long,
+    ): Response<List<ScheduleState>>
 
     @POST("postings/post/{reservationId}")
     suspend fun confirmPostData(

@@ -14,4 +14,6 @@ interface LoginRepository {
     fun clearSession()
 
     suspend fun withDraw()
+
+    fun getMemberId(): Long
 }

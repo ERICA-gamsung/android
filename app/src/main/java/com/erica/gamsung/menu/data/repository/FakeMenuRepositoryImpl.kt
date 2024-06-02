@@ -8,9 +8,12 @@ import kotlinx.coroutines.flow.flowOf
 class FakeMenuRepositoryImpl : MenuRepository {
     private var db = listOf<Menu>()
 
-    override suspend fun updateMenus(menus: List<Menu>) {
+    override suspend fun updateMenus(
+        menus: List<Menu>,
+        userId: Long,
+    ) {
         db = menus
     }
 
-    override suspend fun getMenus(): Flow<List<Menu>> = flowOf(db)
+    override suspend fun getMenus(userId: Long): Flow<List<Menu>> = flowOf(db)
 }
