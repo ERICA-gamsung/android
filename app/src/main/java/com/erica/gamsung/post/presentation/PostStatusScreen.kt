@@ -17,11 +17,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Pending
-import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -183,19 +183,25 @@ fun StatusFilterButtons(
                 when (status) {
                     "All" -> {
                         Icon(imageVector = Icons.Default.FilterList, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = status, fontSize = 14.sp)
                     }
                     "Yet" -> {
-                        Icon(imageVector = Icons.Default.Pending, contentDescription = null)
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Edit", fontSize = 14.sp)
                     }
                     "Ready" -> {
-                        Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null)
+                        Icon(imageVector = Icons.Default.RadioButtonUnchecked, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = status, fontSize = 14.sp)
                     }
                     "Done" -> {
-                        Icon(imageVector = Icons.Default.Upload, contentDescription = null)
+                        Icon(imageVector = Icons.Default.CheckCircleOutline, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = status, fontSize = 14.sp)
                     }
                 }
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = status, fontSize = 14.sp)
             }
         }
     }
@@ -292,7 +298,13 @@ private fun StateIcon(
     isSelected: Boolean,
 ) {
     Icon(
-        imageVector = Icons.Default.Circle,
+        imageVector =
+            when (stateOption) {
+                "yet" -> Icons.Filled.Edit
+                "ready" -> Icons.Default.RadioButtonUnchecked
+                "done" -> Icons.Default.CheckCircleOutline
+                else -> Icons.Default.Circle
+            },
         contentDescription = null,
         tint =
             when (stateOption) {

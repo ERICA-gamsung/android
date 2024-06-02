@@ -18,10 +18,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -149,7 +152,7 @@ private fun ButtonSection(
                     }
                 },
             ) {
-                Text("Cancel", color = Color.Black)
+                Text("취소하기", color = Color.Black)
             }
             Spacer(modifier = Modifier.padding(4.dp))
             OutlinedButton(
@@ -160,7 +163,7 @@ private fun ButtonSection(
                     viewModel.uploadSchedulesToServer()
                 },
             ) {
-                Text("Confirm", color = Color.Black)
+                Text("확정하기", color = Color.Black)
             }
             uploadResult?.let {
                 if (it) {
@@ -240,7 +243,12 @@ fun TimeSlotButton(
             Text(dateSlot, style = MaterialTheme.typography.bodyMedium)
             Text(timeSlot, style = MaterialTheme.typography.bodyMedium)
             if (stateOption == null) {
-                Text("Cancel", modifier = Modifier.clickable { onCancel() })
+                Icon(
+                    imageVector = Icons.Default.DeleteForever,
+                    contentDescription = "",
+                    tint = Color.Black,
+                    modifier = Modifier.clickable { onCancel() },
+                )
             }
         }
     }
