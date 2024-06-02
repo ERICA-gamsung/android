@@ -3,6 +3,7 @@ package com.erica.gamsung.login.data.repository
 import android.content.Context
 import android.content.SharedPreferences
 import com.erica.gamsung.login.data.remote.LoginApi
+import com.erica.gamsung.login.data.remote.TokenResponse
 import com.erica.gamsung.login.domain.LoginRepository
 import com.erica.gamsung.menu.data.remote.MenuApi
 import com.erica.gamsung.store.data.remote.StoreApi
@@ -19,9 +20,9 @@ class LoginRepositoryImpl(
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
 
     override suspend fun fetchAccessToken(uuid: String): String {
-        val accessToken = loginApi.getToken(uuid).accessToken
-        saveToken(accessToken)
-        return accessToken
+        val tokenResponse = loginApi.getToken(uuid)
+        saveToken(tokenResponse)
+        return tokenResponse.accessToken
     }
 
     override fun getSavedAccessToken(): String? = sharedPreferences.getString("access_token", null)
@@ -40,8 +41,9 @@ class LoginRepositoryImpl(
             menuResult.await() && storeResult.await()
         }
 
-    private fun saveToken(token: String) {
-        sharedPreferences.edit().putString("access_token", token).apply()
+    private fun saveToken(token: TokenResponse) {
+        sharedPreferences.edit().putString("access_token", token.accessToken).apply()
+        sharedPreferences.edit().putLong("memberId", token.id).apply()
     }
 
     override fun clearSession() {
@@ -54,4 +56,6 @@ class LoginRepositoryImpl(
             loginApi.deleteMember(bearerToken)
         }
     }
+
+    override fun getMemberId(): Long = sharedPreferences.getLong("memberId", 1L)
 }
