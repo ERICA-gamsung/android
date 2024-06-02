@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Pending
 import androidx.compose.material.icons.filled.Upload
@@ -46,6 +47,7 @@ import com.erica.gamsung.core.presentation.component.GsTopAppBar
 import com.erica.gamsung.core.presentation.theme.Blue
 import com.erica.gamsung.core.presentation.theme.Blue40
 import com.erica.gamsung.core.presentation.theme.Blue80
+import com.erica.gamsung.core.presentation.theme.Orange
 import com.erica.gamsung.post.domain.ScheduleState
 import com.erica.gamsung.post.presentation.utils.formatDate
 import com.erica.gamsung.post.presentation.utils.formatTime
@@ -81,15 +83,17 @@ fun PostStatusScreen(
     }
     // Filtering 한 리스트
     val filteredList =
-        scheduleList?.filter {
-            when (selectedStatus) {
-                "All" -> true
-                "Ready" -> it.state == "ready"
-                "Done" -> it.state == "done"
-                "Yet" -> it.state == "yet"
-                else -> true
-            }
-        } ?: listOf()
+        scheduleList
+            ?.filter {
+                when (selectedStatus) {
+                    "All" -> true
+                    "Ready" -> it.state == "ready"
+                    "Done" -> it.state == "done"
+                    "Yet" -> it.state == "yet"
+                    else -> true
+                }
+            }?.sortedWith(compareBy<ScheduleState> { it.date }.thenBy { it.time }) ?: listOf()
+
     Scaffold(
         topBar = {
             GsTopAppBar(
@@ -274,19 +278,28 @@ fun EnhancedTimeSlotButton(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             stateOption?.let {
-                val icon =
-                    when (it) {
-                        "yet" -> Icons.Default.Pending
-                        "ready" -> Icons.Default.CheckCircle
-                        "done" -> Icons.Default.Upload
-                        else -> null
-                    }
-                icon?.let {
-                    Icon(imageVector = it, contentDescription = null)
-                }
+                StateIcon(stateOption, isSelected)
             }
             Text(dateSlot, style = MaterialTheme.typography.bodyMedium)
             Text(timeSlot, style = MaterialTheme.typography.bodyMedium)
         }
     }
+}
+
+@Composable
+private fun StateIcon(
+    stateOption: String,
+    isSelected: Boolean,
+) {
+    Icon(
+        imageVector = Icons.Default.Circle,
+        contentDescription = null,
+        tint =
+            when (stateOption) {
+                "yet" -> Color.Red
+                "ready" -> Orange
+                "done" -> Color.Green
+                else -> if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+            },
+    )
 }
