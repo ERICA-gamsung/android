@@ -257,23 +257,22 @@ fun PicSection(
                 .clickable { imagePickerLauncher.launch("image/*") },
         contentAlignment = Alignment.Center,
     ) {
-        if (selectedImageUri.value == null) {
+        if (imgBitmap == null) {
             Button(onClick = { imagePickerLauncher.launch("image/*") }) {
                 Text("사진 업로드")
             }
         } else {
-            imgBitmap?.let {
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = "Selected Image",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-            } ?: run {
-                Button(onClick = { imagePickerLauncher.launch("image/*") }) {
-                    Text("사진 업로드")
-                }
-            }
+            Image(
+                bitmap = imgBitmap.asImageBitmap(),
+                contentDescription = "Selected Image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+//            ) ?: run {
+//                Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+//                    Text("사진 업로드")
+//                }
+//            }
         }
     }
 }
