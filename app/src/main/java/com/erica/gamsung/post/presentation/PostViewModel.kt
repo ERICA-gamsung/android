@@ -126,21 +126,21 @@ class PostViewModel
                     reservationId?.let { resId ->
                         imgBitmap?.let {
                             val imgByte = bitmapToByteArray(it)
-                            val requestBody = imgByte.toRequestBody("image/jpeg".toMediaTypeOrNull())
-                            val formData = MultipartBody.Part.createFormData("files", "image.jpg", requestBody)
-                            val filesList = listOf(formData)
-                            val response = postApi.confirmImgData(resId, filesList)
                             if (imgByte.isNotEmpty()) {
+                                val requestBody = imgByte.toRequestBody("image/jpeg".toMediaTypeOrNull())
+                                val formData = MultipartBody.Part.createFormData("files", "image.jpg", requestBody)
+                                val filesList = listOf(formData)
+                                val response = postApi.confirmImgData(resId, filesList)
                                 if (response.isSuccessful) {
                                     val responseBody = response.body()
                                     Log.d("ViewModel", "Image upload successful: $responseBody")
+                                    postApi.confirmPostData(resId, Post(content))
                                 } else {
                                     Log.e("ViewModel", "Error in image upload: ${response.errorBody()?.string()}")
                                 }
                             } else {
                                 Log.e("ViewModel", "Image byte array is empty, skipping upload")
                             }
-                            postApi.confirmPostData(resId, Post(content))
                         } ?: Log.e("ViewModel", "Image Bitmap is null, skipping upload")
                     } ?: Log.e("ViewModel", "Reservation ID is null, cannot upload data")
                 } catch (e: IOException) {
