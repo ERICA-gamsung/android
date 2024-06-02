@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.erica.gamsung.login.domain.LoginRepository
 import com.erica.gamsung.post.data.mock.Post
 import com.erica.gamsung.post.data.remote.PostApi
 import com.erica.gamsung.post.domain.Schedule
@@ -26,6 +27,7 @@ class PostViewModel
     @Inject
     constructor(
         private val postApi: PostApi,
+        private val loginRepository: LoginRepository,
     ) : ViewModel() {
         private val _contents = MutableLiveData<List<String>>()
         val contents: LiveData<List<String>> = _contents
@@ -78,7 +80,7 @@ class PostViewModel
         fun fetchPostListData() {
             viewModelScope.launch {
                 try {
-                    val response = postApi.fetchPostListData()
+                    val response = postApi.fetchPostListData(loginRepository.getMemberId())
                     if (response.isSuccessful) {
                         _postListData.value = response.body()
                     } else {
