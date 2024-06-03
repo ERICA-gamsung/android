@@ -3,6 +3,7 @@ package com.erica.gamsung.store.presentation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.erica.gamsung.login.domain.LoginRepository
 import com.erica.gamsung.store.domain.StoreRepository
 import com.erica.gamsung.store.presentation.utils.toTimePickerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ class StoreViewModel
     @Inject
     constructor(
         private val storeRepository: StoreRepository,
+        private val loginRepository: LoginRepository,
     ) : ViewModel() {
         private var _inputStoreState = MutableStateFlow(InputStoreState())
         val inputStoreState = _inputStoreState.asStateFlow()
@@ -30,7 +32,7 @@ class StoreViewModel
 
         private fun loadStore() {
             viewModelScope.launch(Dispatchers.IO) {
-                storeRepository.getStore().collect { store ->
+                storeRepository.getStore(loginRepository.getMemberId()).collect { store ->
                     store?.let {
                         _inputStoreState.update { currentState ->
                             currentState.copy(
@@ -122,7 +124,7 @@ class StoreViewModel
 
         private fun handleSendStore() {
             CoroutineScope(Dispatchers.IO).launch {
-                storeRepository.updateStore(inputStoreState.value.toDomainModel())
+                storeRepository.updateStore(inputStoreState.value.toDomainModel(), loginRepository.getMemberId())
             }
         }
     }
