@@ -154,7 +154,7 @@ fun SelectPostScreen(
                     onLeftClick = { navController.navigate(Screen.PreviewNewPost.route) },
                     onRightClick = {
                         if (imgBitmap != null) {
-                            confirmAndNavigate
+                            confirmAndNavigate()
                         }
                     },
                 )
@@ -219,6 +219,7 @@ fun PostSection(
             }
         }
         if (posts.isNotEmpty()) {
+            posts.map { it.trimStart() }
             HorizontalPager(state = pagerState) { page ->
                 PostItem(post = posts[page], pageOffset = calculatePageOffset(pagerState, page))
                 setContent(posts[page])
