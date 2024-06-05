@@ -219,8 +219,8 @@ fun PostSection(
             }
         }
         if (posts.isNotEmpty()) {
-            posts.map { it.trimStart() }
             HorizontalPager(state = pagerState) { page ->
+                Log.d("Post", posts[page])
                 PostItem(post = posts[page], pageOffset = calculatePageOffset(pagerState, page))
                 setContent(posts[page])
             }

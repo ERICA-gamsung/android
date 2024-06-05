@@ -105,7 +105,7 @@ class PostViewModel
                     if (response.isSuccessful) {
                         val schedule = response.body()
                         _postData.value = schedule
-                        _contents.value = schedule?.contents
+                        _contents.value = schedule?.contents?.map { it.trimStart() }
                     } else {
                         Log.d(
                             "API_Error",
